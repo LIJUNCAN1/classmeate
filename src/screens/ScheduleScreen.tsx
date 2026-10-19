@@ -309,14 +309,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
       <View style={[styles.heroHeader, { paddingTop: topPadding + 6 }]}>
         {/* 用户信息与 【今日 | 周课表】 切换 */}
         <View style={styles.userInfoRow}>
-          <View style={styles.userProfile}>
-            <View style={styles.avatarCircle}>
-              <Text style={styles.avatarEmoji}>🦖</Text>
-            </View>
-            <View style={styles.userMeta}>
-              <Text style={styles.greetingText}>哈娜宝贝本宝 ✏️</Text>
-            </View>
-          </View>
+          <Text style={styles.screenMainTitle}>课程表</Text>
 
           {/* 模式切换：今日 vs 周课表 (已将“日视图”按要求改为“今日”) */}
           <View style={styles.viewModeToggle}>
@@ -931,6 +924,12 @@ const styles = StyleSheet.create({
   dayScrollArea: {
     flex: 1,
   },
+  screenMainTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: -0.3,
+  },
   scheduleSection: {
     paddingTop: 16,
   },
@@ -940,6 +939,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     marginBottom: 12,
+    minHeight: 32,
   },
   scheduleTitleGroup: {
     flexDirection: 'row',
@@ -950,33 +950,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: Colors.textPrimary,
+    lineHeight: 22,
+    includeFontPadding: false,
   },
   courseCountBadge: {
     backgroundColor: Colors.primaryLight,
     paddingHorizontal: 8,
-    paddingVertical: 2,
+    height: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: Rounded.pill,
   },
   courseCountText: {
     fontSize: 11,
     fontWeight: '700',
     color: Colors.primary,
+    lineHeight: 14,
+    includeFontPadding: false,
   },
   reimportBtn: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    height: 28,
     gap: 4,
     backgroundColor: '#F0FDF4',
     borderWidth: 1,
     borderColor: '#BBF7D0',
     paddingHorizontal: 10,
-    paddingVertical: 5,
     borderRadius: Rounded.pill,
   },
   reimportBtnText: {
     fontSize: 12,
     fontWeight: '700',
     color: Colors.primary,
+    lineHeight: 16,
+    includeFontPadding: false,
   },
   timelineList: {
     paddingLeft: 4,

@@ -6,8 +6,10 @@ import { NotesScreen } from './src/screens/NotesScreen';
 import { ToolsScreen } from './src/screens/ToolsScreen';
 import { BottomNavBar, MainTabType } from './src/components/BottomNavBar';
 import { Colors } from './src/constants/theme';
+import { AnimatedSplashScreen } from './src/components/AnimatedSplashScreen';
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
   // 底部三个精简页面：课程表、笔记、工具
   const [activeTab, setActiveTab] = useState<MainTabType>('schedule');
   const [pendingNoteCourse, setPendingNoteCourse] = useState<string | undefined>(undefined);
@@ -20,6 +22,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <View style={styles.root}>
+        {showSplash && (
+          <AnimatedSplashScreen onFinish={() => setShowSplash(false)} />
+        )}
         <View style={styles.content}>
           {activeTab === 'schedule' ? (
             <ScheduleScreen onNavigateToNotesTab={handleNavigateToNotes} />

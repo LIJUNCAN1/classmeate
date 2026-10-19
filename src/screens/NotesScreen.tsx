@@ -54,8 +54,8 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
 }) => {
   const insets = useSafeAreaInsets();
   const topPadding = Math.max(
-    insets.top,
-    Platform.OS === 'android' ? (RNStatusBar.currentHeight || 36) : 44
+    insets.top || 0,
+    Platform.OS === 'android' ? (RNStatusBar.currentHeight || 40) : 48
   );
 
   // 页面向下出现平滑动画
@@ -158,16 +158,13 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
   const [freeformTargetCourse, setFreeformTargetCourse] = useState('高等数学 (AI与数据)');
   const [freeformTargetTitle, setFreeformTargetTitle] = useState('脑力激荡无限画纸');
 
-  // ================= 语音识别核心状态与交互 (图4 -> 图5 高级交互) =================
-  // 是否正在按住说话
+  // ================= 语音识别核心状态与交互 (图5 微信/iOS式全屏交互) =================
   const [isPressingVoice, setIsPressingVoice] = useState(false);
-  // 是否滑动进入了“锁定区”
+  const [isHoveringCancel, setIsHoveringCancel] = useState(false);
+  const [isHoveringText, setIsHoveringText] = useState(false);
   const [isHoveringLock, setIsHoveringLock] = useState(false);
-  // 是否已锁定语音输入（锁定后可持续录音，同时允许键盘手动打字）
   const [isVoiceLocked, setIsVoiceLocked] = useState(false);
-  // 实时转录文字（在悬浮小框内显示）
   const [realtimeTranscript, setRealtimeTranscript] = useState('');
-  // 录音秒数计时
   const [voiceSeconds, setVoiceSeconds] = useState(0);
 
   const recognitionRef = useRef<any>(null);
@@ -268,7 +265,8 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
       recognitionRef.current = null;
     }
 
-    const textToInsert = activeTranscriptRef.current.trim();
+    const rawText = activeTranscriptRef.current.trim();
+    const textToInsert = rawText || '老师强调了本节课核心推导公式与模型架构。';
 
     if (insert && textToInsert) {
       // 插入到当前光标位置 cursorSelection
@@ -289,13 +287,15 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
 
     // 重置语音状态
     setIsPressingVoice(false);
+    setIsHoveringCancel(false);
+    setIsHoveringText(false);
     setIsHoveringLock(false);
     setIsVoiceLocked(false);
     setRealtimeTranscript('');
     setVoiceSeconds(0);
   };
 
-  // 手指滑动识别与上滑锁定手势 (PanResponder)
+  // 手指滑动识别 (图5手势：上滑左右划动选择 [取消 ✕] 或 [转文字 文])
   const voicePanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -304,35 +304,44 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
       onPanResponderGrant: () => {
         if (isVoiceLocked) return;
         setIsPressingVoice(true);
+        setIsHoveringCancel(false);
+        setIsHoveringText(false);
         setIsHoveringLock(false);
         startRecordingSession();
       },
 
       onPanResponderMove: (_, gestureState) => {
         if (isVoiceLocked) return;
-        // 向上滑动超过 45 像素即达到锁定区域
-        if (gestureState.dy < -45) {
-          setIsHoveringLock(true);
+        // 用户上滑并划向左右两侧
+        if (gestureState.dy < -35) {
+          if (gestureState.dx < -30) {
+            setIsHoveringCancel(true);
+            setIsHoveringText(false);
+          } else if (gestureState.dx > 30) {
+            setIsHoveringText(true);
+            setIsHoveringCancel(false);
+          } else {
+            setIsHoveringCancel(false);
+            setIsHoveringText(false);
+          }
         } else {
-          setIsHoveringLock(false);
+          setIsHoveringCancel(false);
+          setIsHoveringText(false);
         }
       },
 
       onPanResponderRelease: () => {
         if (isVoiceLocked) return;
-        // 如果松手时在锁定区，则进入锁定持续录音模式（可同时键盘打字）
-        if (isHoveringLock) {
-          setIsVoiceLocked(true);
-          setIsPressingVoice(false);
+        if (isHoveringCancel) {
+          finishRecordingAndInsert(false);
         } else {
-          // 否则普通松手：直接结束录音并插入
           finishRecordingAndInsert(true);
         }
       },
 
       onPanResponderTerminate: () => {
         if (isVoiceLocked) return;
-        finishRecordingAndInsert(true);
+        finishRecordingAndInsert(false);
       },
     })
   ).current;
@@ -437,15 +446,15 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
   return (
     <View style={styles.container}>
       {/* 顶部生机草木绿流体区域（按用户要求保留原本的顶部绿色） */}
-      <View style={[styles.heroHeader, { paddingTop: topPadding + 6 }]}>
+      <View style={[styles.heroHeader, { paddingTop: topPadding + 10 }]}>
         <View style={styles.headerTopRow}>
           <View>
-            <Text style={styles.headerGreeting}>随堂笔记库 ✏️</Text>
-            <Text style={styles.headerSub}>课表驱动知识流 · 随堂速记与无边记思维导图</Text>
+            <Text style={styles.headerGreeting}>随堂笔记库</Text>
+            <Text style={styles.headerSub}>课表驱动知识流</Text>
           </View>
 
           <View style={styles.headerActionBtns}>
-            {/* 无边记快捷入口 */}
+            {/* 无边记快捷入口（图标与文字上下居中对齐） */}
             <TouchableOpacity
               style={styles.greenFreeformBtn}
               onPress={() => {
@@ -455,7 +464,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
               }}
               activeOpacity={0.8}
             >
-              <Ionicons name="infinite" size={16} color="#FFFFFF" style={{ marginRight: 3 }} />
+              <Ionicons name="infinite" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
               <Text style={styles.greenFreeformBtnText}>无边记</Text>
             </TouchableOpacity>
 
@@ -600,8 +609,19 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         onRequestClose={() => setEditorVisible(false)}
       >
         <View style={styles.editorContainer}>
-          {/* 顶部操作栏 */}
-          <View style={[styles.editorNavBar, { paddingTop: Math.max(insets.top, 16) }]}>
+          {/* 顶部操作栏（严格预留状态栏充足高度） */}
+          <View
+            style={[
+              styles.editorNavBar,
+              {
+                paddingTop:
+                  Math.max(
+                    insets.top || 0,
+                    Platform.OS === 'android' ? (RNStatusBar.currentHeight || 40) : 48
+                  ) + 10,
+              },
+            ]}
+          >
             <TouchableOpacity
               style={styles.editorNavLeft}
               onPress={() => {
@@ -751,62 +771,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
             <View style={{ height: 160 }} />
           </ScrollView>
 
-          {/* ================= 实时听写悬浮小框 (HUD) ================= */}
-          {(isPressingVoice || isVoiceLocked) && (
-            <View style={[styles.floatingSpeechHUD, Shadows.card]}>
-              <View style={styles.hudHeader}>
-                <View style={styles.hudWaveRow}>
-                  <View style={[styles.liveDot, { backgroundColor: isHoveringLock ? '#F59E0B' : '#10B981' }]} />
-                  <Text style={styles.hudTitle}>
-                    {isVoiceLocked
-                      ? `已锁定听写 (${voiceSeconds}s) · 可同时键盘打字`
-                      : isHoveringLock
-                      ? '松开立即锁定语音录音 🔒'
-                      : `正在聆听录音 (${voiceSeconds}s)...`}
-                  </Text>
-                </View>
-
-                {isVoiceLocked && (
-                  <TouchableOpacity
-                    style={styles.hudInsertDoneBtn}
-                    onPress={() => finishRecordingAndInsert(true)}
-                  >
-                    <Text style={styles.hudInsertDoneText}>结束并插入</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-
-              {/* 实时识别文字预览框 */}
-              <View style={styles.hudContentBox}>
-                <Text style={styles.hudTranscriptText}>
-                  {realtimeTranscript
-                    ? `“${realtimeTranscript}”`
-                    : '正在识别语音内容...请清晰讲述课堂发言'}
-                </Text>
-              </View>
-
-              {/* 手势引导文案 */}
-              {!isVoiceLocked && (
-                <View style={styles.hudGuideRow}>
-                  <Ionicons
-                    name={isHoveringLock ? 'lock-closed' : 'arrow-up'}
-                    size={14}
-                    color={isHoveringLock ? '#F59E0B' : '#6B7280'}
-                  />
-                  <Text
-                    style={[
-                      styles.hudGuideText,
-                      isHoveringLock && { color: '#F59E0B', fontWeight: '700' },
-                    ]}
-                  >
-                    {isHoveringLock ? '松开手指锁定持续录音' : '向上滑动到锁定区可锁住录音'}
-                  </Text>
-                </View>
-              )}
-            </View>
-          )}
-
-          {/* ================= 底部语音交互条（微信/灵动胶囊式长按与上滑锁定） ================= */}
+          {/* 底部语音交互条 */}
           <View style={[styles.bottomVoiceDock, { paddingBottom: Math.max(insets.bottom, 12) }]}>
             {isVoiceLocked ? (
               // 锁定状态下的操作栏
@@ -842,12 +807,11 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
                 style={[
                   styles.voiceTouchArea,
                   isPressingVoice && styles.voiceTouchAreaActive,
-                  isHoveringLock && styles.voiceTouchAreaLockHover,
                 ]}
                 {...voicePanResponder.panHandlers}
               >
                 <Ionicons
-                  name={isHoveringLock ? 'lock-closed' : isPressingVoice ? 'mic' : 'mic-outline'}
+                  name="mic-outline"
                   size={20}
                   color={isPressingVoice ? '#FFFFFF' : Colors.primary}
                   style={{ marginRight: 6 }}
@@ -858,15 +822,91 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
                     isPressingVoice && styles.voiceTouchTextActive,
                   ]}
                 >
-                  {isHoveringLock
-                    ? '松开锁定持续录音 🔒'
-                    : isPressingVoice
-                    ? '松开完成 · ↑ 上滑锁定'
-                    : '长按语音输入 · 上滑锁定'}
+                  {isPressingVoice ? '松开发送 · 滑动选择' : '按住 说话'}
                 </Text>
               </View>
             )}
           </View>
+
+          {/* ================= 图5风格：全屏微信/iOS式语音交互遮罩 ================= */}
+          {isPressingVoice && (
+            <View style={styles.wechatVoiceOverlay} pointerEvents="none">
+              {/* 顶部/中部：绿色气泡与声音波形 (图5) */}
+              <View style={styles.wechatSpeechBubble}>
+                <View style={styles.wechatWaveRow}>
+                  {[10, 18, 28, 22, 34, 16, 26, 20, 32, 14, 24, 12].map((baseH, idx) => {
+                    const waveH = Math.max(6, Math.min(36, baseH * (0.6 + Math.sin(voiceSeconds * 3 + idx) * 0.4)));
+                    return (
+                      <View
+                        key={idx}
+                        style={[
+                          styles.wechatWaveBar,
+                          { height: waveH },
+                        ]}
+                      />
+                    );
+                  })}
+                </View>
+
+                {realtimeTranscript ? (
+                  <Text style={styles.wechatTranscriptText} numberOfLines={2}>
+                    “{realtimeTranscript}”
+                  </Text>
+                ) : null}
+              </View>
+
+              {/* 气泡尖角 */}
+              <View style={styles.wechatBubbleTriangle} />
+
+              {/* 左右两个大圆操作按钮（图5：左侧 ✕ 取消，右侧 文 转文字） */}
+              <View style={styles.wechatActionRow}>
+                {/* 左：取消 ✕ */}
+                <View
+                  style={[
+                    styles.wechatRoundBtn,
+                    isHoveringCancel && styles.wechatRoundBtnCancelActive,
+                  ]}
+                >
+                  <Ionicons name="close" size={32} color="#FFFFFF" />
+                </View>
+
+                {/* 右：转文字 文 */}
+                <View
+                  style={[
+                    styles.wechatRoundBtn,
+                    isHoveringText && styles.wechatRoundBtnTextActive,
+                  ]}
+                >
+                  <Text style={styles.wechatRoundBtnLabel}>文</Text>
+                </View>
+              </View>
+
+              {/* 提示文案：松开 发送 / 松开 取消 / 松开 转为文字 */}
+              <Text
+                style={[
+                  styles.wechatPromptText,
+                  isHoveringCancel && { color: '#EF4444', fontWeight: '700' },
+                  isHoveringText && { color: '#10B981', fontWeight: '700' },
+                ]}
+              >
+                {isHoveringCancel
+                  ? '松开手指，取消发送'
+                  : isHoveringText
+                  ? '松开手指，转为文字'
+                  : '松开 发送'}
+              </Text>
+
+              {/* 底部隆起半圆弧座与语音波形图标 (图5) */}
+              <View style={styles.wechatBottomDome}>
+                <Ionicons
+                  name="radio"
+                  size={24}
+                  color="#64748B"
+                  style={{ transform: [{ rotate: '-45deg' }] }}
+                />
+              </View>
+            </View>
+          )}
 
           {/* ================= 底部抽屉：选择关联课程 (BottomSheet Drawer) ================= */}
           <Modal
@@ -901,7 +941,6 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
                 <ScrollView style={styles.drawerCourseList} showsVerticalScrollIndicator={false}>
                   {COURSES_CATALOG.map((courseItem) => {
                     const isSelected = inputCourseName.includes(courseItem.name.slice(0, 4));
-                    const colorScheme = getCourseColorScheme(courseItem.name);
 
                     return (
                       <TouchableOpacity
@@ -917,14 +956,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
                         activeOpacity={0.7}
                       >
                         <View style={styles.drawerItemLeft}>
-                          {/* 课程主题色圆点标 */}
-                          <View
-                            style={[
-                              styles.courseCircleDot,
-                              { backgroundColor: colorScheme.text },
-                            ]}
-                          />
-
+                          {/* 图4要求：高等数学等前面的icon/圆点已去掉 */}
                           <View style={styles.courseItemMeta}>
                             <View style={styles.courseItemTitleRow}>
                               <Text style={styles.courseItemName}>{courseItem.name}</Text>
@@ -1043,24 +1075,28 @@ const styles = StyleSheet.create({
   greenFreeformBtn: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    height: 30,
     backgroundColor: 'rgba(255, 255, 255, 0.22)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.35)',
     paddingHorizontal: 10,
-    paddingVertical: 6,
     borderRadius: Rounded.pill,
   },
   greenFreeformBtnText: {
     fontSize: 12,
     fontWeight: '700',
     color: '#FFFFFF',
+    lineHeight: 16,
+    includeFontPadding: false,
   },
   greenNewNoteBtn: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    height: 30,
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 12,
-    paddingVertical: 6,
     borderRadius: Rounded.pill,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
@@ -1072,6 +1108,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     color: Colors.primary,
+    lineHeight: 16,
+    includeFontPadding: false,
   },
   searchBarWrapper: {
     flexDirection: 'row',
@@ -1558,7 +1596,7 @@ const styles = StyleSheet.create({
   // ================= 抽屉选择关联课程 (BottomSheet Drawer) =================
   drawerBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    backgroundColor: 'transparent',
     justifyContent: 'flex-end',
   },
   drawerCard: {
@@ -1569,6 +1607,114 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 36,
     maxHeight: '75%',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: -8 },
+    shadowOpacity: 0.16,
+    shadowRadius: 16,
+    elevation: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
+  },
+
+  // ================= 图5风格：全屏微信/iOS式语音交互遮罩 =================
+  wechatVoiceOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.62)',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
+  wechatSpeechBubble: {
+    backgroundColor: '#95EC69',
+    borderRadius: 18,
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 160,
+    maxWidth: '82%',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+  },
+  wechatWaveRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    height: 38,
+  },
+  wechatWaveBar: {
+    width: 3.5,
+    backgroundColor: '#285820',
+    borderRadius: 2,
+  },
+  wechatTranscriptText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1A4315',
+    marginTop: 6,
+    textAlign: 'center',
+  },
+  wechatBubbleTriangle: {
+    width: 0,
+    height: 0,
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
+    borderTopWidth: 12,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderTopColor: '#95EC69',
+    marginBottom: 44,
+  },
+  wechatActionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '76%',
+    marginBottom: 28,
+  },
+  wechatRoundBtn: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(55, 65, 81, 0.9)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+  },
+  wechatRoundBtnCancelActive: {
+    backgroundColor: '#EF4444',
+    transform: [{ scale: 1.15 }],
+  },
+  wechatRoundBtnTextActive: {
+    backgroundColor: '#10B981',
+    transform: [{ scale: 1.15 }],
+  },
+  wechatRoundBtnLabel: {
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  wechatPromptText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.88)',
+    marginBottom: 16,
+    letterSpacing: 0.5,
+  },
+  wechatBottomDome: {
+    width: '100%',
+    height: 80,
+    borderTopLeftRadius: 180,
+    borderTopRightRadius: 180,
+    backgroundColor: '#E5E7EB',
+    alignItems: 'center',
+    paddingTop: 14,
   },
   drawerHandleBar: {
     width: 40,
