@@ -2,30 +2,32 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ScheduleScreen } from './src/screens/ScheduleScreen';
-import { CoursesScreen } from './src/screens/CoursesScreen';
-import { BottomNavBar } from './src/components/BottomNavBar';
+import { NotesScreen } from './src/screens/NotesScreen';
+import { ToolsScreen } from './src/screens/ToolsScreen';
+import { BottomNavBar, MainTabType } from './src/components/BottomNavBar';
 import { Colors } from './src/constants/theme';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'home' | 'schedule' | 'growth' | 'courses' | 'profile'>('schedule');
+  // 底部三个精简页面：课程表、笔记、工具
+  const [activeTab, setActiveTab] = useState<MainTabType>('schedule');
 
   return (
     <SafeAreaProvider>
       <View style={styles.root}>
         <View style={styles.content}>
-          {activeTab === 'schedule' || activeTab === 'home' ? (
+          {activeTab === 'schedule' ? (
             <ScheduleScreen />
-          ) : activeTab === 'courses' ? (
-            <CoursesScreen />
+          ) : activeTab === 'notes' ? (
+            <NotesScreen />
           ) : (
-            <ScheduleScreen />
+            <ToolsScreen />
           )}
         </View>
 
-        {/* 底部 5 标签导航栏 */}
+        {/* 底部 3 标签导航栏 (课程表 / 笔记 / 工具) */}
         <BottomNavBar
           activeTab={activeTab}
-          onTabChange={(tabId) => setActiveTab(tabId as any)}
+          onTabChange={(tabId) => setActiveTab(tabId)}
         />
       </View>
     </SafeAreaProvider>

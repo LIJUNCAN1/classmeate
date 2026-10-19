@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors, Rounded } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 
-interface WeekDay {
+export interface WeekDayItem {
   dayName: string;
   dayNumber: number;
   dateStr: string;
   isToday?: boolean;
+  isHoliday?: boolean;
+  holidayLabel?: string; // e.g. "休"
 }
 
 interface WeekCalendarStripProps {
@@ -19,20 +21,20 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
   selectedDate,
   onSelectDate,
 }) => {
-  const days: WeekDay[] = [
-    { dayName: '日', dayNumber: 19, dateStr: '2026-06-19' },
+  const days: WeekDayItem[] = [
+    { dayName: '日', dayNumber: 19, dateStr: '2026-06-19', isHoliday: true, holidayLabel: '休' },
     { dayName: '一', dayNumber: 20, dateStr: '2026-06-20' },
     { dayName: '二', dayNumber: 21, dateStr: '2026-06-21' },
     { dayName: '三', dayNumber: 22, dateStr: '2026-06-22', isToday: true },
     { dayName: '四', dayNumber: 23, dateStr: '2026-06-23' },
     { dayName: '五', dayNumber: 24, dateStr: '2026-06-24' },
-    { dayName: '六', dayNumber: 25, dateStr: '2026-06-25' },
+    { dayName: '六', dayNumber: 25, dateStr: '2026-06-25', isHoliday: true, holidayLabel: '休' },
   ];
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <TouchableOpacity style={styles.monthSelector}>
+        <TouchableOpacity style={styles.monthSelector} activeOpacity={0.7}>
           <Text style={styles.monthText}>2026.06</Text>
           <Ionicons name="caret-down" size={12} color="#FFFFFF" style={{ marginLeft: 4 }} />
         </TouchableOpacity>
@@ -52,6 +54,20 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
               onPress={() => onSelectDate(item.dateStr)}
               activeOpacity={0.8}
             >
+              {/* 休假标识标签 */}
+              {item.isHoliday && (
+                <View
+                  style={[
+                    styles.holidayBadge,
+                    isSelected ? styles.holidayBadgeSelected : styles.holidayBadgeNormal,
+                  ]}
+                >
+                  <Text style={styles.holidayBadgeText}>
+                    {item.holidayLabel || '休'}
+                  </Text>
+                </View>
+              )}
+
               <Text
                 style={[
                   styles.dayNameText,
@@ -86,14 +102,14 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingTop: 4,
     paddingBottom: 16,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   monthSelector: {
     flexDirection: 'row',
@@ -108,7 +124,7 @@ const styles = StyleSheet.create({
   weekIndicator: {
     fontSize: 12,
     fontWeight: '500',
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: 'rgba(255, 255, 255, 0.88)',
   },
   daysRow: {
     flexDirection: 'row',
@@ -120,6 +136,8 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 8,
     borderRadius: Rounded.lg,
+    position: 'relative',
+    minWidth: 42,
   },
   dayItemSelected: {
     backgroundColor: '#FFFFFF',
@@ -131,6 +149,31 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 4,
+  },
+  holidayBadge: {
+    position: 'absolute',
+    top: -2,
+    right: 2,
+    width: 15,
+    height: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+  },
+  holidayBadgeNormal: {
+    backgroundColor: '#FF4D4F',
+  },
+  holidayBadgeSelected: {
+    backgroundColor: '#FF4D4F',
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+  },
+  holidayBadgeText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    lineHeight: 11,
   },
   dayNameText: {
     fontSize: 13,
