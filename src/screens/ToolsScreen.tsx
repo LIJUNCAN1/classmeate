@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Platform,
   StatusBar as RNStatusBar,
-  Alert,
+  Modal,
+  Animated,
 } from 'react-native';
 import { Colors, Rounded, Shadows } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,9 +21,87 @@ export const ToolsScreen: React.FC = () => {
     Platform.OS === 'android' ? (RNStatusBar.currentHeight || 36) : 44
   );
 
-  const [autoSyncEnabled, setAutoSyncEnabled] = useState(true);
+  // 页面向下出现的平滑与生长动效 (translateY + scale + opacity)
+  const dropAnim = useRef(new Animated.Value(-24)).current;
+  const scaleAnim = useRef(new Animated.Value(0.96)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  // 还原图1的 4 个核心常用工具
+  useEffect(() => {
+    dropAnim.setValue(-24);
+    scaleAnim.setValue(0.96);
+    fadeAnim.setValue(0);
+
+    Animated.parallel([
+      Animated.spring(dropAnim, {
+        toValue: 0,
+        friction: 6,
+        tension: 80,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 7,
+        tension: 80,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 260,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  // 科学计算器弹窗与计算逻辑
+  const [calcVisible, setCalcVisible] = useState(false);
+  const [calcExpression, setCalcExpression] = useState('');
+  const [calcResult, setCalcResult] = useState('0');
+
+  const handleCalcInput = (btn: string) => {
+    if (btn === 'C') {
+      setCalcExpression('');
+      setCalcResult('0');
+      return;
+    }
+    if (btn === '⌫') {
+      setCalcExpression((prev) => prev.slice(0, -1));
+      return;
+    }
+    if (btn === '=') {
+      try {
+        // 安全表达式求值
+        const sanitized = calcExpression
+          .replace(/×/g, '*')
+          .replace(/÷/g, '/')
+          .replace(/π/g, 'Math.PI')
+          .replace(/e/g, 'Math.E')
+          .replace(/sin\(/g, 'Math.sin(')
+          .replace(/cos\(/g, 'Math.cos(')
+          .replace(/tan\(/g, 'Math.tan(')
+          .replace(/√\(/g, 'Math.sqrt(')
+          .replace(/\^/g, '**');
+
+        // eslint-disable-next-line no-eval
+        const res = Function(`"use strict"; return (${sanitized})`)();
+        if (typeof res === 'number' && !isNaN(res)) {
+          setCalcResult(String(Number(res.toFixed(6))));
+        } else {
+          setCalcResult('Error');
+        }
+      } catch (e) {
+        setCalcResult('Error');
+      }
+      return;
+    }
+
+    if (['sin', 'cos', 'tan', '√'].includes(btn)) {
+      setCalcExpression((prev) => prev + btn + '(');
+    } else {
+      setCalcExpression((prev) => prev + btn);
+    }
+  };
+
+  // 4 个核心常用工具 (已将“学力测评”按要求升级为“科学计算器”)
   const primaryTools = [
     {
       id: 'classroom',
@@ -41,30 +120,31 @@ export const ToolsScreen: React.FC = () => {
       bgColor: Colors.accentBlueLight,
     },
     {
-      id: 'assessment',
-      title: '学力测评',
-      desc: '学期阶段性知识掌握度检测',
-      icon: 'school-outline',
+      id: 'calculator',
+      title: '科学计算器',
+      desc: '三角函数/方根/微积分高级运算',
+      icon: 'calculator-outline',
       color: Colors.accentAmber,
       bgColor: Colors.accentAmberLight,
+      badge: '随堂利器',
     },
     {
       id: 'import',
-      title: '教务自动识别',
-      desc: '后台免密嗅探高校教务课表',
+      title: '教务课表导入',
+      desc: '高校教务课表一键识别同步',
       icon: 'sync-circle-outline',
       color: Colors.primary,
       bgColor: Colors.primaryLight,
-      badge: '已启用',
+      badge: '已对接',
     },
   ];
 
   // 扩展校园生活与学习工具
   const campusTools = [
-    { id: 'gpa', title: '绩点GPA换算', icon: 'calculator-outline' },
-    { id: 'rooms', title: '空闲自习室查询', icon: 'business-outline' },
-    { id: 'schedule_setting', title: '全校作息时间表', icon: 'alarm-outline' },
-    { id: 'ics_export', title: '导出日历到手机系统', icon: 'share-social-outline' },
+    { id: 'gpa', title: '绩点GPA换算器', icon: 'ribbon-outline' },
+    { id: 'rooms', title: '空闲自习室与图书馆空位', icon: 'business-outline' },
+    { id: 'schedule_setting', title: '全校作息与节次时间表', icon: 'alarm-outline' },
+    { id: 'ics_export', title: '导出日历到手机系统日历', icon: 'share-social-outline' },
   ];
 
   return (
@@ -72,52 +152,22 @@ export const ToolsScreen: React.FC = () => {
       {/* 顶部标题区 */}
       <View style={[styles.heroHeader, { paddingTop: topPadding + 10 }]}>
         <Text style={styles.headerTitle}>工具箱与服务</Text>
-        <Text style={styles.headerSub}>学习辅助、教务同步与校园生活工具集成</Text>
+        <Text style={styles.headerSub}>随堂计算器、错题本与校园效率工具</Text>
       </View>
 
-      <ScrollView
-        style={styles.scrollArea}
-        contentContainerStyle={{ paddingBottom: 32 }}
+      {/* 核心内容区（带向下的生长动效） */}
+      <Animated.ScrollView
+        style={[
+          styles.scrollArea,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY: dropAnim }, { scale: scaleAnim }],
+          },
+        ]}
+        contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* 自动识别教务课表状态卡片 */}
-        <View style={[styles.autoSyncCard, Shadows.card]}>
-          <View style={styles.autoSyncHeader}>
-            <View style={styles.autoSyncTitleGroup}>
-              <View style={styles.autoSyncIconCircle}>
-                <Ionicons name="flash" size={16} color={Colors.primary} />
-              </View>
-              <View>
-                <Text style={styles.autoSyncTitle}>教务课表智能自动识别</Text>
-                <Text style={styles.autoSyncStatusText}>
-                  {autoSyncEnabled ? '● 自动监测中 · 无需每次手动点击' : '○ 已暂停自动同步'}
-                </Text>
-              </View>
-            </View>
-
-            <TouchableOpacity
-              style={[
-                styles.toggleSwitch,
-                autoSyncEnabled ? styles.toggleSwitchOn : styles.toggleSwitchOff,
-              ]}
-              onPress={() => setAutoSyncEnabled(!autoSyncEnabled)}
-              activeOpacity={0.8}
-            >
-              <View
-                style={[
-                  styles.switchThumb,
-                  autoSyncEnabled ? styles.switchThumbOn : styles.switchThumbOff,
-                ]}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.autoSyncTip}>
-            当检测到登录校园网、教务系统或打开课表网页时，Classmeate 会在后台自动完成 DOM 嗅探与节次匹配，无需手动点按。
-          </Text>
-        </View>
-
-        {/* 常用工具网格 (来自图1的完整还原并美化) */}
+        {/* 常用工具网格 */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>核心常用工具</Text>
         </View>
@@ -128,6 +178,11 @@ export const ToolsScreen: React.FC = () => {
               key={t.id}
               style={[styles.toolCard, Shadows.card]}
               activeOpacity={0.7}
+              onPress={() => {
+                if (t.id === 'calculator') {
+                  setCalcVisible(true);
+                }
+              }}
             >
               <View style={[styles.toolIconWrapper, { backgroundColor: t.bgColor }]}>
                 <Ionicons name={t.icon as any} size={24} color={t.color} />
@@ -168,7 +223,88 @@ export const ToolsScreen: React.FC = () => {
             </TouchableOpacity>
           ))}
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
+
+      {/* 科学计算器弹窗交互 */}
+      <Modal
+        visible={calcVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setCalcVisible(false)}
+      >
+        <View style={styles.calcModalBackdrop}>
+          <View style={[styles.calcCard, Shadows.card]}>
+            {/* 计算器头部 */}
+            <View style={styles.calcHeader}>
+              <View style={styles.calcTitleRow}>
+                <Ionicons name="calculator" size={18} color={Colors.primary} />
+                <Text style={styles.calcTitle}>科学计算器 · 随堂利器</Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setCalcVisible(false)}
+                style={styles.calcCloseBtn}
+              >
+                <Ionicons name="close" size={20} color="#64748B" />
+              </TouchableOpacity>
+            </View>
+
+            {/* 计算器显示屏 */}
+            <View style={styles.calcScreen}>
+              <Text style={styles.calcExprText} numberOfLines={2}>
+                {calcExpression || '0'}
+              </Text>
+              <Text style={styles.calcResultText} numberOfLines={1}>
+                = {calcResult}
+              </Text>
+            </View>
+
+            {/* 科学计算键盘 */}
+            <View style={styles.calcKeypad}>
+              {[
+                ['sin', 'cos', 'tan', 'C', '⌫'],
+                ['√', '^', '(', ')', '÷'],
+                ['7', '8', '9', '×', 'π'],
+                ['4', '5', '6', '-', 'e'],
+                ['1', '2', '3', '+', '='],
+                ['0', '.', '%', 'Ans', 'Rad'],
+              ].map((row, rIdx) => (
+                <View key={rIdx} style={styles.calcRow}>
+                  {row.map((btn) => {
+                    const isOp = ['÷', '×', '-', '+', '='].includes(btn);
+                    const isFunc = ['sin', 'cos', 'tan', '√', '^', 'C', '⌫', 'π', 'e'].includes(btn);
+                    const isEquals = btn === '=';
+
+                    return (
+                      <TouchableOpacity
+                        key={btn}
+                        style={[
+                          styles.calcBtn,
+                          isFunc && styles.calcBtnFunc,
+                          isOp && styles.calcBtnOp,
+                          isEquals && styles.calcBtnEquals,
+                        ]}
+                        onPress={() => handleCalcInput(btn)}
+                        activeOpacity={0.7}
+                      >
+                        <Text
+                          style={[
+                            styles.calcBtnText,
+                            isFunc && styles.calcBtnTextFunc,
+                            isOp && styles.calcBtnTextOp,
+                            isEquals && styles.calcBtnTextEquals,
+                          ]}
+                        >
+                          {btn}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -201,75 +337,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 16,
   },
-  autoSyncCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: Rounded.xl,
-    padding: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.03)',
-  },
-  autoSyncHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  autoSyncTitleGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    flex: 1,
-  },
-  autoSyncIconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  autoSyncTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.textPrimary,
-  },
-  autoSyncStatusText: {
-    fontSize: 11,
-    color: Colors.primary,
-    fontWeight: '600',
-    marginTop: 2,
-  },
-  toggleSwitch: {
-    width: 44,
-    height: 26,
-    borderRadius: 13,
-    padding: 2,
-    justifyContent: 'center',
-  },
-  toggleSwitchOn: {
-    backgroundColor: Colors.primary,
-  },
-  toggleSwitchOff: {
-    backgroundColor: '#E5E7EB',
-  },
-  switchThumb: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: '#FFFFFF',
-  },
-  switchThumbOn: {
-    alignSelf: 'flex-end',
-  },
-  switchThumbOff: {
-    alignSelf: 'flex-start',
-  },
-  autoSyncTip: {
-    fontSize: 12,
-    color: Colors.textMuted,
-    lineHeight: 18,
-  },
   sectionHeader: {
     marginBottom: 12,
   },
@@ -282,66 +349,68 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   toolCard: {
     width: '48%',
-    backgroundColor: Colors.surface,
+    backgroundColor: '#FFFFFF',
     borderRadius: Rounded.xl,
-    padding: 14,
+    padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.03)',
+    borderColor: '#F3F4F6',
   },
   toolIconWrapper: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
     position: 'relative',
   },
   toolBadge: {
     position: 'absolute',
     top: -4,
-    right: -4,
+    right: -12,
     backgroundColor: Colors.primary,
-    paddingHorizontal: 5,
+    paddingHorizontal: 6,
     paddingVertical: 1,
     borderRadius: Rounded.pill,
   },
   toolBadgeText: {
     fontSize: 9,
-    color: '#FFFFFF',
     fontWeight: '700',
+    color: '#FFFFFF',
   },
   toolTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '700',
     color: Colors.textPrimary,
     marginBottom: 4,
   },
   toolDesc: {
-    fontSize: 11,
+    fontSize: 12,
     color: Colors.textMuted,
     lineHeight: 16,
   },
   listCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: '#FFFFFF',
     borderRadius: Rounded.xl,
-    paddingHorizontal: 16,
+    paddingVertical: 4,
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.03)',
+    borderColor: '#F3F4F6',
+    marginBottom: 20,
   },
   listItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 14,
+    paddingHorizontal: 16,
   },
   listItemBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderSubtle,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#F3F4F6',
   },
   listItemLeft: {
     flexDirection: 'row',
@@ -350,7 +419,104 @@ const styles = StyleSheet.create({
   },
   listItemTitle: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
     color: Colors.textPrimary,
+  },
+
+  // 科学计算器弹窗
+  calcModalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  calcCard: {
+    backgroundColor: '#1E293B',
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    padding: 20,
+    paddingBottom: 36,
+  },
+  calcHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  calcTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  calcTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  calcCloseBtn: {
+    padding: 4,
+  },
+  calcScreen: {
+    backgroundColor: '#0F172A',
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'flex-end',
+    marginBottom: 16,
+    minHeight: 84,
+    justifyContent: 'center',
+  },
+  calcExprText: {
+    fontSize: 16,
+    color: '#94A3B8',
+    marginBottom: 6,
+  },
+  calcResultText: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#34D399',
+    letterSpacing: -0.5,
+  },
+  calcKeypad: {
+    gap: 8,
+  },
+  calcRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 6,
+  },
+  calcBtn: {
+    flex: 1,
+    height: 46,
+    borderRadius: 12,
+    backgroundColor: '#334155',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  calcBtnFunc: {
+    backgroundColor: '#475569',
+  },
+  calcBtnOp: {
+    backgroundColor: '#F59E0B',
+  },
+  calcBtnEquals: {
+    backgroundColor: Colors.primary,
+  },
+  calcBtnText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  calcBtnTextFunc: {
+    fontSize: 13,
+    color: '#E2E8F0',
+  },
+  calcBtnTextOp: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  calcBtnTextEquals: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
 });

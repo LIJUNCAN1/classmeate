@@ -8,6 +8,7 @@ import {
   Platform,
   StatusBar as RNStatusBar,
   Animated,
+  Modal,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,6 +17,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { WeekCalendarStrip } from '../components/WeekCalendarStrip';
 import { CourseCard } from '../components/CourseCard';
 import { WeekGridView } from '../components/WeekGridView';
+import { AppleNotesEditor } from '../components/AppleNotesEditor';
+import { FreeformCanvas } from '../components/FreeformCanvas';
 import { Course } from '../types/schedule';
 import { AutoScheduleService, AutoDetectStatus } from '../services/autoScheduleDetector';
 
@@ -162,6 +165,28 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
 
   // 悬浮提醒 Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // 课程表直开笔记：选择记录方式弹窗与编辑器状态
+  const [recordModeModalVisible, setRecordModeModalVisible] = useState(false);
+  const [selectedCourseForNote, setSelectedCourseForNote] = useState<Course | null>(null);
+  const [appleNotesEditorVisible, setAppleNotesEditorVisible] = useState(false);
+  const [freeformVisible, setFreeformVisible] = useState(false);
+
+  // 点击卡片上的“记笔记”：弹出记录方式选择，直接开启对应编辑器
+  const handleStartNoteForCourse = (course: Course) => {
+    setSelectedCourseForNote(course);
+    setRecordModeModalVisible(true);
+  };
+
+  // 退出笔记时：按要求直接跳转并切换到笔记页面
+  const handleExitNote = () => {
+    const targetCourse = selectedCourseForNote?.name;
+    setAppleNotesEditorVisible(false);
+    setFreeformVisible(false);
+    if (onNavigateToNotesTab && targetCourse) {
+      onNavigateToNotesTab(targetCourse);
+    }
+  };
 
   // 页面向下平滑出现的淡入向下动画 (Downward Entrance Animation)
   const dropAnim = useRef(new Animated.Value(-18)).current;
@@ -400,11 +425,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                       key={course.id}
                       course={course}
                       isLast={index === dayCourses.length - 1}
-                      onNavigateToNotes={(c) => {
-                        if (onNavigateToNotesTab) {
-                          onNavigateToNotesTab(c.name);
-                        }
-                      }}
+                      onNavigateToNotes={(c) => handleStartNoteForCourse(c)}
                       onToggleReminder={handleToggleReminder}
                     />
                   ))}
@@ -419,14 +440,125 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
           <View style={styles.weekGridWrapper}>
             <WeekGridView
               onOpenNote={(courseName) => {
-                if (onNavigateToNotesTab) {
-                  onNavigateToNotesTab(courseName);
-                }
+                const found = FULL_WEEK_COURSES.find((c) => c.name.includes(courseName.slice(0, 4)));
+                handleStartNoteForCourse(found || FULL_WEEK_COURSES[0]);
               }}
             />
           </View>
         )}
       </Animated.View>
+
+      {/* 课程表直开记笔记：选择记录方式弹窗 */}
+      <Modal
+        visible={recordModeModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setRecordModeModalVisible(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setRecordModeModalVisible(false)}
+        >
+          <View style={[styles.recordModeCard, Shadows.card]}>
+            <View style={styles.recordModeHeader}>
+              <View>
+                <Text style={styles.recordModeTitle}>选择记录方式</Text>
+                <Text style={styles.recordModeSub}>
+                  记录【{selectedCourseForNote?.name}】随堂笔记
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setRecordModeModalVisible(false)}
+                style={styles.recordModeClose}
+              >
+                <Ionicons name="close" size={20} color="#64748B" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.recordModeOptions}>
+              {/* 选项 1：备忘录速记 */}
+              <TouchableOpacity
+                style={styles.recordOptionCard}
+                activeOpacity={0.7}
+                onPress={() => {
+                  setRecordModeModalVisible(false);
+                  setAppleNotesEditorVisible(true);
+                }}
+              >
+                <View style={[styles.recordOptionIconWrap, { backgroundColor: '#F0FDF4' }]}>
+                  <Ionicons name="document-text" size={24} color={Colors.primary} />
+                </View>
+                <View style={styles.recordOptionTextWrap}>
+                  <View style={styles.recordOptionTitleRow}>
+                    <Text style={styles.recordOptionTitle}>备忘录速记</Text>
+                    <View style={styles.optionTag}>
+                      <Text style={styles.optionTagText}>打字 + 语音</Text>
+                    </View>
+                  </View>
+                  <Text style={styles.recordOptionDesc}>
+                    苹果备忘录风格 · 底部长按与上滑锁定语音实时转录
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
+              </TouchableOpacity>
+
+              {/* 选项 2：无边记白板 */}
+              <TouchableOpacity
+                style={styles.recordOptionCard}
+                activeOpacity={0.7}
+                onPress={() => {
+                  setRecordModeModalVisible(false);
+                  setFreeformVisible(true);
+                }}
+              >
+                <View style={[styles.recordOptionIconWrap, { backgroundColor: '#EFF6FF' }]}>
+                  <Ionicons name="infinite" size={24} color="#3B82F6" />
+                </View>
+                <View style={styles.recordOptionTextWrap}>
+                  <View style={styles.recordOptionTitleRow}>
+                    <Text style={styles.recordOptionTitle}>无边记白板</Text>
+                    <View style={[styles.optionTag, { backgroundColor: '#DBEAFE' }]}>
+                      <Text style={[styles.optionTagText, { color: '#1D4ED8' }]}>无限画纸</Text>
+                    </View>
+                  </View>
+                  <Text style={styles.recordOptionDesc}>
+                    点阵网格无限画布 · 悬浮 Apple Pencil 画笔坞 · 彩色便签贴纸
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* 备忘录速记编辑器（直接开启，退出时切至笔记页） */}
+      {appleNotesEditorVisible && (
+        <AppleNotesEditor
+          visible={appleNotesEditorVisible}
+          initialCourseName={selectedCourseForNote?.name}
+          initialTitle={`第 14 周 · ${selectedCourseForNote?.name} 随堂备忘`}
+          onClose={handleExitNote}
+          onSave={handleExitNote}
+        />
+      )}
+
+      {/* 无边记无限画布（直接开启，退出时切至笔记页） */}
+      {freeformVisible && (
+        <Modal
+          visible={freeformVisible}
+          animationType="slide"
+          presentationStyle="fullScreen"
+          onRequestClose={handleExitNote}
+        >
+          <FreeformCanvas
+            courseName={selectedCourseForNote?.name || '随堂'}
+            onClose={handleExitNote}
+            onSave={handleExitNote}
+          />
+        </Modal>
+      )}
     </View>
   );
 };
@@ -660,5 +792,91 @@ const styles = StyleSheet.create({
   weekGridWrapper: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  recordModeCard: {
+    width: '100%',
+    maxWidth: 380,
+    backgroundColor: '#FFFFFF',
+    borderRadius: Rounded.xl,
+    padding: 20,
+  },
+  recordModeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+    paddingBottom: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#E2E8F0',
+  },
+  recordModeTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  recordModeSub: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 2,
+  },
+  recordModeClose: {
+    padding: 4,
+  },
+  recordModeOptions: {
+    gap: 12,
+  },
+  recordOptionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    borderRadius: 14,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  recordOptionIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  recordOptionTextWrap: {
+    flex: 1,
+  },
+  recordOptionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
+  recordOptionTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1E293B',
+  },
+  optionTag: {
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  optionTagText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#15803D',
+  },
+  recordOptionDesc: {
+    fontSize: 11,
+    color: '#64748B',
+    lineHeight: 16,
   },
 });

@@ -16,6 +16,7 @@ import { Colors, Rounded, Shadows, getCourseColorScheme } from '../constants/the
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedCheckmark } from '../components/AnimatedCheckmark';
+import { FreeformCanvas } from '../components/FreeformCanvas';
 
 export interface NoteItem {
   id: string;
@@ -151,6 +152,11 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
   const [showCanvas, setShowCanvas] = useState(false);
   const [drawStrokes, setDrawStrokes] = useState<{ x: number; y: number }[]>([]);
   const [penColor, setPenColor] = useState('#1F2937');
+
+  // 苹果 Freeform 无边记无限画布状态
+  const [freeformModalVisible, setFreeformModalVisible] = useState(false);
+  const [freeformTargetCourse, setFreeformTargetCourse] = useState('高等数学 (AI与数据)');
+  const [freeformTargetTitle, setFreeformTargetTitle] = useState('脑力激荡无限画纸');
 
   // ================= 语音识别核心状态与交互 (图4 -> 图5 高级交互) =================
   // 是否正在按住说话
@@ -349,11 +355,17 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
 
   // 打开备忘录编辑
   const handleOpenNote = (note: NoteItem) => {
+    if (note.type === 'freeform') {
+      setFreeformTargetCourse(note.courseName);
+      setFreeformTargetTitle(note.title);
+      setFreeformModalVisible(true);
+      return;
+    }
     setEditingNoteId(note.id);
     setInputCourseName(note.courseName);
     setInputTitle(note.title);
     setInputContent(note.content);
-    setShowCanvas(note.type === 'freeform');
+    setShowCanvas(false);
     setDrawStrokes([]);
     setCursorSelection({ start: note.content.length, end: note.content.length });
     setEditorVisible(true);
@@ -431,14 +443,30 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
           <Text style={styles.screenSubTitle}>Classmeate 随堂知识流</Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.newNoteTopBtn}
-          onPress={handleCreateNewNote}
-          activeOpacity={0.8}
-        >
-          <Ionicons name="create-outline" size={20} color="#FFFFFF" style={{ marginRight: 4 }} />
-          <Text style={styles.newNoteTopBtnText}>写笔记</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          {/* 无边记白板快捷入口 */}
+          <TouchableOpacity
+            style={styles.newFreeformTopBtn}
+            onPress={() => {
+              setFreeformTargetCourse(COURSES_CATALOG[0].name);
+              setFreeformTargetTitle(`第 14 周 · ${COURSES_CATALOG[0].name} 脑力激荡`);
+              setFreeformModalVisible(true);
+            }}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="infinite" size={18} color="#2563EB" style={{ marginRight: 3 }} />
+            <Text style={styles.newFreeformTopBtnText}>无边记</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.newNoteTopBtn}
+            onPress={handleCreateNewNote}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="create-outline" size={18} color="#FFFFFF" style={{ marginRight: 4 }} />
+            <Text style={styles.newNoteTopBtnText}>写备忘</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* 搜索框 */}
@@ -938,6 +966,35 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
           </Modal>
         </View>
       </Modal>
+
+      {/* 苹果 Freeform 无边记无限画布 Modal */}
+      {freeformModalVisible && (
+        <Modal
+          visible={freeformModalVisible}
+          animationType="slide"
+          presentationStyle="fullScreen"
+          onRequestClose={() => setFreeformModalVisible(false)}
+        >
+          <FreeformCanvas
+            courseName={freeformTargetCourse}
+            initialTitle={freeformTargetTitle}
+            onClose={() => setFreeformModalVisible(false)}
+            onSave={(data) => {
+              const newNote: NoteItem = {
+                id: `n-${Date.now()}`,
+                courseName: freeformTargetCourse,
+                title: data.title,
+                date: '刚刚',
+                content: `【无边记无限画纸】包含 ${data.notesCount} 张彩色便签，${data.strokesCount} 段手绘架构笔迹。`,
+                tags: ['无边记手写', '思维导图'],
+                type: 'freeform',
+              };
+              setNotes((prev) => [newNote, ...prev]);
+              setFreeformModalVisible(false);
+            }}
+          />
+        </Modal>
+      )}
     </View>
   );
 };
@@ -968,16 +1025,31 @@ const styles = StyleSheet.create({
     color: '#64748B',
     marginTop: 2,
   },
+  newFreeformTopBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: Rounded.pill,
+  },
+  newFreeformTopBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1D4ED8',
+  },
   newNoteTopBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.primary,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: 13,
+    paddingVertical: 7,
     borderRadius: Rounded.pill,
   },
   newNoteTopBtnText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '700',
     color: '#FFFFFF',
   },
