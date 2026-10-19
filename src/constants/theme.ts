@@ -39,8 +39,10 @@ export const Colors = {
   surface: '#FFFFFF',
   background: '#F8FAF8',
   textPrimary: '#1F2937',
+  textMain: '#1F2937',
   textSecondary: '#4B5563',
   textMuted: '#9CA3AF',
+  border: '#E2E8F0',
   borderSubtle: '#F3F4F6',
   timelineLine: '#E5E7EB',
 };

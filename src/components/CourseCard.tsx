@@ -12,6 +12,22 @@ interface CourseCardProps {
   onToggleReminder?: (course: Course, enabled: boolean) => void;
 }
 
+// 规范化课程分类：最左侧只允许显示 必修课、选修课、专业课、通识课
+const normalizeCategory = (tag?: string): { category: '必修课' | '选修课' | '专业课' | '通识课'; rest: string } => {
+  if (!tag) return { category: '必修课', rest: '' };
+  const parts = tag.split('·').map((p) => p.trim());
+  const rawFirst = parts[0] || '必修课';
+  let category: '必修课' | '选修课' | '专业课' | '通识课' = '必修课';
+
+  if (rawFirst.includes('选修')) category = '选修课';
+  else if (rawFirst.includes('专业')) category = '专业课';
+  else if (rawFirst.includes('通识')) category = '通识课';
+  else category = '必修课';
+
+  const rest = parts.slice(1).join(' · ');
+  return { category, rest };
+};
+
 export const CourseCard: React.FC<CourseCardProps> = ({
   course,
   isLast = false,
@@ -21,6 +37,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   // 提醒状态（已开启提醒 / 未开启提醒）
   const [reminderActive, setReminderActive] = useState(course.status === 'in_progress');
   const hasNotes = course.notesCount > 0;
+  const { category, rest } = normalizeCategory(course.stageTag);
 
   const handleReminderPress = () => {
     const nextState = !reminderActive;
@@ -46,9 +63,32 @@ export const CourseCard: React.FC<CourseCardProps> = ({
         <View style={styles.cardHeader}>
           <View style={styles.titleArea}>
             <Text style={styles.courseName}>{course.name}</Text>
-            {course.stageTag && (
-              <Text style={styles.stageTagText}>{course.stageTag}</Text>
-            )}
+            
+            {/* 图3要求：最左边只显示 必修课、选修课、专业课、通识课 几种 */}
+            <View style={styles.stageTagRow}>
+              <View
+                style={[
+                  styles.categoryPill,
+                  category === '必修课' && styles.categoryPillRequired,
+                  category === '选修课' && styles.categoryPillElective,
+                  category === '专业课' && styles.categoryPillMajor,
+                  category === '通识课' && styles.categoryPillGeneral,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.categoryPillText,
+                    category === '必修课' && styles.categoryTextRequired,
+                    category === '选修课' && styles.categoryTextElective,
+                    category === '专业课' && styles.categoryTextMajor,
+                    category === '通识课' && styles.categoryTextGeneral,
+                  ]}
+                >
+                  {category}
+                </Text>
+              </View>
+              {rest ? <Text style={styles.stageTagRestText}>· {rest}</Text> : null}
+            </View>
           </View>
 
           {/* 状态与接入提醒事项胶囊按钮 */}
@@ -98,27 +138,29 @@ export const CourseCard: React.FC<CourseCardProps> = ({
 
         {/* 笔记状态栏：一笔画勾动画 + 只显示有或没有笔记 + 点击直接打开笔记页面 */}
         <View style={styles.noteDivider} />
+
         <TouchableOpacity
-          style={styles.noteFooter}
-          onPress={() => onNavigateToNotes && onNavigateToNotes(course)}
+          style={styles.noteStatusBar}
           activeOpacity={0.7}
+          onPress={() => onNavigateToNotes && onNavigateToNotes(course)}
         >
           <View style={styles.noteStatusLeft}>
-            {/* 一笔画成的勾动效组件 */}
             <AnimatedCheckmark checked={hasNotes} size={18} />
             <Text
               style={[
                 styles.noteStatusText,
-                hasNotes ? styles.noteStatusTextActive : styles.noteStatusTextEmpty,
+                hasNotes ? styles.noteStatusTextActive : styles.noteStatusTextInactive,
               ]}
             >
-              {hasNotes ? '已有课堂笔记' : '暂无笔记'}
+              {hasNotes ? '本节已有随堂笔记' : '暂无随堂笔记'}
             </Text>
           </View>
 
-          <View style={styles.openNoteBtn}>
-            <Text style={styles.openNoteBtnText}>记笔记</Text>
-            <Ionicons name="chevron-forward" size={12} color={Colors.primary} />
+          <View style={styles.noteActionRow}>
+            <Text style={styles.noteActionText}>
+              {hasNotes ? '去查看' : '记笔记'}
+            </Text>
+            <Ionicons name="chevron-forward" size={13} color={Colors.primary} />
           </View>
         </TouchableOpacity>
       </View>
@@ -130,12 +172,11 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     marginBottom: 16,
-    paddingRight: 16,
   },
   timelineCol: {
-    width: 68,
-    alignItems: 'center',
-    paddingTop: 14,
+    width: 62,
+    alignItems: 'flex-start',
+    paddingTop: 12,
   },
   timeLabelRow: {
     flexDirection: 'row',
@@ -144,24 +185,25 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '600',
     color: Colors.textSecondary,
     fontVariant: ['tabular-nums'],
   },
   timelineLine: {
+    width: 2,
     flex: 1,
-    width: 1.5,
-    backgroundColor: Colors.timelineLine,
-    marginTop: 8,
-    marginBottom: -16,
+    backgroundColor: '#E5E7EB',
+    marginLeft: 18,
+    marginTop: 6,
+    borderRadius: 1,
   },
   cardSurface: {
     flex: 1,
-    backgroundColor: Colors.surface,
+    backgroundColor: '#FFFFFF',
     borderRadius: Rounded.xl,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.03)',
+    borderColor: '#F3F4F6',
   },
   cardHeader: {
     flexDirection: 'row',
@@ -171,19 +213,57 @@ const styles = StyleSheet.create({
   },
   titleArea: {
     flex: 1,
-    paddingRight: 8,
+    marginRight: 8,
   },
   courseName: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.textPrimary,
-    letterSpacing: -0.2,
+    color: Colors.textMain,
     marginBottom: 4,
+    letterSpacing: -0.2,
   },
-  stageTagText: {
+  stageTagRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 4,
+  },
+  categoryPill: {
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 4,
+  },
+  categoryPillRequired: {
+    backgroundColor: '#EFF6FF',
+  },
+  categoryPillElective: {
+    backgroundColor: '#F3E8FF',
+  },
+  categoryPillMajor: {
+    backgroundColor: '#ECFDF5',
+  },
+  categoryPillGeneral: {
+    backgroundColor: '#FFFBEB',
+  },
+  categoryPillText: {
     fontSize: 11,
+    fontWeight: '700',
+  },
+  categoryTextRequired: {
+    color: '#2563EB',
+  },
+  categoryTextElective: {
+    color: '#9333EA',
+  },
+  categoryTextMajor: {
+    color: '#059669',
+  },
+  categoryTextGeneral: {
+    color: '#D97706',
+  },
+  stageTagRestText: {
+    fontSize: 12,
     color: Colors.textMuted,
-    fontWeight: '400',
   },
   reminderBtn: {
     flexDirection: 'row',
@@ -250,64 +330,51 @@ const styles = StyleSheet.create({
   teacherName: {
     fontSize: 13,
     color: Colors.textSecondary,
-    fontWeight: '600',
-  },
-  ratingPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-    backgroundColor: Colors.accentGoldLight,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: Rounded.pill,
-  },
-  ratingText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: Colors.accentGold,
+    fontWeight: '500',
   },
   locationBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
+    gap: 4,
   },
   locationText: {
     fontSize: 12,
     color: Colors.textMuted,
   },
   noteDivider: {
-    height: 1,
-    backgroundColor: Colors.borderSubtle,
-    marginBottom: 10,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: '#F3F4F6',
+    marginVertical: 6,
   },
-  noteFooter: {
+  noteStatusBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingTop: 4,
   },
   noteStatusLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   noteStatusText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   noteStatusTextActive: {
-    color: Colors.textPrimary,
+    color: '#15803D',
   },
-  noteStatusTextEmpty: {
+  noteStatusTextInactive: {
     color: Colors.textMuted,
   },
-  openNoteBtn: {
+  noteActionRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 2,
   },
-  openNoteBtnText: {
-    fontSize: 13,
+  noteActionText: {
+    fontSize: 12,
     color: Colors.primary,
-    fontWeight: '700',
+    fontWeight: '600',
   },
 });

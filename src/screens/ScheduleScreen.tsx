@@ -23,7 +23,7 @@ interface ScheduleScreenProps {
   onNavigateToNotesTab?: (courseName: string) => void;
 }
 
-// 包含周一至周日完整一周的课程排期数据
+// 包含周一至周日完整一周的课程排期数据（最左侧规范为：必修课、选修课、专业课、通识课）
 const FULL_WEEK_COURSES: Course[] = [
   // 周一 (dayOfWeek = 1)
   {
@@ -34,7 +34,7 @@ const FULL_WEEK_COURSES: Course[] = [
     dayOfWeek: 1,
     startTime: '08:00',
     endTime: '09:35',
-    stageTag: '必修大课 · 48课时 · 周一1-2节',
+    stageTag: '必修课 · 48课时 · 周一1-2节',
     status: 'in_progress',
     notesCount: 2,
   },
@@ -46,7 +46,7 @@ const FULL_WEEK_COURSES: Course[] = [
     dayOfWeek: 1,
     startTime: '14:00',
     endTime: '15:35',
-    stageTag: '核心基础 · 32课时 · 周一5-6节',
+    stageTag: '专业课 · 32课时 · 周一5-6节',
     status: 'pending',
     notesCount: 1,
   },
@@ -60,7 +60,7 @@ const FULL_WEEK_COURSES: Course[] = [
     dayOfWeek: 2,
     startTime: '10:00',
     endTime: '11:35',
-    stageTag: '通识核心 · 32课时 · 周二3-4节',
+    stageTag: '通识课 · 32课时 · 周二3-4节',
     status: 'pending',
     notesCount: 0,
   },
@@ -74,7 +74,7 @@ const FULL_WEEK_COURSES: Course[] = [
     dayOfWeek: 3,
     startTime: '09:00',
     endTime: '10:35',
-    stageTag: '进阶阶段 · 36课时 · 高阶',
+    stageTag: '选修课 · 36课时 · 周三1-2节',
     status: 'pending',
     notesCount: 3,
   },
@@ -86,7 +86,7 @@ const FULL_WEEK_COURSES: Course[] = [
     dayOfWeek: 3,
     startTime: '13:30',
     endTime: '15:05',
-    stageTag: '强化阶段 · 32课时 · 周三5-6节',
+    stageTag: '选修课 · 32课时 · 周三5-6节',
     status: 'pending',
     notesCount: 1,
   },
@@ -98,7 +98,7 @@ const FULL_WEEK_COURSES: Course[] = [
     dayOfWeek: 3,
     startTime: '16:30',
     endTime: '17:45',
-    stageTag: '培养阶段 · 24课时 · 入门',
+    stageTag: '选修课 · 24课时 · 周三7-8节',
     status: 'pending',
     notesCount: 0,
   },
@@ -112,7 +112,7 @@ const FULL_WEEK_COURSES: Course[] = [
     dayOfWeek: 4,
     startTime: '08:00',
     endTime: '09:35',
-    stageTag: '核心专业 · 48课时 · 周四1-2节',
+    stageTag: '专业课 · 48课时 · 周四1-2节',
     status: 'pending',
     notesCount: 4,
   },
@@ -126,7 +126,7 @@ const FULL_WEEK_COURSES: Course[] = [
     dayOfWeek: 5,
     startTime: '10:00',
     endTime: '12:25',
-    stageTag: '专业选修 · 36课时 · 周五3-5节',
+    stageTag: '选修课 · 36课时 · 周五3-5节',
     status: 'pending',
     notesCount: 2,
   },
@@ -230,8 +230,21 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     triggerEntranceAnimation();
   };
 
-  // 4. 根据当前选中的星期几过滤出对应课程
+  // 4. 根据当前选中的星期几过滤出对应课程（用于下方课表列表）
   const dayCourses = FULL_WEEK_COURSES.filter((c) => c.dayOfWeek === selectedDayOfWeek);
+
+  // 本日真实剩余课程（锁定真实今天的课程，不随日历轴点击切换而改变！）
+  const realTodayDayOfWeek = getTodayInfo().dayOfWeek;
+  const realTodayCourses = FULL_WEEK_COURSES.filter((c) => c.dayOfWeek === realTodayDayOfWeek);
+
+  // 重新导入课程表处理
+  const handleReimportCourses = () => {
+    setToastMessage('🔄 正在连接教务系统重新识别并导入课表...');
+    setTimeout(() => {
+      setToastMessage('✅ 教务课表已重新导入，排期已同步至最新学期进度！');
+      setTimeout(() => setToastMessage(null), 3000);
+    }, 1200);
+  };
 
   // 5. 点击接入系统提醒事项
   const handleToggleReminder = (course: Course, enabled: boolean) => {
@@ -299,7 +312,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
           </View>
         </View>
 
-        {/* 仅保留：本日剩余课（已彻底去除副标题文案） */}
+        {/* 仅保留：本日剩余课（无论日历轴切换到哪天，固定只显示今日实际剩余课） */}
         {scheduleViewMode === 'day' && (
           <View style={styles.todayRemainingCard}>
             <View style={styles.todayRemainingLeft}>
@@ -310,7 +323,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
             </View>
 
             <View style={styles.todayRemainingRight}>
-              <Text style={styles.todayRemainingNumber}>{dayCourses.length}</Text>
+              <Text style={styles.todayRemainingNumber}>{realTodayCourses.length}</Text>
               <Text style={styles.todayRemainingUnit}>节</Text>
             </View>
           </View>
@@ -360,10 +373,15 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                   </View>
                 </View>
 
-                <View style={styles.syncStatusBadge}>
-                  <Ionicons name="flash" size={12} color={Colors.primary} />
-                  <Text style={styles.syncStatusText}>教务已自动同步</Text>
-                </View>
+                {/* 图1要求：改成“重新导入”按钮 */}
+                <TouchableOpacity
+                  style={styles.reimportBtn}
+                  onPress={handleReimportCourses}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="sync-outline" size={13} color={Colors.primary} />
+                  <Text style={styles.reimportBtnText}>重新导入</Text>
+                </TouchableOpacity>
               </View>
 
               {/* 当天课程列表：随选中日期动态切换 */}
@@ -600,18 +618,20 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.primary,
   },
-  syncStatusBadge: {
+  reimportBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: 5,
     borderRadius: Rounded.pill,
   },
-  syncStatusText: {
-    fontSize: 11,
-    fontWeight: '600',
+  reimportBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
     color: Colors.primary,
   },
   timelineList: {
