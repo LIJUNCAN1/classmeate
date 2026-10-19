@@ -1,0 +1,62 @@
+/**
+ * Classmeate Design System Tokens
+ * Fully aligned with DESIGN.md
+ */
+export const Colors = {
+  primary: '#52C41A',
+  primaryGradientStart: '#68D391',
+  primaryGradientEnd: '#48BB78',
+  primaryLight: '#F0FDF4',
+  primaryBorder: '#DCFCE7',
+
+  accentBlue: '#4A90E2',
+  accentBlueLight: '#EFF6FF',
+  accentPurple: '#8B5CF6',
+  accentPurpleLight: '#F5F3FF',
+  accentAmber: '#F59E0B',
+  accentAmberLight: '#FEF3C7',
+  accentGold: '#FAAD14',
+  accentGoldLight: '#FFFBEB',
+  accentPink: '#FF4D4F',
+  accentPinkLight: '#FFF1F0',
+
+  surface: '#FFFFFF',
+  background: '#F8FAF8',
+  textPrimary: '#1F2937',
+  textSecondary: '#4B5563',
+  textMuted: '#9CA3AF',
+  borderSubtle: '#F3F4F6',
+  timelineLine: '#E5E7EB',
+};
+
+export const Rounded = {
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  pill: 9999,
+};
+
+export const Shadows = {
+  card: {
+    shadowColor: '#1F2937',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  glow: {
+    shadowColor: '#52C41A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  modal: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
+    elevation: 8,
+  },
+};
