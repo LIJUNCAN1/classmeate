@@ -132,7 +132,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
   const [selectedFolder, setSelectedFolder] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 编辑器状态（苹果备忘录风格，文字输入+手绘+语音整合在一起）
+  // 编辑器状态（一体化笔记编辑器，文字输入+手绘+语音整合在一起）
   const [editorVisible, setEditorVisible] = useState(false);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [inputCourseName, setInputCourseName] = useState('高等数学 (AI与数据)');
@@ -181,7 +181,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
   useEffect(() => {
     if (initialCourseName) {
       setInputCourseName(initialCourseName);
-      setInputTitle(`第 14 周 · ${initialCourseName} 随堂备忘`);
+      setInputTitle(`第 14 周 · ${initialCourseName} 随堂笔记`);
       setInputContent('');
       setEditingNoteId(null);
       setShowCanvas(false);
@@ -353,7 +353,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     })
   ).current;
 
-  // 打开备忘录编辑
+  // 打开笔记编辑
   const handleOpenNote = (note: NoteItem) => {
     if (note.type === 'freeform') {
       setFreeformTargetCourse(note.courseName);
@@ -592,7 +592,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         })}
       </Animated.ScrollView>
 
-      {/* ================= 图5风格：苹果备忘录全屏一体化编辑器 ================= */}
+      {/* ================= 图5风格：全屏一体化笔记编辑器 ================= */}
       <Modal
         visible={editorVisible}
         animationType="slide"
@@ -613,7 +613,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
               activeOpacity={0.7}
             >
               <Ionicons name="chevron-back" size={20} color={Colors.primary} />
-              <Text style={styles.editorNavBackText}>备忘录</Text>
+              <Text style={styles.editorNavBackText}>笔记</Text>
             </TouchableOpacity>
 
             <View style={styles.editorNavRight}>
@@ -647,10 +647,10 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
-            {/* 笔记大标题（苹果备忘录纯净大字风格） */}
+            {/* 笔记大标题 */}
             <TextInput
               style={styles.iosTitleInput}
-              placeholder="备忘标题"
+              placeholder="笔记标题"
               placeholderTextColor="#9CA3AF"
               value={inputTitle}
               onChangeText={setInputTitle}
@@ -734,7 +734,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
               </View>
             )}
 
-            {/* 正文输入框：苹果备忘录纯净质感，监听光标位置 */}
+            {/* 正文输入框：纯净质感，监听光标位置 */}
             <TextInput
               style={styles.iosBodyInput}
               placeholder="在此开始记录课堂要点、推导过程... 也可使用底部语音速记直接在光标处填入。"
@@ -806,7 +806,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
             </View>
           )}
 
-          {/* ================= 底部语音交互条（微信/苹果备忘录式长按与上滑锁定） ================= */}
+          {/* ================= 底部语音交互条（微信/灵动胶囊式长按与上滑锁定） ================= */}
           <View style={[styles.bottomVoiceDock, { paddingBottom: Math.max(insets.bottom, 12) }]}>
             {isVoiceLocked ? (
               // 锁定状态下的操作栏
@@ -1206,7 +1206,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // ================= 苹果备忘录全屏编辑器样式 =================
+  // ================= 一体化全屏编辑器样式 =================
   editorContainer: {
     flex: 1,
     backgroundColor: '#FFFFFF',

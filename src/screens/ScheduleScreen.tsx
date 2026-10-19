@@ -498,7 +498,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
             </View>
 
             <View style={styles.recordModeOptions}>
-              {/* 选项 1：备忘录速记 */}
+              {/* 选项 1：随堂速记 */}
               <TouchableOpacity
                 style={styles.recordOptionCard}
                 activeOpacity={0.7}
@@ -512,13 +512,13 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                 </View>
                 <View style={styles.recordOptionTextWrap}>
                   <View style={styles.recordOptionTitleRow}>
-                    <Text style={styles.recordOptionTitle}>备忘录速记</Text>
+                    <Text style={styles.recordOptionTitle}>随堂速记</Text>
                     <View style={styles.optionTag}>
                       <Text style={styles.optionTagText}>打字 + 语音</Text>
                     </View>
                   </View>
                   <Text style={styles.recordOptionDesc}>
-                    苹果备忘录风格 · 底部长按与上滑锁定语音实时转录
+                    极简笔记风格 · 底部长按与上滑锁定语音实时转录
                   </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
@@ -554,12 +554,12 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
         </TouchableOpacity>
       </Modal>
 
-      {/* 备忘录速记编辑器（直接开启，退出时切至笔记页） */}
+      {/* 随堂速记编辑器（直接开启，退出时切至笔记页） */}
       {appleNotesEditorVisible && (
         <AppleNotesEditor
           visible={appleNotesEditorVisible}
           initialCourseName={selectedCourseForNote?.name}
-          initialTitle={`第 14 周 · ${selectedCourseForNote?.name} 随堂备忘`}
+          initialTitle={`第 14 周 · ${selectedCourseForNote?.name} 随堂笔记`}
           onClose={handleExitNote}
           onSave={handleExitNote}
         />
