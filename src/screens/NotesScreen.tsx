@@ -371,11 +371,11 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     setEditorVisible(true);
   };
 
-  // 新建备忘录
+  // 新建随堂笔记
   const handleCreateNewNote = () => {
     setEditingNoteId(null);
     setInputCourseName(COURSES_CATALOG[0].name);
-    setInputTitle(`第 14 周 · ${COURSES_CATALOG[0].name} 随堂备忘`);
+    setInputTitle(`第 14 周 · ${COURSES_CATALOG[0].name} 随堂笔记`);
     setInputContent('');
     setShowCanvas(false);
     setDrawStrokes([]);
@@ -383,7 +383,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     setEditorVisible(true);
   };
 
-  // 保存备忘录
+  // 保存随堂笔记
   const handleSaveNote = () => {
     if (!inputTitle.trim()) return;
 
@@ -408,7 +408,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         title: inputTitle,
         date: '刚刚',
         content: inputContent,
-        tags: ['随堂备忘'],
+        tags: ['随堂笔记'],
         type: showCanvas || drawStrokes.length > 0 ? 'freeform' : 'text',
       };
       setNotes((prev) => [newNote, ...prev]);
@@ -416,9 +416,9 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     setEditorVisible(false);
   };
 
-  // 文件夹分类列表
+  // 文件夹分类列表（按要求全部改为“笔记”）
   const folderList = [
-    { id: 'all', name: '所有备忘录', icon: 'folder', count: notes.length },
+    { id: 'all', name: '所有笔记', icon: 'folder', count: notes.length },
     { id: '高等数学', name: '高等数学', icon: 'calculator-outline', count: notes.filter((n) => n.courseName.includes('数学')).length },
     { id: '商务韩语', name: '商务韩语', icon: 'chatbubbles-outline', count: notes.filter((n) => n.courseName.includes('韩语')).length },
     { id: '系统结构', name: '计算机系统', icon: 'hardware-chip-outline', count: notes.filter((n) => n.courseName.includes('系统')).length },
@@ -436,36 +436,39 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* 顶部标题与新建按钮（极简苹果备忘录导航栏） */}
-      <View style={[styles.navHeader, { paddingTop: topPadding + 4 }]}>
-        <View>
-          <Text style={styles.screenMainTitle}>备忘录</Text>
-          <Text style={styles.screenSubTitle}>Classmeate 随堂知识流</Text>
-        </View>
+      {/* 顶部生机草木绿流体区域（按用户要求保留原本的顶部绿色） */}
+      <View style={[styles.heroHeader, { paddingTop: topPadding + 6 }]}>
+        <View style={styles.headerTopRow}>
+          <View>
+            <Text style={styles.headerGreeting}>随堂笔记库 ✏️</Text>
+            <Text style={styles.headerSub}>课表驱动知识流 · 随堂速记与无边记思维导图</Text>
+          </View>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          {/* 无边记白板快捷入口 */}
-          <TouchableOpacity
-            style={styles.newFreeformTopBtn}
-            onPress={() => {
-              setFreeformTargetCourse(COURSES_CATALOG[0].name);
-              setFreeformTargetTitle(`第 14 周 · ${COURSES_CATALOG[0].name} 脑力激荡`);
-              setFreeformModalVisible(true);
-            }}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="infinite" size={18} color="#2563EB" style={{ marginRight: 3 }} />
-            <Text style={styles.newFreeformTopBtnText}>无边记</Text>
-          </TouchableOpacity>
+          <View style={styles.headerActionBtns}>
+            {/* 无边记快捷入口 */}
+            <TouchableOpacity
+              style={styles.greenFreeformBtn}
+              onPress={() => {
+                setFreeformTargetCourse(COURSES_CATALOG[0].name);
+                setFreeformTargetTitle(`第 14 周 · ${COURSES_CATALOG[0].name} 脑力激荡`);
+                setFreeformModalVisible(true);
+              }}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="infinite" size={16} color="#FFFFFF" style={{ marginRight: 3 }} />
+              <Text style={styles.greenFreeformBtnText}>无边记</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.newNoteTopBtn}
-            onPress={handleCreateNewNote}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="create-outline" size={18} color="#FFFFFF" style={{ marginRight: 4 }} />
-            <Text style={styles.newNoteTopBtnText}>写备忘</Text>
-          </TouchableOpacity>
+            {/* 写笔记按钮 */}
+            <TouchableOpacity
+              style={styles.greenNewNoteBtn}
+              onPress={handleCreateNewNote}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="create-outline" size={16} color={Colors.primary} style={{ marginRight: 3 }} />
+              <Text style={styles.greenNewNoteBtnText}>写笔记</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
@@ -474,7 +477,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         <Ionicons name="search" size={16} color="#9CA3AF" style={{ marginRight: 8 }} />
         <TextInput
           style={styles.searchInput}
-          placeholder="搜索全部备忘录、关键词或课程..."
+          placeholder="搜索全部随堂笔记、关键词或课程..."
           placeholderTextColor="#9CA3AF"
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -1004,54 +1007,71 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8FAFC',
   },
-  navHeader: {
+  heroHeader: {
+    backgroundColor: Colors.primary,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
     paddingHorizontal: 20,
-    paddingBottom: 12,
+    paddingBottom: 20,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  headerTopRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E2E8F0',
   },
-  screenMainTitle: {
-    fontSize: 26,
+  headerGreeting: {
+    fontSize: 22,
     fontWeight: '800',
-    color: '#0F172A',
-    letterSpacing: -0.5,
+    color: '#FFFFFF',
+    letterSpacing: -0.3,
   },
-  screenSubTitle: {
+  headerSub: {
     fontSize: 12,
-    color: '#64748B',
-    marginTop: 2,
+    color: 'rgba(255, 255, 255, 0.88)',
+    marginTop: 4,
   },
-  newFreeformTopBtn: {
+  headerActionBtns: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EFF6FF',
+    gap: 8,
+  },
+  greenFreeformBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
     borderWidth: 1,
-    borderColor: '#BFDBFE',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
+    borderColor: 'rgba(255, 255, 255, 0.35)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: Rounded.pill,
   },
-  newFreeformTopBtnText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#1D4ED8',
-  },
-  newNoteTopBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 13,
-    paddingVertical: 7,
-    borderRadius: Rounded.pill,
-  },
-  newNoteTopBtnText: {
-    fontSize: 13,
+  greenFreeformBtnText: {
+    fontSize: 12,
     fontWeight: '700',
     color: '#FFFFFF',
+  },
+  greenNewNoteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: Rounded.pill,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  greenNewNoteBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.primary,
   },
   searchBarWrapper: {
     flexDirection: 'row',

@@ -48,7 +48,7 @@ export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
     initialCourseName || COURSES_CATALOG[0].name
   );
   const [inputTitle, setInputTitle] = useState(
-    initialTitle || `第 14 周 · ${initialCourseName || COURSES_CATALOG[0].name} 随堂备忘`
+    initialTitle || `第 14 周 · ${initialCourseName || COURSES_CATALOG[0].name} 随堂笔记`
   );
   const [inputContent, setInputContent] = useState(initialContent || '');
 
@@ -56,7 +56,7 @@ export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
     if (initialCourseName) {
       setInputCourseName(initialCourseName);
       if (!initialTitle) {
-        setInputTitle(`第 14 周 · ${initialCourseName} 随堂备忘`);
+        setInputTitle(`第 14 周 · ${initialCourseName} 随堂笔记`);
       }
     }
   }, [initialCourseName, initialTitle]);
@@ -234,7 +234,7 @@ export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
             activeOpacity={0.7}
           >
             <Ionicons name="chevron-back" size={20} color={Colors.primary} />
-            <Text style={styles.editorNavBackText}>返回</Text>
+            <Text style={styles.editorNavBackText}>笔记</Text>
           </TouchableOpacity>
 
           <View style={styles.editorNavRight}>
@@ -276,7 +276,7 @@ export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
         >
           <TextInput
             style={styles.iosTitleInput}
-            placeholder="备忘标题"
+            placeholder="笔记标题"
             placeholderTextColor="#9CA3AF"
             value={inputTitle}
             onChangeText={setInputTitle}

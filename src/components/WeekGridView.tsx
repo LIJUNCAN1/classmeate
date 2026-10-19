@@ -353,7 +353,7 @@ export const WeekGridView: React.FC<WeekGridViewProps> = ({ onOpenNote }) => {
                         <Text
                           style={[styles.courseBlockLoc, { color: c.colorScheme.text }]}
                         >
-                          📍{c.location}
+                          @ {c.location}
                         </Text>
                       </View>
 

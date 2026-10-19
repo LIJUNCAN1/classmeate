@@ -78,6 +78,34 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
     };
   }, [weekOffset]);
 
+  // 切换周处理：切换到非本周默认选中周一，切回本周默认选中今天
+  const handleWeekChange = (newOffset: number) => {
+    setWeekOffset(newOffset);
+
+    const now = new Date();
+    const currentDay = now.getDay();
+    const mondayDiff = currentDay === 0 ? -6 : 1 - currentDay;
+    const baseMonday = new Date(now);
+    baseMonday.setDate(now.getDate() + mondayDiff + newOffset * 7);
+
+    if (newOffset === 0) {
+      // 本周：默认移动到今天
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      const todayDateStr = `${y}-${m}-${d}`;
+      const dNum = now.getDay() === 0 ? 7 : now.getDay();
+      onSelectDate(todayDateStr, dNum);
+    } else {
+      // 其它周：默认移动到星期一
+      const y = baseMonday.getFullYear();
+      const m = String(baseMonday.getMonth() + 1).padStart(2, '0');
+      const d = String(baseMonday.getDate()).padStart(2, '0');
+      const mondayDateStr = `${y}-${m}-${d}`;
+      onSelectDate(mondayDateStr, 1);
+    }
+  };
+
   // 选择月份处理
   const handleSelectMonth = (monthIndex: number) => {
     // 根据选定的年份与月份计算到基准周的偏移
@@ -85,7 +113,7 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
     const targetDate = new Date(selectedYear, monthIndex, 1);
     const diffTime = targetDate.getTime() - now.getTime();
     const diffWeeks = Math.round(diffTime / (7 * 24 * 60 * 60 * 1000));
-    setWeekOffset(diffWeeks);
+    handleWeekChange(diffWeeks);
     setMonthPickerVisible(false);
   };
 
@@ -112,14 +140,14 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
         <View style={styles.weekControlRow}>
           <TouchableOpacity
             style={styles.weekArrowBtn}
-            onPress={() => setWeekOffset((prev) => prev - 1)}
+            onPress={() => handleWeekChange(weekOffset - 1)}
             activeOpacity={0.7}
           >
             <Ionicons name="chevron-back" size={13} color="rgba(255,255,255,0.85)" />
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => setWeekOffset(0)}
+            onPress={() => handleWeekChange(0)}
             activeOpacity={0.7}
           >
             <Text style={styles.weekIndicator}>
@@ -130,7 +158,7 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
 
           <TouchableOpacity
             style={styles.weekArrowBtn}
-            onPress={() => setWeekOffset((prev) => prev + 1)}
+            onPress={() => handleWeekChange(weekOffset + 1)}
             activeOpacity={0.7}
           >
             <Ionicons name="chevron-forward" size={13} color="rgba(255,255,255,0.85)" />

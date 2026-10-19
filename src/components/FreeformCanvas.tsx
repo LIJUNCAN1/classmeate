@@ -107,6 +107,19 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
     '#8B5CF6', // 紫
   ];
 
+  // 双指放大缩小 (Pinch-to-zoom)
+  const [zoomScale, setZoomScale] = useState<number>(1.0);
+  const initialDistanceRef = useRef<number | null>(null);
+  const initialScaleRef = useRef<number>(1.0);
+
+  // 当前公历日期
+  const dateSubtitle = new Date().toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+  });
+
   // 添加新便签
   const handleAddStickyNote = (color: string = '#FEF08A') => {
     const newNote: StickyNote = {
@@ -143,15 +156,23 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
     setStrokes([]);
   };
 
-  // 画板手势 (PanResponder)
+  // 画板手势 (支持单指书写涂鸦，双指缩放画布)
   const canvasPanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
       onPanResponderGrant: (evt) => {
+        // 双指触控：初始化缩放基准距离
+        if (evt.nativeEvent.touches && evt.nativeEvent.touches.length >= 2) {
+          const t0 = evt.nativeEvent.touches[0];
+          const t1 = evt.nativeEvent.touches[1];
+          initialDistanceRef.current = Math.hypot(t0.pageX - t1.pageX, t0.pageY - t1.pageY);
+          initialScaleRef.current = zoomScale;
+          return;
+        }
+
         const { locationX, locationY } = evt.nativeEvent;
         if (selectedTool === 'eraser') {
-          // 擦除附近笔迹
           setStrokes((prev) =>
             prev.filter(
               (s) =>
@@ -165,6 +186,19 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
         }
       },
       onPanResponderMove: (evt) => {
+        // 双指触控滑动：动态计算缩放比例
+        if (evt.nativeEvent.touches && evt.nativeEvent.touches.length >= 2) {
+          const t0 = evt.nativeEvent.touches[0];
+          const t1 = evt.nativeEvent.touches[1];
+          const dist = Math.hypot(t0.pageX - t1.pageX, t0.pageY - t1.pageY);
+          if (initialDistanceRef.current && initialDistanceRef.current > 0) {
+            const factor = dist / initialDistanceRef.current;
+            const newScale = Math.min(3.0, Math.max(0.6, initialScaleRef.current * factor));
+            setZoomScale(Number(newScale.toFixed(2)));
+          }
+          return;
+        }
+
         const { locationX, locationY } = evt.nativeEvent;
         if (selectedTool === 'eraser') {
           setStrokes((prev) =>
@@ -180,6 +214,7 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
         }
       },
       onPanResponderRelease: () => {
+        initialDistanceRef.current = null;
         if (selectedTool !== 'eraser' && currentStroke.length > 0) {
           const width = selectedTool === 'highlighter' ? 14 : 3.5;
           const strokeColor =
@@ -196,7 +231,7 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* 顶部操作条（完全复刻图1的 Apple Freeform 导航栏） */}
+      {/* 顶部操作条（完全复刻图1的 Apple Freeform 导航栏，副标题已按要求换成日期） */}
       <View style={[styles.topNavBar, { paddingTop: topPadding + 4 }]}>
         <View style={styles.navLeft}>
           <TouchableOpacity onPress={onClose} style={styles.backBtn}>
@@ -209,13 +244,33 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
               onChangeText={setTitle}
               placeholder="无边记项目名称"
             />
-            <Text style={styles.canvasCourseTag}>📚 {courseName} · 无边记无限画布</Text>
+            {/* 按用户要求：去掉“无边记无限画布”说明，换成日期 */}
+            <Text style={styles.canvasCourseTag}>{dateSubtitle}</Text>
           </View>
         </View>
 
         <View style={styles.navRight}>
+          {/* 缩放控制器指示 */}
+          <View style={styles.zoomControlRow}>
+            <TouchableOpacity
+              onPress={() => setZoomScale((s) => Math.max(0.6, Number((s - 0.2).toFixed(1))))}
+              style={styles.zoomBtn}
+            >
+              <Ionicons name="remove" size={13} color="#4B5563" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setZoomScale(1.0)}>
+              <Text style={styles.zoomText}>{Math.round(zoomScale * 100)}%</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setZoomScale((s) => Math.min(3.0, Number((s + 0.2).toFixed(1))))}
+              style={styles.zoomBtn}
+            >
+              <Ionicons name="add" size={13} color="#4B5563" />
+            </TouchableOpacity>
+          </View>
+
           <TouchableOpacity onPress={handleUndo} style={styles.navActionBtn}>
-            <Ionicons name="arrow-undo-outline" size={20} color="#4B5563" />
+            <Ionicons name="arrow-undo-outline" size={18} color="#4B5563" />
           </TouchableOpacity>
 
           {/* 添加便利贴快捷按钮 */}
@@ -224,7 +279,7 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
             style={styles.addStickyBtn}
             activeOpacity={0.7}
           >
-            <Ionicons name="copy-outline" size={16} color="#B45309" style={{ marginRight: 3 }} />
+            <Ionicons name="copy-outline" size={15} color="#B45309" style={{ marginRight: 3 }} />
             <Text style={styles.addStickyBtnText}>+便签</Text>
           </TouchableOpacity>
 
@@ -247,89 +302,91 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
 
       {/* 无限点状网格画布主体 */}
       <View style={styles.canvasArea} {...canvasPanResponder.panHandlers}>
-        {/* 背景点状网格（点阵质感，完全还原图1画纸效果） */}
-        <View style={styles.dotGridOverlay} pointerEvents="none">
-          {Array.from({ length: 12 }).map((_, rIdx) => (
-            <View key={rIdx} style={styles.dotRow}>
-              {Array.from({ length: 10 }).map((_, cIdx) => (
-                <View key={cIdx} style={styles.gridDot} />
+        <View style={[styles.canvasScaleContainer, { transform: [{ scale: zoomScale }] }]}>
+          {/* 背景点状网格（点阵质感，完全还原图1画纸效果） */}
+          <View style={styles.dotGridOverlay} pointerEvents="none">
+            {Array.from({ length: 12 }).map((_, rIdx) => (
+              <View key={rIdx} style={styles.dotRow}>
+                {Array.from({ length: 10 }).map((_, cIdx) => (
+                  <View key={cIdx} style={styles.gridDot} />
+                ))}
+              </View>
+            ))}
+          </View>
+
+          {/* 绘制已保存的手绘线段 */}
+          {strokes.map((stroke, sIdx) => (
+            <React.Fragment key={sIdx}>
+              {stroke.points.map((pt, pIdx) => (
+                <View
+                  key={pIdx}
+                  pointerEvents="none"
+                  style={{
+                    position: 'absolute',
+                    left: pt.x - stroke.width / 2,
+                    top: pt.y - stroke.width / 2,
+                    width: stroke.width,
+                    height: stroke.width,
+                    borderRadius: stroke.width / 2,
+                    backgroundColor: stroke.color,
+                  }}
+                />
               ))}
+            </React.Fragment>
+          ))}
+
+          {/* 绘制当前正在画的一笔 */}
+          {currentStroke.map((pt, idx) => (
+            <View
+              key={`curr-${idx}`}
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                left: pt.x - 2,
+                top: pt.y - 2,
+                width: selectedTool === 'highlighter' ? 12 : 4,
+                height: selectedTool === 'highlighter' ? 12 : 4,
+                borderRadius: 3,
+                backgroundColor: activeColor,
+              }}
+            />
+          ))}
+
+          {/* 便签贴纸（黄色、粉色、青色便利贴，如首图真实呈现） */}
+          {stickyNotes.map((note) => (
+            <View
+              key={note.id}
+              style={[
+                styles.stickyCard,
+                {
+                  backgroundColor: note.color,
+                  left: note.x,
+                  top: note.y,
+                },
+                Shadows.card,
+              ]}
+            >
+              <View style={styles.stickyHeader}>
+                <View style={styles.stickyPin} />
+                <TouchableOpacity
+                  onPress={() => handleDeleteSticky(note.id)}
+                  style={styles.stickyDeleteBtn}
+                >
+                  <Ionicons name="close" size={14} color="#78350F" />
+                </TouchableOpacity>
+              </View>
+
+              <TextInput
+                style={styles.stickyInput}
+                value={note.text}
+                onChangeText={(txt) => handleUpdateStickyText(note.id, txt)}
+                multiline={true}
+                placeholder="在此记录想法..."
+                placeholderTextColor="#92400E"
+              />
             </View>
           ))}
         </View>
-
-        {/* 绘制已保存的手绘线段 */}
-        {strokes.map((stroke, sIdx) => (
-          <React.Fragment key={sIdx}>
-            {stroke.points.map((pt, pIdx) => (
-              <View
-                key={pIdx}
-                pointerEvents="none"
-                style={{
-                  position: 'absolute',
-                  left: pt.x - stroke.width / 2,
-                  top: pt.y - stroke.width / 2,
-                  width: stroke.width,
-                  height: stroke.width,
-                  borderRadius: stroke.width / 2,
-                  backgroundColor: stroke.color,
-                }}
-              />
-            ))}
-          </React.Fragment>
-        ))}
-
-        {/* 绘制当前正在画的一笔 */}
-        {currentStroke.map((pt, idx) => (
-          <View
-            key={`curr-${idx}`}
-            pointerEvents="none"
-            style={{
-              position: 'absolute',
-              left: pt.x - 2,
-              top: pt.y - 2,
-              width: selectedTool === 'highlighter' ? 12 : 4,
-              height: selectedTool === 'highlighter' ? 12 : 4,
-              borderRadius: 3,
-              backgroundColor: activeColor,
-            }}
-          />
-        ))}
-
-        {/* 便签贴纸（黄色、粉色、青色便利贴，如首图真实呈现） */}
-        {stickyNotes.map((note) => (
-          <View
-            key={note.id}
-            style={[
-              styles.stickyCard,
-              {
-                backgroundColor: note.color,
-                left: note.x,
-                top: note.y,
-              },
-              Shadows.card,
-            ]}
-          >
-            <View style={styles.stickyHeader}>
-              <View style={styles.stickyPin} />
-              <TouchableOpacity
-                onPress={() => handleDeleteSticky(note.id)}
-                style={styles.stickyDeleteBtn}
-              >
-                <Ionicons name="close" size={14} color="#78350F" />
-              </TouchableOpacity>
-            </View>
-
-            <TextInput
-              style={styles.stickyInput}
-              value={note.text}
-              onChangeText={(txt) => handleUpdateStickyText(note.id, txt)}
-              multiline={true}
-              placeholder="在此记录想法..."
-              placeholderTextColor="#92400E"
-            />
-          </View>
-        ))}
       </View>
 
       {/* ================= 仿苹果 Apple Pencil 悬浮画笔坞 (Floating Tool Palette) ================= */}
@@ -595,5 +652,26 @@ const styles = StyleSheet.create({
   },
   clearBtn: {
     padding: 6,
+  },
+  zoomControlRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F1F5F9',
+    borderRadius: Rounded.pill,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    gap: 4,
+  },
+  zoomBtn: {
+    padding: 2,
+  },
+  zoomText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#374151',
+  },
+  canvasScaleContainer: {
+    width: '100%',
+    height: '100%',
   },
 });
