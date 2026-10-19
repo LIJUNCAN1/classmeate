@@ -84,16 +84,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           )}
         </View>
 
-        {/* 讲师与地点详情 (已彻底去除前面的 CN、国旗等前缀) */}
+        {/* 讲师与地点详情 (已去除前缀及评分) */}
         <View style={styles.detailsRow}>
           <View style={styles.teacherBadge}>
             <Text style={styles.teacherName}>{course.teacher}</Text>
-            {course.rating && (
-              <View style={styles.ratingPill}>
-                <Ionicons name="star" size={10} color="#FAAD14" />
-                <Text style={styles.ratingText}>{course.rating}</Text>
-              </View>
-            )}
           </View>
 
           <View style={styles.locationBadge}>

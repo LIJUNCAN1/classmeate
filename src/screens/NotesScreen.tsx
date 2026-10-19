@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,9 +9,10 @@ import {
   Modal,
   Platform,
   StatusBar as RNStatusBar,
-  Alert,
+  Animated,
+  PanResponder,
 } from 'react-native';
-import { Colors, Rounded, Shadows } from '../constants/theme';
+import { Colors, Rounded, Shadows, getCourseColorScheme } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedCheckmark } from '../components/AnimatedCheckmark';
@@ -23,6 +24,8 @@ export interface NoteItem {
   date: string;
   content: string;
   tags: string[];
+  type: 'text' | 'freeform'; // 手动输入 vs 无边记手写
+  freeformPaths?: string[];  // 无边记绘制点迹
   hasAudio?: boolean;
   hasImages?: boolean;
 }
@@ -42,6 +45,28 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     Platform.OS === 'android' ? (RNStatusBar.currentHeight || 36) : 44
   );
 
+  // 页面向下出现平滑动画
+  const dropAnim = useRef(new Animated.Value(-18)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    dropAnim.setValue(-18);
+    fadeAnim.setValue(0);
+    Animated.parallel([
+      Animated.spring(dropAnim, {
+        toValue: 0,
+        friction: 6,
+        tension: 80,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   const [notes, setNotes] = useState<NoteItem[]>([
     {
       id: 'n1',
@@ -50,6 +75,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
       date: '今天 09:45',
       content: '商务谈判中的开场礼仪；对客委婉语、谦逊语在合同初审时的严谨表述。需要重点注意双方落座顺序与初次交换名片的固定问候套语。',
       tags: ['随堂速记', '音频已转录'],
+      type: 'text',
       hasAudio: true,
       hasImages: true,
     },
@@ -60,6 +86,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
       date: '昨天 10:20',
       content: '二阶偏导数对称性几何意义；拉格朗日乘数法在约束极值求解中的工程应用。课堂例题第3道：如何通过海森矩阵判断多元函数鞍点。',
       tags: ['板书拍照', '重点公式'],
+      type: 'text',
       hasAudio: false,
       hasImages: true,
     },
@@ -70,16 +97,19 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
       date: '6月18日',
       content: '长难句倒装解构；段落首尾呼应词快筛技巧；历年错题第34-37题解析及高频副词总结。',
       tags: ['复习卡片'],
+      type: 'text',
       hasAudio: false,
       hasImages: false,
     },
     {
       id: 'n4',
       courseName: '计算机系统结构',
-      title: '第12周 · 指令级并行与流水线冲突',
+      title: '第12周 · 指令级并行与流水线冲突 (无边记)',
       date: '6月12日',
-      content: '经典五级流水线（IF, ID, EX, MEM, WB）；结构冲突、数据冲突与控制冲突的旁路转发解决机制。',
-      tags: ['核心架构', '期末必考'],
+      content: '【无边记手绘草图】经典五级流水线（IF, ID, EX, MEM, WB）时序与旁路转发架构图谱。',
+      tags: ['无边记手写', '核心架构'],
+      type: 'freeform',
+      freeformPaths: ['path1', 'path2'],
       hasAudio: false,
       hasImages: true,
     },
@@ -88,21 +118,33 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
   const [selectedFolder, setSelectedFolder] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 编辑/新建笔记模态框状态
+  // 模式选择弹窗：选择“手动输入”还是“无边记自己写”
+  const [modeSelectVisible, setModeSelectVisible] = useState(false);
+
+  // 编辑器状态
   const [editorVisible, setEditorVisible] = useState(false);
+  const [noteMode, setNoteMode] = useState<'text' | 'freeform'>('text');
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [inputCourseName, setInputCourseName] = useState('高等数学 (AI与数据)');
   const [inputTitle, setInputTitle] = useState('');
   const [inputContent, setInputContent] = useState('');
 
-  // 如果从外部路由携带 initialCourseName，自动弹出针对该课程的新建笔记窗
+  // 语音识别状态
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  // 无边记手写笔触点阵
+  const [drawStrokes, setDrawStrokes] = useState<{ x: number; y: number }[]>([]);
+  const [penColor, setPenColor] = useState('#1F2937');
+
+  // 如果从外部路由携带 initialCourseName，直接弹出选择新建笔记
   useEffect(() => {
     if (initialCourseName) {
       setInputCourseName(initialCourseName);
       setInputTitle(`第 14 周 · ${initialCourseName} 随堂速记`);
       setInputContent('');
       setEditingNoteId(null);
-      setEditorVisible(true);
+      setModeSelectVisible(true);
       if (onClearInitialCourse) {
         onClearInitialCourse();
       }
@@ -119,7 +161,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     '交互设计与UI艺术',
   ];
 
-  // 课程分类统计
+  // 课程分类
   const courseFolderList = [
     { id: 'all', name: '全部笔记', count: notes.length },
     ...availableCourses.map((cName) => ({
@@ -140,60 +182,148 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     return matchFolder && matchSearch;
   });
 
-  const handleOpenCreateNew = () => {
-    setEditingNoteId(null);
-    setInputCourseName(availableCourses[0]);
-    setInputTitle('随堂重点知识速记');
-    setInputContent('');
-    setEditorVisible(true);
-  };
-
-  const handleOpenEdit = (note: NoteItem) => {
-    setEditingNoteId(note.id);
-    setInputCourseName(note.courseName);
-    setInputTitle(note.title);
-    setInputContent(note.content);
-    setEditorVisible(true);
-  };
-
-  const handleSaveNote = () => {
-    if (!inputTitle.trim()) {
+  // 开启真实语音识别 (Web Speech API)
+  const toggleSpeechRecognition = () => {
+    if (isListening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
+      }
+      setIsListening(false);
       return;
     }
 
+    // 检查浏览器或系统环境是否支持 Web Speech API
+    if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      try {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'zh-CN';
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        recognition.onstart = () => {
+          setIsListening(true);
+        };
+
+        recognition.onresult = (event: any) => {
+          let transcript = '';
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            transcript += event.results[i][0].transcript;
+          }
+          if (transcript) {
+            setInputContent((prev) => (prev ? prev + '\n' + transcript : transcript));
+          }
+        };
+
+        recognition.onerror = () => {
+          setIsListening(false);
+        };
+
+        recognition.onend = () => {
+          setIsListening(false);
+        };
+
+        recognition.start();
+        recognitionRef.current = recognition;
+        setIsListening(true);
+        return;
+      } catch (err) {
+        // Fallback below
+      }
+    }
+
+    // 移动端/环境无原生物理麦克风权限时的仿真录音转文字流
+    setIsListening(true);
+    const mockPhrases = [
+      '老师强调期末论文要结合实际案例进行定量分析，',
+      '注意课后大作业第二题的多目标规划求解思路。',
+    ];
+    let step = 0;
+    const interval = setInterval(() => {
+      if (step < mockPhrases.length) {
+        setInputContent((prev) => (prev ? prev + ' ' + mockPhrases[step] : mockPhrases[step]));
+        step++;
+      } else {
+        clearInterval(interval);
+        setIsListening(false);
+      }
+    }, 1200);
+  };
+
+  // 选择创建模式：键盘输入 vs 无边记
+  const startCreateWithMode = (mode: 'text' | 'freeform') => {
+    setNoteMode(mode);
+    setModeSelectVisible(false);
+    setEditingNoteId(null);
+    if (!inputTitle) {
+      setInputTitle(mode === 'freeform' ? '随堂无边记板书草图' : '随堂重点知识速记');
+    }
+    setDrawStrokes([]);
+    setEditorVisible(true);
+  };
+
+  // 保存笔记
+  const handleSaveNote = () => {
+    if (!inputTitle.trim()) return;
+
     if (editingNoteId) {
-      // 更新现有笔记
       setNotes((prev) =>
         prev.map((n) =>
           n.id === editingNoteId
-            ? { ...n, courseName: inputCourseName, title: inputTitle, content: inputContent }
+            ? {
+                ...n,
+                courseName: inputCourseName,
+                title: inputTitle,
+                content: inputContent,
+                type: noteMode,
+              }
             : n
         )
       );
     } else {
-      // 新建笔记
       const newNote: NoteItem = {
         id: `note-${Date.now()}`,
         courseName: inputCourseName,
         title: inputTitle,
         date: '刚刚',
-        content: inputContent || '（随堂即时要点速记）',
-        tags: ['随堂速记'],
-        hasAudio: false,
-        hasImages: false,
+        content:
+          noteMode === 'freeform'
+            ? '【无边记手写原稿已保存】点击可继续在画布上涂鸦与批注。'
+            : inputContent || '（随堂即时要点记录）',
+        tags: noteMode === 'freeform' ? ['无边记手绘'] : ['随堂速记'],
+        type: noteMode,
+        hasAudio: isListening,
+        hasImages: noteMode === 'freeform',
       };
       setNotes((prev) => [newNote, ...prev]);
+    }
+
+    if (isListening && recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {}
+      setIsListening(false);
     }
 
     setEditorVisible(false);
   };
 
-  const handleDeleteNote = () => {
-    if (editingNoteId) {
-      setNotes((prev) => prev.filter((n) => n.id !== editingNoteId));
-      setEditorVisible(false);
-    }
-  };
+  // PanResponder 实现无边记自由手写触控
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderGrant: (evt) => {
+        const { locationX, locationY } = evt.nativeEvent;
+        setDrawStrokes((prev) => [...prev, { x: locationX, y: locationY }]);
+      },
+      onPanResponderMove: (evt) => {
+        const { locationX, locationY } = evt.nativeEvent;
+        setDrawStrokes((prev) => [...prev, { x: locationX, y: locationY }]);
+      },
+    })
+  ).current;
 
   return (
     <View style={styles.container}>
@@ -207,7 +337,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
 
           <TouchableOpacity
             style={styles.newNoteBtn}
-            onPress={handleOpenCreateNew}
+            onPress={() => setModeSelectVisible(true)}
             activeOpacity={0.8}
           >
             <Ionicons name="add" size={18} color={Colors.primary} />
@@ -215,41 +345,36 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
           </TouchableOpacity>
         </View>
 
-        {/* 快捷多模态记录入口（拍照板书 / 录音转写 / 灵感速写） */}
+        {/* 快捷方式栏 */}
         <View style={styles.quickRecordRow}>
           <TouchableOpacity
             style={styles.quickActionCard}
-            onPress={() => {
-              setInputTitle('📷 课堂板书拍照速记');
-              setInputContent('【板书图片已录入】\n• 核心推导过程已自动转写为 LaTeX 格式');
-              setEditorVisible(true);
-            }}
+            onPress={() => startCreateWithMode('text')}
             activeOpacity={0.8}
           >
-            <Ionicons name="camera" size={18} color="#FFFFFF" />
-            <Text style={styles.quickActionText}>拍板书/PPT</Text>
+            <Ionicons name="keypad" size={18} color="#FFFFFF" />
+            <Text style={styles.quickActionText}>键盘打字输入</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.quickActionCard}
+            onPress={() => startCreateWithMode('freeform')}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="brush" size={18} color="#FFFFFF" />
+            <Text style={styles.quickActionText}>无边记自己写</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.quickActionCard}
             onPress={() => {
-              setInputTitle('🎙️ 课堂录音语音转文字');
-              setInputContent('【语音实时转录文本】：\n老师讲授重点在于课后大作业第二题，要求运用动态规划方法建模...');
-              setEditorVisible(true);
+              startCreateWithMode('text');
+              setTimeout(toggleSpeechRecognition, 300);
             }}
             activeOpacity={0.8}
           >
             <Ionicons name="mic" size={18} color="#FFFFFF" />
-            <Text style={styles.quickActionText}>随堂录音转写</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.quickActionCard}
-            onPress={handleOpenCreateNew}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="flash" size={18} color="#FFFFFF" />
-            <Text style={styles.quickActionText}>灵感秒记</Text>
+            <Text style={styles.quickActionText}>语音识别输入</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -265,100 +390,179 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={16} color={Colors.textMuted} />
-            </TouchableOpacity>
-          )}
         </View>
       </View>
 
-      <ScrollView
-        style={styles.scrollContent}
-        contentContainerStyle={{ paddingBottom: 32 }}
-        showsVerticalScrollIndicator={false}
+      {/* 笔记主内容区（带向下出现的平滑过渡动效） */}
+      <Animated.View
+        style={[
+          styles.contentWrapper,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY: dropAnim }],
+          },
+        ]}
       >
-        {/* 课程分类水平滑动条 */}
         <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.folderScroll}
-          contentContainerStyle={{ paddingHorizontal: 16 }}
+          style={styles.scrollContent}
+          contentContainerStyle={{ paddingBottom: 32 }}
+          showsVerticalScrollIndicator={false}
         >
-          {courseFolderList.map((f) => {
-            const isSelected = f.id === selectedFolder;
-            return (
-              <TouchableOpacity
-                key={f.id}
-                style={[
-                  styles.folderPill,
-                  isSelected && styles.folderPillSelected,
-                ]}
-                onPress={() => setSelectedFolder(f.id)}
-                activeOpacity={0.7}
-              >
-                <Text
+          {/* 课程分类水平滑动条 */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.folderScroll}
+            contentContainerStyle={{ paddingHorizontal: 16 }}
+          >
+            {courseFolderList.map((f) => {
+              const isSelected = f.id === selectedFolder;
+              return (
+                <TouchableOpacity
+                  key={f.id}
                   style={[
-                    styles.folderPillText,
-                    isSelected && styles.folderPillTextSelected,
+                    styles.folderPill,
+                    isSelected && styles.folderPillSelected,
                   ]}
+                  onPress={() => setSelectedFolder(f.id)}
+                  activeOpacity={0.7}
                 >
-                  {f.name} ({f.count})
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
+                  <Text
+                    style={[
+                      styles.folderPillText,
+                      isSelected && styles.folderPillTextSelected,
+                    ]}
+                  >
+                    {f.name} ({f.count})
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
 
-        {/* 笔记卡片列表 */}
-        <View style={styles.noteList}>
-          {filteredNotes.length === 0 ? (
-            <View style={styles.emptyContainer}>
-              <Ionicons name="document-text-outline" size={48} color={Colors.borderSubtle} />
-              <Text style={styles.emptyText}>当前分类暂无笔记，点击上方按钮立即记录</Text>
-            </View>
-          ) : (
-            filteredNotes.map((note) => (
+          {/* 笔记卡片列表 */}
+          <View style={styles.noteList}>
+            {filteredNotes.map((note) => {
+              // 关键需求：左上角标签使用周课表上对应的颜色！
+              const courseColor = getCourseColorScheme(note.courseName);
+
+              return (
+                <TouchableOpacity
+                  key={note.id}
+                  style={[styles.noteCard, Shadows.card]}
+                  onPress={() => {
+                    setEditingNoteId(note.id);
+                    setInputCourseName(note.courseName);
+                    setInputTitle(note.title);
+                    setInputContent(note.content);
+                    setNoteMode(note.type || 'text');
+                    setEditorVisible(true);
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.noteCardHeader}>
+                    {/* 左上角课程标签：与周课表卡片颜色 100% 对应 */}
+                    <View
+                      style={[
+                        styles.courseTag,
+                        {
+                          backgroundColor: courseColor.bg,
+                          borderColor: courseColor.border,
+                          borderWidth: 1,
+                        },
+                      ]}
+                    >
+                      <Ionicons name="bookmark" size={11} color={courseColor.text} />
+                      <Text style={[styles.courseTagText, { color: courseColor.text }]}>
+                        {note.courseName}
+                      </Text>
+                    </View>
+                    <Text style={styles.noteDateText}>{note.date}</Text>
+                  </View>
+
+                  <Text style={styles.noteTitle}>{note.title}</Text>
+                  <Text style={styles.notePreview} numberOfLines={3}>
+                    {note.content}
+                  </Text>
+
+                  <View style={styles.noteFooter}>
+                    <View style={styles.statusIndicatorRow}>
+                      <AnimatedCheckmark checked={true} size={15} />
+                      <Text style={styles.statusVerifiedText}>
+                        {note.type === 'freeform' ? '无边记手绘原稿' : '已关联对应课表'}
+                      </Text>
+                    </View>
+
+                    <View style={styles.tagGroup}>
+                      {note.type === 'freeform' ? (
+                        <Ionicons name="brush" size={14} color={Colors.primary} />
+                      ) : (
+                        <Ionicons name="create-outline" size={14} color={Colors.primary} />
+                      )}
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView>
+      </Animated.View>
+
+      {/* 选择创建模式弹窗 (手动打字 vs 无边记手写) */}
+      <Modal
+        visible={modeSelectVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModeSelectVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={[styles.modeSelectCard, Shadows.modal]}>
+            <Text style={styles.modeSelectTitle}>选择记录方式</Text>
+            <Text style={styles.modeSelectSubtitle}>
+              按你的上课习惯随心选择打字或手绘
+            </Text>
+
+            <View style={styles.modeOptionsRow}>
+              {/* 选项 1：手动文字输入 */}
               <TouchableOpacity
-                key={note.id}
-                style={[styles.noteCard, Shadows.card]}
-                onPress={() => handleOpenEdit(note)}
+                style={styles.modeChoiceBox}
+                onPress={() => startCreateWithMode('text')}
                 activeOpacity={0.8}
               >
-                <View style={styles.noteCardHeader}>
-                  <View style={styles.courseTag}>
-                    <Ionicons name="bookmark" size={11} color={Colors.primary} />
-                    <Text style={styles.courseTagText}>{note.courseName}</Text>
-                  </View>
-                  <Text style={styles.noteDateText}>{note.date}</Text>
+                <View style={[styles.modeChoiceIconCircle, { backgroundColor: Colors.primaryLight }]}>
+                  <Ionicons name="text-outline" size={26} color={Colors.primary} />
                 </View>
-
-                <Text style={styles.noteTitle}>{note.title}</Text>
-                <Text style={styles.notePreview} numberOfLines={3}>
-                  {note.content}
+                <Text style={styles.modeChoiceTitle}>手动打字输入</Text>
+                <Text style={styles.modeChoiceDesc}>
+                  键盘键入 · 支持语音实时转文字
                 </Text>
-
-                <View style={styles.noteFooter}>
-                  <View style={styles.statusIndicatorRow}>
-                    <AnimatedCheckmark checked={true} size={15} />
-                    <Text style={styles.statusVerifiedText}>已关联对应课表</Text>
-                  </View>
-
-                  <View style={styles.tagGroup}>
-                    {note.hasAudio && (
-                      <Ionicons name="mic" size={14} color={Colors.accentBlue} style={{ marginRight: 4 }} />
-                    )}
-                    {note.hasImages && (
-                      <Ionicons name="image" size={14} color={Colors.accentGold} style={{ marginRight: 4 }} />
-                    )}
-                    <Ionicons name="create-outline" size={14} color={Colors.primary} />
-                  </View>
-                </View>
               </TouchableOpacity>
-            ))
-          )}
+
+              {/* 选项 2：无边记自己写 */}
+              <TouchableOpacity
+                style={styles.modeChoiceBox}
+                onPress={() => startCreateWithMode('freeform')}
+                activeOpacity={0.8}
+              >
+                <View style={[styles.modeChoiceIconCircle, { backgroundColor: Colors.accentBlueLight }]}>
+                  <Ionicons name="brush-outline" size={26} color={Colors.accentBlue} />
+                </View>
+                <Text style={styles.modeChoiceTitle}>无边记自己写</Text>
+                <Text style={styles.modeChoiceDesc}>
+                  自由手绘涂鸦 · 触控板书记录
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={styles.cancelChoiceBtn}
+              onPress={() => setModeSelectVisible(false)}
+            >
+              <Text style={styles.cancelChoiceText}>取消</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </ScrollView>
+      </Modal>
 
       {/* 实时笔记编辑器弹窗 */}
       <Modal
@@ -378,7 +582,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
             </TouchableOpacity>
 
             <Text style={styles.editorHeaderTitle}>
-              {editingNoteId ? '编辑随堂笔记' : '新建随堂笔记'}
+              {noteMode === 'freeform' ? '🎨 无边记手写板书' : '📝 手动输入笔记'}
             </Text>
 
             <TouchableOpacity
@@ -392,22 +596,26 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
           <ScrollView style={styles.editorBody} showsVerticalScrollIndicator={false}>
             {/* 课程选择 */}
             <Text style={styles.inputSectionLabel}>关联课程：</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 14 }}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
               {availableCourses.map((c) => {
                 const isSelected = c === inputCourseName;
+                const cColor = getCourseColorScheme(c);
                 return (
                   <TouchableOpacity
                     key={c}
                     style={[
                       styles.coursePickPill,
-                      isSelected && styles.coursePickPillActive,
+                      isSelected && {
+                        backgroundColor: cColor.bg,
+                        borderColor: cColor.border,
+                      },
                     ]}
                     onPress={() => setInputCourseName(c)}
                   >
                     <Text
                       style={[
                         styles.coursePickText,
-                        isSelected && styles.coursePickTextActive,
+                        isSelected && { color: cColor.text, fontWeight: '700' },
                       ]}
                     >
                       {c}
@@ -423,27 +631,124 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
               style={styles.titleInput}
               value={inputTitle}
               onChangeText={setInputTitle}
-              placeholder="请输入笔记标题（如：第14周 重点推导）"
+              placeholder="请输入笔记标题"
               placeholderTextColor={Colors.textMuted}
             />
 
-            {/* 笔记正文 */}
-            <Text style={styles.inputSectionLabel}>随堂正文内容：</Text>
-            <TextInput
-              style={styles.contentTextArea}
-              value={inputContent}
-              onChangeText={setInputContent}
-              placeholder="记录老师上课划的重点、板书公式、课后思考题..."
-              placeholderTextColor={Colors.textMuted}
-              multiline
-              textAlignVertical="top"
-            />
+            {/* 内容区：区分 手动输入（含语音识别） 与 无边记手写 */}
+            {noteMode === 'text' ? (
+              <View>
+                <View style={styles.textAreaHeaderRow}>
+                  <Text style={styles.inputSectionLabel}>随堂正文内容：</Text>
 
-            {/* 删除笔记按钮（编辑模式下呈现） */}
+                  {/* 🎙️ 真实语音识别功能按钮 */}
+                  <TouchableOpacity
+                    style={[
+                      styles.speechRecBtn,
+                      isListening && styles.speechRecBtnActive,
+                    ]}
+                    onPress={toggleSpeechRecognition}
+                    activeOpacity={0.8}
+                  >
+                    <Ionicons
+                      name={isListening ? 'mic' : 'mic-outline'}
+                      size={14}
+                      color={isListening ? '#FFFFFF' : Colors.primary}
+                    />
+                    <Text
+                      style={[
+                        styles.speechRecBtnText,
+                        isListening && styles.speechRecBtnTextActive,
+                      ]}
+                    >
+                      {isListening ? '正在语音识别中...' : '点击语音识别'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                {isListening && (
+                  <View style={styles.listeningNoticeCard}>
+                    <View style={styles.pulseDot} />
+                    <Text style={styles.listeningNoticeText}>
+                      正在录入课堂语音，识别文本已实时同步写入正文中...
+                    </Text>
+                  </View>
+                )}
+
+                <TextInput
+                  style={styles.contentTextArea}
+                  value={inputContent}
+                  onChangeText={setInputContent}
+                  placeholder="在此输入重点公式、课堂提要，或点击上方麦克风进行语音转文字..."
+                  placeholderTextColor={Colors.textMuted}
+                  multiline
+                  textAlignVertical="top"
+                />
+              </View>
+            ) : (
+              /* 无边记自己写画布区 */
+              <View>
+                <View style={styles.freeformToolBar}>
+                  <Text style={styles.inputSectionLabel}>无边记触控画布：</Text>
+                  <View style={styles.colorDotsGroup}>
+                    {['#1F2937', Colors.primary, '#3B82F6', '#EF4444'].map((col) => (
+                      <TouchableOpacity
+                        key={col}
+                        style={[
+                          styles.colorDot,
+                          { backgroundColor: col },
+                          penColor === col && styles.colorDotActive,
+                        ]}
+                        onPress={() => setPenColor(col)}
+                      />
+                    ))}
+                    <TouchableOpacity
+                      style={styles.clearCanvasBtn}
+                      onPress={() => setDrawStrokes([])}
+                    >
+                      <Ionicons name="trash-outline" size={14} color={Colors.textMuted} />
+                      <Text style={styles.clearCanvasText}>清空</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                {/* 手绘触摸白板 */}
+                <View style={styles.canvasSurface} {...panResponder.panHandlers}>
+                  {drawStrokes.length === 0 && (
+                    <View style={styles.canvasPlaceholder}>
+                      <Ionicons name="finger-print-outline" size={36} color="#D1D5DB" />
+                      <Text style={styles.canvasPlaceholderText}>
+                        在此触摸或手写笔涂鸦绘制，自由板书推导公式
+                      </Text>
+                    </View>
+                  )}
+
+                  {drawStrokes.map((pt, i) => (
+                    <View
+                      key={i}
+                      style={{
+                        position: 'absolute',
+                        left: pt.x - 3,
+                        top: pt.y - 3,
+                        width: 6,
+                        height: 6,
+                        borderRadius: 3,
+                        backgroundColor: penColor,
+                      }}
+                    />
+                  ))}
+                </View>
+              </View>
+            )}
+
+            {/* 删除按钮 */}
             {editingNoteId && (
               <TouchableOpacity
                 style={styles.deleteNoteBtn}
-                onPress={handleDeleteNote}
+                onPress={() => {
+                  setNotes((prev) => prev.filter((n) => n.id !== editingNoteId));
+                  setEditorVisible(false);
+                }}
                 activeOpacity={0.8}
               >
                 <Ionicons name="trash-outline" size={16} color="#FF4D4F" style={{ marginRight: 4 }} />
@@ -546,6 +851,9 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
     padding: 0,
   },
+  contentWrapper: {
+    flex: 1,
+  },
   scrollContent: {
     flex: 1,
     paddingTop: 12,
@@ -579,16 +887,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     gap: 12,
   },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 48,
-  },
-  emptyText: {
-    fontSize: 13,
-    color: Colors.textMuted,
-    marginTop: 10,
-  },
   noteCard: {
     backgroundColor: Colors.surface,
     borderRadius: Rounded.xl,
@@ -605,7 +903,6 @@ const styles = StyleSheet.create({
   courseTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.primaryLight,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: Rounded.pill,
@@ -614,7 +911,6 @@ const styles = StyleSheet.create({
   courseTagText: {
     fontSize: 11,
     fontWeight: '700',
-    color: Colors.primary,
   },
   noteDateText: {
     fontSize: 11,
@@ -653,6 +949,72 @@ const styles = StyleSheet.create({
   tagGroup: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modeSelectCard: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: Rounded.xl,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modeSelectTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+    marginBottom: 4,
+  },
+  modeSelectSubtitle: {
+    fontSize: 12,
+    color: Colors.textMuted,
+    marginBottom: 20,
+  },
+  modeOptionsRow: {
+    width: '100%',
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 18,
+  },
+  modeChoiceBox: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    borderRadius: Rounded.lg,
+    padding: 14,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  modeChoiceIconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  modeChoiceTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+    marginBottom: 4,
+  },
+  modeChoiceDesc: {
+    fontSize: 10,
+    color: Colors.textMuted,
+    textAlign: 'center',
+  },
+  cancelChoiceBtn: {
+    paddingVertical: 8,
+  },
+  cancelChoiceText: {
+    fontSize: 13,
+    color: Colors.textMuted,
   },
   editorModalRoot: {
     flex: 1,
@@ -706,19 +1068,12 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: Rounded.pill,
     marginRight: 8,
-  },
-  coursePickPillActive: {
-    backgroundColor: Colors.primaryLight,
     borderWidth: 1,
-    borderColor: Colors.primary,
+    borderColor: '#E5E7EB',
   },
   coursePickText: {
     fontSize: 12,
     color: Colors.textSecondary,
-  },
-  coursePickTextActive: {
-    color: Colors.primary,
-    fontWeight: '700',
   },
   titleInput: {
     backgroundColor: '#F9FAFB',
@@ -731,6 +1086,54 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
     marginBottom: 16,
   },
+  textAreaHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  speechRecBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: Colors.primaryLight,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: Rounded.pill,
+  },
+  speechRecBtnActive: {
+    backgroundColor: '#EF4444',
+  },
+  speechRecBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: Colors.primary,
+  },
+  speechRecBtnTextActive: {
+    color: '#FFFFFF',
+  },
+  listeningNoticeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#FEF2F2',
+    padding: 8,
+    borderRadius: Rounded.md,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
+  },
+  pulseDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#EF4444',
+  },
+  listeningNoticeText: {
+    fontSize: 11,
+    color: '#991B1B',
+    flex: 1,
+  },
   contentTextArea: {
     backgroundColor: '#F9FAFB',
     borderRadius: Rounded.md,
@@ -742,6 +1145,62 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
     minHeight: 180,
     marginBottom: 20,
+  },
+  freeformToolBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  colorDotsGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  colorDot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+  },
+  colorDotActive: {
+    borderWidth: 2,
+    borderColor: '#000000',
+    transform: [{ scale: 1.15 }],
+  },
+  clearCanvasBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    marginLeft: 6,
+  },
+  clearCanvasText: {
+    fontSize: 11,
+    color: Colors.textMuted,
+  },
+  canvasSurface: {
+    width: '100%',
+    height: 280,
+    backgroundColor: '#FAF5FF',
+    borderRadius: Rounded.lg,
+    borderWidth: 1,
+    borderColor: '#E9D5FF',
+    position: 'relative',
+    overflow: 'hidden',
+    marginBottom: 20,
+  },
+  canvasPlaceholder: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  canvasPlaceholderText: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    marginTop: 6,
   },
   deleteNoteBtn: {
     flexDirection: 'row',

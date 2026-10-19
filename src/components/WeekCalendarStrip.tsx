@@ -1,41 +1,74 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors, Rounded } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 
-export interface WeekDayItem {
+export interface DynamicWeekDay {
   dayName: string;
   dayNumber: number;
   dateStr: string;
-  isToday?: boolean;
+  dayOfWeek: number; // 1-7 (1=周一, 7=周日)
+  isToday: boolean;
   isHoliday?: boolean;
-  holidayLabel?: string; // e.g. "休"
 }
 
 interface WeekCalendarStripProps {
   selectedDate: string;
-  onSelectDate: (dateStr: string) => void;
+  onSelectDate: (dateStr: string, dayOfWeek: number) => void;
 }
 
 export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
   selectedDate,
   onSelectDate,
 }) => {
-  const days: WeekDayItem[] = [
-    { dayName: '日', dayNumber: 19, dateStr: '2026-06-19', isHoliday: true, holidayLabel: '休' },
-    { dayName: '一', dayNumber: 20, dateStr: '2026-06-20' },
-    { dayName: '二', dayNumber: 21, dateStr: '2026-06-21' },
-    { dayName: '三', dayNumber: 22, dateStr: '2026-06-22', isToday: true },
-    { dayName: '四', dayNumber: 23, dateStr: '2026-06-23' },
-    { dayName: '五', dayNumber: 24, dateStr: '2026-06-24' },
-    { dayName: '六', dayNumber: 25, dateStr: '2026-06-25', isHoliday: true, holidayLabel: '休' },
-  ];
+  // 动态生成本周真实的 7 天日期（自动对齐周一到周日，自动定位真实今日）
+  const { days, monthLabel } = useMemo(() => {
+    const now = new Date();
+    const currentDay = now.getDay(); // 0 是周日, 1-6 是周一到周六
+    // 计算本周一的日期
+    const mondayDiff = currentDay === 0 ? -6 : 1 - currentDay;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + mondayDiff);
+
+    const dayNames = ['一', '二', '三', '四', '五', '六', '日'];
+    const generatedDays: DynamicWeekDay[] = [];
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const dayStr = String(d.getDate()).padStart(2, '0');
+      const dateStr = `${y}-${m}-${dayStr}`;
+
+      const isToday = d.toDateString() === now.toDateString();
+      // 周六、周日自动标休
+      const isHoliday = i === 5 || i === 6;
+
+      generatedDays.push({
+        dayName: dayNames[i],
+        dayNumber: d.getDate(),
+        dateStr,
+        dayOfWeek: i + 1,
+        isToday,
+        isHoliday,
+      });
+    }
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    return {
+      days: generatedDays,
+      monthLabel: `${year}.${month}`,
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <TouchableOpacity style={styles.monthSelector} activeOpacity={0.7}>
-          <Text style={styles.monthText}>2026.06</Text>
+          <Text style={styles.monthText}>{monthLabel}</Text>
           <Ionicons name="caret-down" size={12} color="#FFFFFF" style={{ marginLeft: 4 }} />
         </TouchableOpacity>
         <Text style={styles.weekIndicator}>第 14 周 · 夏学期</Text>
@@ -43,7 +76,7 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
 
       <View style={styles.daysRow}>
         {days.map((item) => {
-          const isSelected = item.dateStr === selectedDate;
+          const isSelected = item.dateStr === selectedDate || (item.isToday && !selectedDate);
           return (
             <TouchableOpacity
               key={item.dateStr}
@@ -51,7 +84,7 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
                 styles.dayItem,
                 isSelected && styles.dayItemSelected,
               ]}
-              onPress={() => onSelectDate(item.dateStr)}
+              onPress={() => onSelectDate(item.dateStr, item.dayOfWeek)}
               activeOpacity={0.8}
             >
               {/* 休假标识标签 */}
@@ -62,9 +95,7 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
                     isSelected ? styles.holidayBadgeSelected : styles.holidayBadgeNormal,
                   ]}
                 >
-                  <Text style={styles.holidayBadgeText}>
-                    {item.holidayLabel || '休'}
-                  </Text>
+                  <Text style={styles.holidayBadgeText}>休</Text>
                 </View>
               )}
 

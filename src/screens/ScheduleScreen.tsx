@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -17,12 +17,120 @@ import { WeekCalendarStrip } from '../components/WeekCalendarStrip';
 import { CourseCard } from '../components/CourseCard';
 import { WeekGridView } from '../components/WeekGridView';
 import { Course } from '../types/schedule';
-import { MOCK_IMPORTED_COURSES } from '../services/jwParser';
 import { AutoScheduleService, AutoDetectStatus } from '../services/autoScheduleDetector';
 
 interface ScheduleScreenProps {
   onNavigateToNotesTab?: (courseName: string) => void;
 }
+
+// 包含周一至周日完整一周的课程排期数据
+const FULL_WEEK_COURSES: Course[] = [
+  // 周一 (dayOfWeek = 1)
+  {
+    id: 'c-1',
+    name: '高等数学 (AI 与数据方向)',
+    teacher: '张晓华 教授',
+    location: '第一教学楼 A204',
+    dayOfWeek: 1,
+    startTime: '08:00',
+    endTime: '09:35',
+    stageTag: '必修大课 · 48课时 · 周一1-2节',
+    status: 'in_progress',
+    notesCount: 2,
+  },
+  {
+    id: 'c-2',
+    name: '计算机系统结构',
+    teacher: '王工 讲师',
+    location: '信息实验楼 301实验室',
+    dayOfWeek: 1,
+    startTime: '14:00',
+    endTime: '15:35',
+    stageTag: '核心基础 · 32课时 · 周一5-6节',
+    status: 'pending',
+    notesCount: 1,
+  },
+
+  // 周二 (dayOfWeek = 2)
+  {
+    id: 'c-3',
+    name: '大学英语写作与思辨',
+    teacher: 'Sarah 外教',
+    location: '外国语学院 405研讨室',
+    dayOfWeek: 2,
+    startTime: '10:00',
+    endTime: '11:35',
+    stageTag: '通识核心 · 32课时 · 周二3-4节',
+    status: 'pending',
+    notesCount: 0,
+  },
+
+  // 周三 (dayOfWeek = 3)
+  {
+    id: 'c-4',
+    name: '成人商务韩语谈判',
+    teacher: 'Jennifer 老师',
+    location: '国际交流中心 302',
+    dayOfWeek: 3,
+    startTime: '09:00',
+    endTime: '10:35',
+    stageTag: '进阶阶段 · 36课时 · 高阶',
+    status: 'pending',
+    notesCount: 3,
+  },
+  {
+    id: 'c-5',
+    name: 'TOPIK备考（留学专攻）',
+    teacher: 'Stefanee 讲师',
+    location: '同声传译实训室 401',
+    dayOfWeek: 3,
+    startTime: '13:30',
+    endTime: '15:05',
+    stageTag: '强化阶段 · 32课时 · 周三5-6节',
+    status: 'pending',
+    notesCount: 1,
+  },
+  {
+    id: 'c-6',
+    name: '韩语口语突破1v1',
+    teacher: 'Cipher 老师',
+    location: '在线协同音视频 2室',
+    dayOfWeek: 3,
+    startTime: '16:30',
+    endTime: '17:45',
+    stageTag: '培养阶段 · 24课时 · 入门',
+    status: 'pending',
+    notesCount: 0,
+  },
+
+  // 周四 (dayOfWeek = 4)
+  {
+    id: 'c-7',
+    name: '数据结构与算法',
+    teacher: '李院长',
+    location: '软件工程学院 208机房',
+    dayOfWeek: 4,
+    startTime: '08:00',
+    endTime: '09:35',
+    stageTag: '核心专业 · 48课时 · 周四1-2节',
+    status: 'pending',
+    notesCount: 4,
+  },
+
+  // 周五 (dayOfWeek = 5)
+  {
+    id: 'c-8',
+    name: '交互设计与UI艺术',
+    teacher: '陈总监',
+    location: '创新设计工坊 102艺术厅',
+    dayOfWeek: 5,
+    startTime: '10:00',
+    endTime: '12:25',
+    stageTag: '专业选修 · 36课时 · 周五3-5节',
+    status: 'pending',
+    notesCount: 2,
+  },
+];
 
 export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
   onNavigateToNotesTab,
@@ -33,84 +141,114 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     Platform.OS === 'android' ? (RNStatusBar.currentHeight || 36) : 44
   );
 
-  // 格式化今日真实日期 YYYY-MM-DD
-  const getTodayFormatted = () => {
-    const d = new Date();
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  // 获取今日真实日期与星期
+  const getTodayInfo = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
+    // getDay() 0是周日，对应星期数字 7，其它1-6
+    const dNum = now.getDay() === 0 ? 7 : now.getDay();
+    return { dateStr, dayOfWeek: dNum };
   };
 
-  // 视图模式：日视图 vs 周课表
+  // 模式：【今日】 vs 【周课表】（按要求将“日视图”改名为“今日”）
   const [scheduleViewMode, setScheduleViewMode] = useState<'day' | 'week'>('day');
-  const [selectedDate, setSelectedDate] = useState(getTodayFormatted());
-  const [courses, setCourses] = useState<Course[]>(MOCK_IMPORTED_COURSES);
 
-  // 自动识别与提醒 Toast 状态
-  const [autoStatus, setAutoStatus] = useState<AutoDetectStatus | null>(null);
+  // 当前选中日期与对应星期几 (默认自动严格锁定今天的真实日期)
+  const [selectedDate, setSelectedDate] = useState(() => getTodayInfo().dateStr);
+  const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<number>(() => getTodayInfo().dayOfWeek);
+
+  // 悬浮提醒 Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // 1. 每日 0:00 自动切换日期机制
+  // 页面向下平滑出现的淡入向下动画 (Downward Entrance Animation)
+  const dropAnim = useRef(new Animated.Value(-18)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const triggerEntranceAnimation = () => {
+    dropAnim.setValue(-18);
+    fadeAnim.setValue(0);
+    Animated.parallel([
+      Animated.spring(dropAnim, {
+        toValue: 0,
+        friction: 6,
+        tension: 80,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  // 页面初次加载时触发向下出现动画
   useEffect(() => {
-    const checkAndSwitchDate = () => {
-      setSelectedDate(getTodayFormatted());
+    triggerEntranceAnimation();
+  }, [scheduleViewMode]);
+
+  // 1. 每天 0:00 自动切换日期的机制
+  useEffect(() => {
+    const updateToRealToday = () => {
+      const today = getTodayInfo();
+      setSelectedDate(today.dateStr);
+      setSelectedDayOfWeek(today.dayOfWeek);
     };
 
-    // 初始化对齐当前日期
-    checkAndSwitchDate();
+    updateToRealToday();
 
-    // 计算距离今日午夜 00:00:01 的毫秒数
+    // 计算距离明日凌晨 00:00:01 的倒计时
     const now = new Date();
-    const tomorrowMidnight = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + 1,
-      0,
-      0,
-      1
-    );
-    const msUntilMidnight = tomorrowMidnight.getTime() - now.getTime();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1);
+    const msToMidnight = tomorrow.getTime() - now.getTime();
 
     const midnightTimer = setTimeout(() => {
-      checkAndSwitchDate();
-      // 随后每 24 小时检查一次
-      const dailyInterval = setInterval(checkAndSwitchDate, 24 * 60 * 60 * 1000);
-      return () => clearInterval(dailyInterval);
-    }, msUntilMidnight);
+      updateToRealToday();
+      const dailyTimer = setInterval(updateToRealToday, 24 * 60 * 60 * 1000);
+      return () => clearInterval(dailyTimer);
+    }, msToMidnight);
 
     return () => clearTimeout(midnightTimer);
   }, []);
 
-  // 2. 页面加载静默自动识别课表
-  useEffect(() => {
-    AutoScheduleService.detectScheduleSilently().then((res) => {
-      if (res.success) {
-        setCourses(res.data);
-        setAutoStatus(res.status);
-      }
-    });
-  }, []);
+  // 2. 切换日期处理函数（点击日历轴任意一天，立刻切换过滤出该天的课表）
+  const handleSelectDate = (dateStr: string, dayOfWeek: number) => {
+    setSelectedDate(dateStr);
+    setSelectedDayOfWeek(dayOfWeek);
+    triggerEntranceAnimation();
+  };
 
-  // 3. 点击接入提醒事项处理
+  // 3. 点击切换回“今日”模式时，自动复位到今天的日期
+  const handleSwitchToToday = () => {
+    setScheduleViewMode('day');
+    const today = getTodayInfo();
+    setSelectedDate(today.dateStr);
+    setSelectedDayOfWeek(today.dayOfWeek);
+    triggerEntranceAnimation();
+  };
+
+  // 4. 根据当前选中的星期几过滤出对应课程
+  const dayCourses = FULL_WEEK_COURSES.filter((c) => c.dayOfWeek === selectedDayOfWeek);
+
+  // 5. 点击接入系统提醒事项
   const handleToggleReminder = (course: Course, enabled: boolean) => {
     const msg = enabled
-      ? `🔔 已接入提醒事项：【${course.name}】课前 15 分钟准时提醒`
+      ? `🔔 已接入系统提醒事项：将在【${course.name}】课前15分钟提醒`
       : `🔕 已关闭【${course.name}】上课提醒`;
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // 计算本日剩余课数量
-  const remainingCount = courses.filter((c) => c.status !== 'completed').length;
-
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      {/* 顶部生机草木绿流体区域 (安全留出手机通知栏/灵动岛高度) */}
+      {/* 顶部生机草木绿流体区域 */}
       <View style={[styles.heroHeader, { paddingTop: topPadding + 6 }]}>
-        {/* 用户信息栏 & 日/周课表切换器 */}
+        {/* 用户信息与 【今日 | 周课表】 切换 */}
         <View style={styles.userInfoRow}>
           <View style={styles.userProfile}>
             <View style={styles.avatarCircle}>
@@ -118,20 +256,17 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
             </View>
             <View style={styles.userMeta}>
               <Text style={styles.greetingText}>哈娜宝贝本宝 ✏️</Text>
-              <Text style={styles.subGreetingText}>
-                今日 · 每天0:00自动对齐日程
-              </Text>
             </View>
           </View>
 
-          {/* 日视图 / 周课表 模式切换胶囊 */}
+          {/* 模式切换：今日 vs 周课表 (已将“日视图”按要求改为“今日”) */}
           <View style={styles.viewModeToggle}>
             <TouchableOpacity
               style={[
                 styles.modeBtn,
                 scheduleViewMode === 'day' && styles.modeBtnActive,
               ]}
-              onPress={() => setScheduleViewMode('day')}
+              onPress={handleSwitchToToday}
               activeOpacity={0.8}
             >
               <Text
@@ -140,7 +275,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                   scheduleViewMode === 'day' ? styles.modeBtnTextActive : styles.modeBtnTextInactive,
                 ]}
               >
-                日视图
+                今日
               </Text>
             </TouchableOpacity>
 
@@ -164,36 +299,33 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
           </View>
         </View>
 
-        {/* 本日剩余课卡片 (日视图下展示) */}
+        {/* 仅保留：本日剩余课（已彻底去除副标题文案） */}
         {scheduleViewMode === 'day' && (
           <View style={styles.todayRemainingCard}>
             <View style={styles.todayRemainingLeft}>
               <View style={styles.remainingIconCircle}>
                 <Ionicons name="time" size={16} color={Colors.primary} />
               </View>
-              <View>
-                <Text style={styles.todayRemainingLabel}>本日剩余课</Text>
-                <Text style={styles.todayRemainingSub}>课前 15 分钟系统提醒 · 关联随堂知识库</Text>
-              </View>
+              <Text style={styles.todayRemainingLabel}>本日剩余课</Text>
             </View>
 
             <View style={styles.todayRemainingRight}>
-              <Text style={styles.todayRemainingNumber}>{remainingCount}</Text>
+              <Text style={styles.todayRemainingNumber}>{dayCourses.length}</Text>
               <Text style={styles.todayRemainingUnit}>节</Text>
             </View>
           </View>
         )}
 
-        {/* 7 天横滑日历轴 (支持休假标识) */}
+        {/* 7 天横滑日历轴 (支持休假标识，自动定位高亮真实今日) */}
         {scheduleViewMode === 'day' && (
           <WeekCalendarStrip
             selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
+            onSelectDate={handleSelectDate}
           />
         )}
       </View>
 
-      {/* 悬浮接入提醒事项 Toast 反馈 */}
+      {/* 提醒事项 Toast 浮条 */}
       {toastMessage && (
         <View style={styles.toastFloatBar}>
           <Ionicons name="information-circle" size={16} color="#FFFFFF" />
@@ -201,60 +333,82 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
         </View>
       )}
 
-      {/* 核心内容区 */}
-      {scheduleViewMode === 'day' ? (
-        <ScrollView
-          style={styles.dayScrollArea}
-          showsVerticalScrollIndicator={false}
-          bounces={true}
-        >
-          <View style={styles.scheduleSection}>
-            <View style={styles.scheduleHeaderRow}>
-              <View style={styles.scheduleTitleGroup}>
-                <Text style={styles.scheduleSectionTitle}>今日课表安排</Text>
-                <View style={styles.courseCountBadge}>
-                  <Text style={styles.courseCountText}>{courses.length} 门课</Text>
+      {/* 核心内容区（带向下出现的平滑动画） */}
+      <Animated.View
+        style={[
+          styles.animatedContentWrapper,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY: dropAnim }],
+          },
+        ]}
+      >
+        {scheduleViewMode === 'day' ? (
+          <ScrollView
+            style={styles.dayScrollArea}
+            showsVerticalScrollIndicator={false}
+            bounces={true}
+          >
+            <View style={styles.scheduleSection}>
+              <View style={styles.scheduleHeaderRow}>
+                <View style={styles.scheduleTitleGroup}>
+                  <Text style={styles.scheduleSectionTitle}>
+                    {selectedDayOfWeek === getTodayInfo().dayOfWeek ? '今日课表安排' : '当日课表安排'}
+                  </Text>
+                  <View style={styles.courseCountBadge}>
+                    <Text style={styles.courseCountText}>{dayCourses.length} 门课</Text>
+                  </View>
+                </View>
+
+                <View style={styles.syncStatusBadge}>
+                  <Ionicons name="flash" size={12} color={Colors.primary} />
+                  <Text style={styles.syncStatusText}>教务已自动同步</Text>
                 </View>
               </View>
 
-              <View style={styles.syncStatusBadge}>
-                <Ionicons name="flash" size={12} color={Colors.primary} />
-                <Text style={styles.syncStatusText}>教务已自动识别同步</Text>
-              </View>
+              {/* 当天课程列表：随选中日期动态切换 */}
+              {dayCourses.length === 0 ? (
+                <View style={[styles.weekendRestCard, Shadows.card]}>
+                  <Text style={{ fontSize: 36, marginBottom: 8 }}>🏖️</Text>
+                  <Text style={styles.restTitle}>本日无课程安排</Text>
+                  <Text style={styles.restSub}>
+                    尽情享受休假时光，或者去知识库回顾本周随堂笔记
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.timelineList}>
+                  {dayCourses.map((course, index) => (
+                    <CourseCard
+                      key={course.id}
+                      course={course}
+                      isLast={index === dayCourses.length - 1}
+                      onNavigateToNotes={(c) => {
+                        if (onNavigateToNotesTab) {
+                          onNavigateToNotesTab(c.name);
+                        }
+                      }}
+                      onToggleReminder={handleToggleReminder}
+                    />
+                  ))}
+                </View>
+              )}
             </View>
 
-            {/* 时间轴与大圆角课程卡片 (点击记笔记直接打开笔记页面) */}
-            <View style={styles.timelineList}>
-              {courses.map((course, index) => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  isLast={index === courses.length - 1}
-                  onNavigateToNotes={(c) => {
-                    if (onNavigateToNotesTab) {
-                      onNavigateToNotesTab(c.name);
-                    }
-                  }}
-                  onToggleReminder={handleToggleReminder}
-                />
-              ))}
-            </View>
+            <View style={{ height: 32 }} />
+          </ScrollView>
+        ) : (
+          /* 周课表全景网格视图 */
+          <View style={styles.weekGridWrapper}>
+            <WeekGridView
+              onOpenNote={(courseName) => {
+                if (onNavigateToNotesTab) {
+                  onNavigateToNotesTab(courseName);
+                }
+              }}
+            />
           </View>
-
-          <View style={{ height: 28 }} />
-        </ScrollView>
-      ) : (
-        /* 周课表全景大网格视图 (支持双指放大、位置完整换行、左下角教师名) */
-        <View style={styles.weekGridWrapper}>
-          <WeekGridView
-            onOpenNote={(courseName) => {
-              if (onNavigateToNotesTab) {
-                onNavigateToNotesTab(courseName);
-              }
-            }}
-          />
-        </View>
-      )}
+        )}
+      </Animated.View>
     </View>
   );
 };
@@ -306,14 +460,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   greetingText: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
     color: '#FFFFFF',
-  },
-  subGreetingText: {
-    fontSize: 11,
-    color: 'rgba(255, 255, 255, 0.88)',
-    marginTop: 2,
   },
   viewModeToggle: {
     flexDirection: 'row',
@@ -323,7 +472,7 @@ const styles = StyleSheet.create({
   },
   modeBtn: {
     paddingVertical: 6,
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     borderRadius: Rounded.pill,
   },
   modeBtnActive: {
@@ -353,7 +502,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderRadius: Rounded.lg,
     paddingVertical: 12,
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     marginBottom: 8,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.25)',
@@ -372,14 +521,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   todayRemainingLabel: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '700',
     color: '#FFFFFF',
-  },
-  todayRemainingSub: {
-    fontSize: 10,
-    color: 'rgba(255, 255, 255, 0.85)',
-    marginTop: 1,
   },
   todayRemainingRight: {
     flexDirection: 'row',
@@ -417,6 +561,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#FFFFFF',
     fontWeight: '600',
+    flex: 1,
+  },
+  animatedContentWrapper: {
     flex: 1,
   },
   dayScrollArea: {
@@ -469,6 +616,26 @@ const styles = StyleSheet.create({
   },
   timelineList: {
     paddingLeft: 4,
+  },
+  weekendRestCard: {
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 16,
+    borderRadius: Rounded.xl,
+    paddingVertical: 36,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  restTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+    marginBottom: 6,
+  },
+  restSub: {
+    fontSize: 12,
+    color: Colors.textMuted,
+    textAlign: 'center',
   },
   weekGridWrapper: {
     flex: 1,

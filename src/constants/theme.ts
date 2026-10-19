@@ -76,3 +76,26 @@ export const Shadows = {
     elevation: 8,
   },
 };
+
+/**
+ * 根据课程名称获取周课表对应的专属颜色方案 (背景/边框/字体)
+ */
+export const getCourseColorScheme = (name: string) => {
+  if (name.includes('数学') || name.includes('口语')) {
+    return { bg: Colors.courseBlueBg, border: Colors.courseBlueBorder, text: Colors.courseBlueText };
+  }
+  if (name.includes('韩语') || name.includes('设计') || name.includes('交互')) {
+    return { bg: Colors.courseGreenBg, border: Colors.courseGreenBorder, text: Colors.courseGreenText };
+  }
+  if (name.includes('系统') || name.includes('算法') || name.includes('结构')) {
+    return { bg: Colors.coursePurpleBg, border: Colors.coursePurpleBorder, text: Colors.coursePurpleText };
+  }
+  if (name.includes('英语') || name.includes('写作')) {
+    return { bg: Colors.courseAmberBg, border: Colors.courseAmberBorder, text: Colors.courseAmberText };
+  }
+  if (name.includes('TOPIK') || name.includes('专攻')) {
+    return { bg: Colors.coursePinkBg, border: Colors.coursePinkBorder, text: Colors.coursePinkText };
+  }
+  return { bg: Colors.courseBlueBg, border: Colors.courseBlueBorder, text: Colors.courseBlueText };
+};
+
