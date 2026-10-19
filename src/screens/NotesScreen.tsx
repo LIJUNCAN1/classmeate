@@ -521,13 +521,10 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* 顶部生机草木绿流体区域（按用户要求保留原本的顶部绿色） */}
-      <View style={[styles.heroHeader, { paddingTop: topPadding + 10 }]}>
+      {/* 顶部生机草木绿流体区域（标准统一头部高度与坐标） */}
+      <View style={[styles.heroHeader, { paddingTop: topPadding + 8 }]}>
         <View style={styles.headerTopRow}>
-          <View>
-            <Text style={styles.headerGreeting}>随堂笔记库</Text>
-            <Text style={styles.headerSub}>课表驱动知识流</Text>
-          </View>
+          <Text style={styles.screenMainTitle}>笔记</Text>
 
           <View style={styles.headerActionBtns}>
             {/* 无边记快捷入口（图标与文字上下居中对齐） */}
@@ -1242,12 +1239,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    height: 38,
+    minHeight: 38,
+  },
+  screenMainTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: -0.3,
+    lineHeight: 28,
   },
   headerGreeting: {
     fontSize: 22,
     fontWeight: '800',
     color: '#FFFFFF',
     letterSpacing: -0.3,
+    lineHeight: 28,
   },
   headerSub: {
     fontSize: 12,

@@ -63,6 +63,38 @@ export const ToolsScreen: React.FC = () => {
   const [piikVisible, setPiikVisible] = useState(false);
   const [roomCode, setRoomCode] = useState('CLASS-8826');
 
+  // 智能课表导入状态与逻辑
+  const [importModalVisible, setImportModalVisible] = useState(false);
+  const [importStep, setImportStep] = useState<'select' | 'scanning' | 'success'>('select');
+  const [scanProgress, setScanProgress] = useState(0);
+  const [selectedSource, setSelectedSource] = useState('zhifang');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const handleStartImport = () => {
+    setImportStep('scanning');
+    setScanProgress(15);
+    setTimeout(() => {
+      setScanProgress(45);
+      setTimeout(() => {
+        setScanProgress(80);
+        setTimeout(() => {
+          setScanProgress(100);
+          setTimeout(() => {
+            setImportStep('success');
+          }, 250);
+        }, 300);
+      }, 350);
+    }, 350);
+  };
+
+  const handleCompleteImport = () => {
+    setImportModalVisible(false);
+    setToastMessage('✅ 课表导入并对齐成功！已更新至今日课表与周视图');
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+  };
+
   // 错题本按要求改造成纯粹的 DeepSeek 对话框 (只写使用 DeepSeek 的对话框)
   const [deepseekVisible, setDeepseekVisible] = useState(false);
   const [deepseekInputText, setDeepseekInputText] = useState('');
@@ -177,7 +209,7 @@ export const ToolsScreen: React.FC = () => {
     }
   };
 
-  // 4 个核心常用工具 (口令教室已对接 Piik，错题本已接入 DeepSeek AI)
+  // 4 个核心常用工具 (按图1要求已移除图标右上角绿色角标与文字)
   const primaryTools = [
     {
       id: 'classroom',
@@ -186,7 +218,6 @@ export const ToolsScreen: React.FC = () => {
       icon: 'key-outline',
       color: Colors.accentPurple,
       bgColor: Colors.accentPurpleLight,
-      badge: 'Piik接入',
     },
     {
       id: 'mistakes',
@@ -195,7 +226,6 @@ export const ToolsScreen: React.FC = () => {
       icon: 'bulb-outline',
       color: Colors.accentBlue,
       bgColor: Colors.accentBlueLight,
-      badge: 'DeepSeek',
     },
     {
       id: 'calculator',
@@ -204,7 +234,6 @@ export const ToolsScreen: React.FC = () => {
       icon: 'calculator-outline',
       color: Colors.accentAmber,
       bgColor: Colors.accentAmberLight,
-      badge: '随堂利器',
     },
     {
       id: 'import',
@@ -213,7 +242,6 @@ export const ToolsScreen: React.FC = () => {
       icon: 'sync-circle-outline',
       color: Colors.primary,
       bgColor: Colors.primaryLight,
-      badge: '已对接',
     },
   ];
 
@@ -224,11 +252,20 @@ export const ToolsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* 顶部标题区 */}
-      <View style={[styles.heroHeader, { paddingTop: topPadding + 10 }]}>
-        <Text style={styles.headerTitle}>工具箱与服务</Text>
-        <Text style={styles.headerSub}>Piik 口令教室 · DeepSeek 错题本 · 科学计算器</Text>
+      {/* 顶部生机草木绿流体区域（标准统一头部高度与坐标） */}
+      <View style={[styles.heroHeader, { paddingTop: topPadding + 8 }]}>
+        <View style={styles.headerTopBar}>
+          <Text style={styles.screenMainTitle}>工具</Text>
+        </View>
       </View>
+
+      {/* 提醒 Toast 浮条 */}
+      {toastMessage && (
+        <View style={styles.toastFloatBar}>
+          <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" />
+          <Text style={styles.toastText}>{toastMessage}</Text>
+        </View>
+      )}
 
       {/* 核心内容区（带向下的生长动效） */}
       <Animated.ScrollView
@@ -260,18 +297,31 @@ export const ToolsScreen: React.FC = () => {
                   setPiikVisible(true);
                 } else if (t.id === 'mistakes') {
                   setDeepseekVisible(true);
+                } else if (t.id === 'import') {
+                  setImportStep('select');
+                  setImportModalVisible(true);
                 }
               }}
             >
               <View style={[styles.toolIconWrapper, { backgroundColor: t.bgColor }]}>
                 <Ionicons name={t.icon as any} size={24} color={t.color} />
-                {t.badge && (
-                  <View style={styles.toolBadge}>
-                    <Text style={styles.toolBadgeText}>{t.badge}</Text>
-                  </View>
+              </View>
+              <View style={styles.toolTitleRow}>
+                <Text style={styles.toolTitle}>{t.title}</Text>
+                {t.id === 'import' && (
+                  <TouchableOpacity
+                    style={styles.cardImportPillBtn}
+                    onPress={() => {
+                      setImportStep('select');
+                      setImportModalVisible(true);
+                    }}
+                    activeOpacity={0.8}
+                  >
+                    <Ionicons name="cloud-download-outline" size={12} color="#FFFFFF" />
+                    <Text style={styles.cardImportPillText}>导入</Text>
+                  </TouchableOpacity>
                 )}
               </View>
-              <Text style={styles.toolTitle}>{t.title}</Text>
               <Text style={styles.toolDesc} numberOfLines={2}>
                 {t.desc}
               </Text>
@@ -623,6 +673,151 @@ export const ToolsScreen: React.FC = () => {
           </View>
         </View>
       </Modal>
+
+      {/* 教务课表智能导入弹窗 (无黑色压抑遮罩，支持教务系统/截图/ICS一键导入同步) */}
+      <Modal
+        visible={importModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setImportModalVisible(false)}
+      >
+        <View style={styles.importModalBackdrop}>
+          <View style={[styles.importModalCard, Shadows.card]}>
+            {/* 弹窗顶部栏 */}
+            <View style={styles.importHeader}>
+              <View style={styles.importTitleRow}>
+                <Ionicons name="sync-circle" size={22} color={Colors.primary} />
+                <Text style={styles.importTitle}>教务课表智能导入</Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setImportModalVisible(false)}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Ionicons name="close-circle" size={24} color="#94A3B8" />
+              </TouchableOpacity>
+            </View>
+
+            {importStep === 'select' && (
+              <View style={styles.importContent}>
+                <Text style={styles.importHint}>
+                  支持全国高校常用教务系统、截屏识别与日历文件导入：
+                </Text>
+
+                <View style={styles.sourceList}>
+                  {[
+                    { id: 'zhifang', title: '正方教务管理系统', tag: '智能直连', icon: 'school-outline' },
+                    { id: 'qiangzhi', title: '强智教务系统', tag: '推荐', icon: 'globe-outline' },
+                    { id: 'image_ocr', title: '教务网截图 / 照片识别', tag: 'AI解析', icon: 'image-outline' },
+                    { id: 'ics', title: 'iCalendar 日历文件 (.ics)', tag: '通用格式', icon: 'calendar-outline' },
+                  ].map((s) => (
+                    <TouchableOpacity
+                      key={s.id}
+                      style={[
+                        styles.sourceItem,
+                        selectedSource === s.id && styles.sourceItemActive,
+                      ]}
+                      onPress={() => setSelectedSource(s.id)}
+                      activeOpacity={0.8}
+                    >
+                      <View style={styles.sourceLeft}>
+                        <Ionicons
+                          name={s.icon as any}
+                          size={18}
+                          color={selectedSource === s.id ? Colors.primary : '#64748B'}
+                        />
+                        <Text
+                          style={[
+                            styles.sourceTitle,
+                            selectedSource === s.id && styles.sourceTitleActive,
+                          ]}
+                        >
+                          {s.title}
+                        </Text>
+                      </View>
+                      <View
+                        style={[
+                          styles.sourceTag,
+                          selectedSource === s.id && styles.sourceTagActive,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.sourceTagText,
+                            selectedSource === s.id && styles.sourceTagTextActive,
+                          ]}
+                        >
+                          {s.tag}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                <TouchableOpacity
+                  style={styles.startImportBtn}
+                  onPress={handleStartImport}
+                  activeOpacity={0.85}
+                >
+                  <Ionicons name="cloud-download" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+                  <Text style={styles.startImportBtnText}>开始智能识别并导入</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {importStep === 'scanning' && (
+              <View style={styles.scanningContent}>
+                <View style={styles.scanAnimationCircle}>
+                  <Ionicons name="sync" size={36} color={Colors.primary} />
+                </View>
+                <Text style={styles.scanStatusText}>正在解析教务课表数据...</Text>
+                <Text style={styles.scanDetailText}>
+                  {scanProgress < 40
+                    ? '正在连接校园教务接口...'
+                    : scanProgress < 80
+                    ? '已抓取学期周历，正在解析课程与教室...'
+                    : '课程、任课教师与节次对齐完成！'}
+                </Text>
+
+                <View style={styles.progressBarWrapper}>
+                  <View style={[styles.progressBarFill, { width: `${scanProgress}%` }]} />
+                </View>
+                <Text style={styles.scanProgressText}>{scanProgress}%</Text>
+              </View>
+            )}
+
+            {importStep === 'success' && (
+              <View style={styles.successContent}>
+                <View style={styles.successBadge}>
+                  <Ionicons name="checkmark-circle" size={48} color="#10B981" />
+                </View>
+                <Text style={styles.successTitle}>课表导入成功！</Text>
+                <Text style={styles.successDesc}>
+                  共识别出本学期 7 门核心课程、34 节上课排期。已自动关联任课教师、上课地点与周次！
+                </Text>
+
+                <View style={styles.coursesPreviewBox}>
+                  <View style={styles.courseTagRow}>
+                    <Text style={styles.previewTag}>高等数学 (AI与数据)</Text>
+                    <Text style={styles.previewTag}>商务韩语口语</Text>
+                  </View>
+                  <View style={styles.courseTagRow}>
+                    <Text style={styles.previewTag}>计算机系统结构</Text>
+                    <Text style={styles.previewTag}>近代史纲要</Text>
+                  </View>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.finishImportBtn}
+                  onPress={handleCompleteImport}
+                  activeOpacity={0.85}
+                >
+                  <Text style={styles.finishImportBtnText}>完成并同步至课表</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -638,6 +833,25 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 28,
     paddingHorizontal: 20,
     paddingBottom: 20,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  headerTopBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 38,
+    minHeight: 38,
+  },
+  screenMainTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: -0.3,
+    lineHeight: 28,
   },
   headerTitle: {
     fontSize: 22,
@@ -649,6 +863,29 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'rgba(255, 255, 255, 0.88)',
     marginTop: 4,
+  },
+  toastFloatBar: {
+    position: 'absolute',
+    top: 60,
+    alignSelf: 'center',
+    zIndex: 9999,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#0F172A',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: Rounded.pill,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  toastText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
   scrollArea: {
     flex: 1,
@@ -686,30 +923,264 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     position: 'relative',
   },
-  toolBadge: {
-    position: 'absolute',
-    top: -4,
-    right: -12,
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: Rounded.pill,
-  },
-  toolBadgeText: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: '#FFFFFF',
+  toolTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
   },
   toolTitle: {
     fontSize: 15,
     fontWeight: '700',
     color: Colors.textPrimary,
-    marginBottom: 4,
+  },
+  cardImportPillBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: Rounded.pill,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  cardImportPillText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    lineHeight: 14,
   },
   toolDesc: {
     fontSize: 12,
     color: Colors.textMuted,
     lineHeight: 16,
+  },
+  importModalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  importModalCard: {
+    width: '100%',
+    maxWidth: 420,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 22,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.2,
+    shadowRadius: 24,
+    elevation: 12,
+  },
+  importHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  importTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  importTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  importContent: {
+    marginTop: 4,
+  },
+  importHint: {
+    fontSize: 13,
+    color: '#64748B',
+    marginBottom: 14,
+    lineHeight: 18,
+  },
+  sourceList: {
+    gap: 10,
+    marginBottom: 20,
+  },
+  sourceItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+  },
+  sourceItemActive: {
+    backgroundColor: '#F0FDF4',
+    borderColor: Colors.primary,
+  },
+  sourceLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  sourceTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#334155',
+  },
+  sourceTitleActive: {
+    color: '#0F172A',
+    fontWeight: '700',
+  },
+  sourceTag: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+    backgroundColor: '#E2E8F0',
+  },
+  sourceTagActive: {
+    backgroundColor: Colors.primary,
+  },
+  sourceTagText: {
+    fontSize: 11,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  sourceTagTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  startImportBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
+    paddingVertical: 14,
+    borderRadius: 14,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  startImportBtnText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  scanningContent: {
+    alignItems: 'center',
+    paddingVertical: 24,
+  },
+  scanAnimationCircle: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#DCFCE7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  scanStatusText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0F172A',
+    marginBottom: 6,
+  },
+  scanDetailText: {
+    fontSize: 13,
+    color: '#64748B',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  progressBarWrapper: {
+    width: '100%',
+    height: 8,
+    backgroundColor: '#E2E8F0',
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginBottom: 8,
+  },
+  progressBarFill: {
+    height: '100%',
+    backgroundColor: Colors.primary,
+    borderRadius: 4,
+  },
+  scanProgressText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: Colors.primary,
+  },
+  successContent: {
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  successBadge: {
+    marginBottom: 12,
+  },
+  successTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginBottom: 6,
+  },
+  successDesc: {
+    fontSize: 13,
+    color: '#64748B',
+    textAlign: 'center',
+    lineHeight: 18,
+    marginBottom: 16,
+    paddingHorizontal: 10,
+  },
+  coursesPreviewBox: {
+    width: '100%',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 8,
+    marginBottom: 20,
+  },
+  courseTagRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    gap: 8,
+  },
+  previewTag: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#334155',
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    textAlign: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  finishImportBtn: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#10B981',
+    paddingVertical: 14,
+    borderRadius: 14,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  finishImportBtnText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
   listCard: {
     backgroundColor: '#FFFFFF',

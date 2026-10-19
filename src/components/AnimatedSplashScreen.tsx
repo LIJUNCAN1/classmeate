@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Image, Text, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, Animated, Image, Text, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -68,33 +68,27 @@ export const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({ onFi
   }, [fadeAnim, scaleAnim, floatAnim, textFadeAnim, onFinish]);
 
   return (
-    <TouchableWithoutFeedback onPress={onFinish}>
-      <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-        <Animated.View
-          style={[
-            styles.logoWrapper,
-            {
-              transform: [{ scale: scaleAnim }, { translateY: floatAnim }],
-            },
-          ]}
-        >
-          <Image
-            source={require('../../assets/splash-monster.png')}
-            style={styles.logoImage}
-            resizeMode="contain"
-          />
-        </Animated.View>
-
-        <Animated.View style={[styles.titleWrapper, { opacity: textFadeAnim }]}>
-          <Text style={styles.brandTitle}>Classmeate</Text>
-          <Text style={styles.brandSubtitle}>课表驱动知识流 · 随堂全景学习</Text>
-        </Animated.View>
-
-        <View style={styles.footerNote}>
-          <Text style={styles.footerText}>点击任意处可跳过</Text>
-        </View>
+    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+      <Animated.View
+        style={[
+          styles.logoWrapper,
+          {
+            transform: [{ scale: scaleAnim }, { translateY: floatAnim }],
+          },
+        ]}
+      >
+        <Image
+          source={require('../../assets/splash-monster.png')}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
       </Animated.View>
-    </TouchableWithoutFeedback>
+
+      <Animated.View style={[styles.titleWrapper, { opacity: textFadeAnim }]}>
+        <Text style={styles.brandTitle}>Classmeate</Text>
+        <Text style={styles.brandSubtitle}>课表驱动知识流 · 随堂全景学习</Text>
+      </Animated.View>
+    </Animated.View>
   );
 };
 

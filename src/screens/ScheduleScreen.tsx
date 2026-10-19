@@ -343,8 +343,8 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      {/* 顶部生机草木绿流体区域 */}
-      <View style={[styles.heroHeader, { paddingTop: topPadding + 6 }]}>
+      {/* 顶部生机草木绿流体区域（标准统一头部高度与坐标） */}
+      <View style={[styles.heroHeader, { paddingTop: topPadding + 8 }]}>
         {/* 用户信息与 【今日 | 周课表】 切换 */}
         <View style={styles.userInfoRow}>
           <Text style={styles.screenMainTitle}>课程表</Text>
@@ -829,7 +829,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
+    height: 38,
+    minHeight: 38,
     marginBottom: 12,
   },
   userProfile: {
@@ -971,6 +973,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#FFFFFF',
     letterSpacing: -0.3,
+    lineHeight: 28,
   },
   scheduleSection: {
     paddingTop: 16,
