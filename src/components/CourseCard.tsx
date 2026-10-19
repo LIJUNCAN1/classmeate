@@ -3,58 +3,30 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors, Rounded, Shadows } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { Course } from '../types/schedule';
+import { AnimatedCheckmark } from './AnimatedCheckmark';
 
 interface CourseCardProps {
   course: Course;
   isLast?: boolean;
-  onOpenNotes?: (course: Course) => void;
+  onNavigateToNotes?: (course: Course) => void;
+  onToggleReminder?: (course: Course, enabled: boolean) => void;
 }
 
 export const CourseCard: React.FC<CourseCardProps> = ({
   course,
   isLast = false,
-  onOpenNotes,
+  onNavigateToNotes,
+  onToggleReminder,
 }) => {
-  const [expanded, setExpanded] = useState(false);
+  // 提醒状态（已开启提醒 / 未开启提醒）
+  const [reminderActive, setReminderActive] = useState(course.status === 'in_progress');
+  const hasNotes = course.notesCount > 0;
 
-  // 状态胶囊配置
-  const renderStatusButton = () => {
-    switch (course.status) {
-      case 'in_progress':
-        return (
-          <TouchableOpacity
-            style={[styles.statusBtn, styles.statusBtnLive]}
-            activeOpacity={0.8}
-          >
-            <View style={styles.livePulseDot} />
-            <Text style={styles.statusTextLive}>上课中</Text>
-          </TouchableOpacity>
-        );
-      case 'completed':
-        return (
-          <View style={[styles.statusBtn, styles.statusBtnDisabled]}>
-            <Text style={styles.statusTextDisabled}>已预约</Text>
-          </View>
-        );
-      case 'booked':
-        return (
-          <TouchableOpacity
-            style={[styles.statusBtn, styles.statusBtnSecondary]}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.statusTextSecondary}>已选课</Text>
-          </TouchableOpacity>
-        );
-      case 'pending':
-      default:
-        return (
-          <TouchableOpacity
-            style={[styles.statusBtn, styles.statusBtnPrimary]}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.statusTextPrimary}>预约</Text>
-          </TouchableOpacity>
-        );
+  const handleReminderPress = () => {
+    const nextState = !reminderActive;
+    setReminderActive(nextState);
+    if (onToggleReminder) {
+      onToggleReminder(course, nextState);
     }
   };
 
@@ -78,15 +50,43 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               <Text style={styles.stageTagText}>{course.stageTag}</Text>
             )}
           </View>
-          {renderStatusButton()}
+
+          {/* 状态与接入提醒事项胶囊按钮 */}
+          {course.status === 'in_progress' ? (
+            <View style={[styles.statusBtn, styles.statusBtnLive]}>
+              <View style={styles.livePulseDot} />
+              <Text style={styles.statusTextLive}>上课中</Text>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={[
+                styles.reminderBtn,
+                reminderActive ? styles.reminderBtnActive : styles.reminderBtnInactive,
+              ]}
+              onPress={handleReminderPress}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name={reminderActive ? 'notifications' : 'notifications-outline'}
+                size={13}
+                color={reminderActive ? '#FFFFFF' : Colors.primary}
+                style={{ marginRight: 3 }}
+              />
+              <Text
+                style={[
+                  styles.reminderBtnText,
+                  reminderActive ? styles.reminderBtnTextActive : styles.reminderBtnTextInactive,
+                ]}
+              >
+                {reminderActive ? '已提醒' : '提醒'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
-        {/* 讲师与地点详情 */}
+        {/* 讲师与地点详情 (已彻底去除前面的 CN、国旗等前缀) */}
         <View style={styles.detailsRow}>
           <View style={styles.teacherBadge}>
-            {course.countryFlag && (
-              <Text style={styles.flagEmoji}>{course.countryFlag}</Text>
-            )}
             <Text style={styles.teacherName}>{course.teacher}</Text>
             {course.rating && (
               <View style={styles.ratingPill}>
@@ -102,50 +102,31 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           </View>
         </View>
 
-        {/* Classmeate 核心特色：课表深度绑定笔记 */}
+        {/* 笔记状态栏：一笔画勾动画 + 只显示有或没有笔记 + 点击直接打开笔记页面 */}
         <View style={styles.noteDivider} />
         <TouchableOpacity
           style={styles.noteFooter}
-          onPress={() => {
-            setExpanded(!expanded);
-            if (onOpenNotes) onOpenNotes(course);
-          }}
+          onPress={() => onNavigateToNotes && onNavigateToNotes(course)}
           activeOpacity={0.7}
         >
-          <View style={styles.noteCountArea}>
-            <Ionicons name="document-text" size={14} color={Colors.primary} />
-            <Text style={styles.noteCountText}>
-              {course.notesCount > 0
-                ? `已沉淀 ${course.notesCount} 篇课堂笔记`
-                : '暂无笔记，点击随堂快记'}
+          <View style={styles.noteStatusLeft}>
+            {/* 一笔画成的勾动效组件 */}
+            <AnimatedCheckmark checked={hasNotes} size={18} />
+            <Text
+              style={[
+                styles.noteStatusText,
+                hasNotes ? styles.noteStatusTextActive : styles.noteStatusTextEmpty,
+              ]}
+            >
+              {hasNotes ? '已有课堂笔记' : '暂无笔记'}
             </Text>
           </View>
-          <View style={styles.noteActionPill}>
-            <Text style={styles.noteActionText}>
-              {expanded ? '收起' : '记笔记'}
-            </Text>
-            <Ionicons
-              name={expanded ? 'chevron-up' : 'chevron-forward'}
-              size={12}
-              color={Colors.primary}
-            />
+
+          <View style={styles.openNoteBtn}>
+            <Text style={styles.openNoteBtnText}>记笔记</Text>
+            <Ionicons name="chevron-forward" size={12} color={Colors.primary} />
           </View>
         </TouchableOpacity>
-
-        {/* 展开的轻量笔记预览/速记框 */}
-        {expanded && (
-          <View style={styles.expandedNoteArea}>
-            <Text style={styles.notePreviewTitle}>💡 上次课重点回顾：</Text>
-            <Text style={styles.notePreviewContent}>
-              • 核心语法句式及商务谈判破冰礼仪规范{'\n'}
-              • 下节课准备：研读第3章案例并携带课后练习册
-            </Text>
-            <TouchableOpacity style={styles.quickAddNoteBtn} activeOpacity={0.8}>
-              <Ionicons name="add-circle-outline" size={14} color="#FFFFFF" />
-              <Text style={styles.quickAddNoteText}>添加语音/板书速记</Text>
-            </TouchableOpacity>
-          </View>
-        )}
       </View>
     </View>
   );
@@ -210,30 +191,37 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     fontWeight: '400',
   },
-  statusBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-    borderRadius: Rounded.pill,
+  reminderBtn: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: Rounded.pill,
   },
-  statusBtnPrimary: {
+  reminderBtnActive: {
     backgroundColor: Colors.primary,
   },
-  statusTextPrimary: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  statusBtnSecondary: {
+  reminderBtnInactive: {
     backgroundColor: Colors.primaryLight,
     borderWidth: 1,
     borderColor: Colors.primaryBorder,
   },
-  statusTextSecondary: {
-    color: Colors.primary,
+  reminderBtnText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
+  },
+  reminderBtnTextActive: {
+    color: '#FFFFFF',
+  },
+  reminderBtnTextInactive: {
+    color: Colors.primary,
+  },
+  statusBtn: {
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: Rounded.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   statusBtnLive: {
     backgroundColor: Colors.accentPinkLight,
@@ -252,34 +240,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
   },
-  statusBtnDisabled: {
-    backgroundColor: '#F3F4F6',
-  },
-  statusTextDisabled: {
-    color: Colors.textMuted,
-    fontSize: 12,
-    fontWeight: '500',
-  },
   detailsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginBottom: 12,
     flexWrap: 'wrap',
     gap: 8,
   },
   teacherBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-  },
-  flagEmoji: {
-    fontSize: 13,
+    gap: 6,
   },
   teacherName: {
     fontSize: 13,
     color: Colors.textSecondary,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   ratingPill: {
     flexDirection: 'row',
@@ -301,69 +278,42 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   locationText: {
-    fontSize: 11,
+    fontSize: 12,
     color: Colors.textMuted,
   },
   noteDivider: {
     height: 1,
     backgroundColor: Colors.borderSubtle,
-    marginVertical: 8,
+    marginBottom: 10,
   },
   noteFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  noteCountArea: {
+  noteStatusLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
-  noteCountText: {
+  noteStatusText: {
     fontSize: 12,
-    color: Colors.textSecondary,
-    fontWeight: '500',
+    fontWeight: '600',
   },
-  noteActionPill: {
+  noteStatusTextActive: {
+    color: Colors.textPrimary,
+  },
+  noteStatusTextEmpty: {
+    color: Colors.textMuted,
+  },
+  openNoteBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 2,
   },
-  noteActionText: {
-    fontSize: 12,
+  openNoteBtnText: {
+    fontSize: 13,
     color: Colors.primary,
-    fontWeight: '600',
-  },
-  expandedNoteArea: {
-    backgroundColor: Colors.primaryLight,
-    borderRadius: Rounded.md,
-    padding: 10,
-    marginTop: 10,
-  },
-  notePreviewTitle: {
-    fontSize: 11,
     fontWeight: '700',
-    color: Colors.primary,
-    marginBottom: 3,
-  },
-  notePreviewContent: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-    lineHeight: 18,
-    marginBottom: 8,
-  },
-  quickAddNoteBtn: {
-    backgroundColor: Colors.primary,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    paddingVertical: 6,
-    borderRadius: Rounded.pill,
-  },
-  quickAddNoteText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
   },
 });

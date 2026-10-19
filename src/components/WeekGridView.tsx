@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Colors, Rounded, Shadows } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
-import { Course } from '../types/schedule';
+import { AnimatedCheckmark } from './AnimatedCheckmark';
 
 interface WeekCourseItem {
   id: string;
@@ -18,7 +18,7 @@ interface WeekCourseItem {
   location: string;
   day: number; // 1: 一, 2: 二, 3: 三, 4: 四, 5: 五, 6: 六, 7: 日
   startPeriod: number; // 1-10
-  span: number; // 几节连上，例如 2
+  span: number; // 节数跨度
   colorScheme: {
     bg: string;
     border: string;
@@ -27,19 +27,56 @@ interface WeekCourseItem {
   notesCount: number;
 }
 
-export const WeekGridView: React.FC = () => {
-  const [selectedCourse, setSelectedCourse] = useState<WeekCourseItem | null>(null);
+interface WeekGridViewProps {
+  onOpenNote?: (courseName: string, teacher: string) => void;
+}
 
-  // 星期表头定义
-  const weekColumns = [
-    { day: 1, name: '周一', date: '6/20' },
-    { day: 2, name: '周二', date: '6/21' },
-    { day: 3, name: '周三', date: '6/22', isToday: true },
-    { day: 4, name: '周四', date: '6/23' },
-    { day: 5, name: '周五', date: '6/24' },
-    { day: 6, name: '周六', date: '6/25', isHoliday: true },
-    { day: 7, name: '周日', date: '6/19', isHoliday: true },
-  ];
+export const WeekGridView: React.FC<WeekGridViewProps> = ({ onOpenNote }) => {
+  const [currentWeekIndex, setCurrentWeekIndex] = useState(14); // 第 14 周
+  const [selectedCourse, setSelectedCourse] = useState<WeekCourseItem | null>(null);
+  const [zoomScale, setZoomScale] = useState(1.0); // 缩放比例，支持双指放大
+
+  // 星期与日期定义（随周次切换动态计算）
+  const weekDatesMap: Record<number, { range: string; days: { day: number; name: string; date: string; isToday?: boolean; isHoliday?: boolean }[] }> = {
+    13: {
+      range: '06/13 - 06/19',
+      days: [
+        { day: 1, name: '周一', date: '6/13' },
+        { day: 2, name: '周二', date: '6/14' },
+        { day: 3, name: '周三', date: '6/15' },
+        { day: 4, name: '周四', date: '6/16' },
+        { day: 5, name: '周五', date: '6/17' },
+        { day: 6, name: '周六', date: '6/18', isHoliday: true },
+        { day: 7, name: '周日', date: '6/19', isHoliday: true },
+      ],
+    },
+    14: {
+      range: '06/20 - 06/26',
+      days: [
+        { day: 1, name: '周一', date: '6/20' },
+        { day: 2, name: '周二', date: '6/21' },
+        { day: 3, name: '周三', date: '6/22', isToday: true },
+        { day: 4, name: '周四', date: '6/23' },
+        { day: 5, name: '周五', date: '6/24' },
+        { day: 6, name: '周六', date: '6/25', isHoliday: true },
+        { day: 7, name: '周日', date: '6/26', isHoliday: true },
+      ],
+    },
+    15: {
+      range: '06/27 - 07/03',
+      days: [
+        { day: 1, name: '周一', date: '6/27' },
+        { day: 2, name: '周二', date: '6/28' },
+        { day: 3, name: '周三', date: '6/29' },
+        { day: 4, name: '周四', date: '6/30' },
+        { day: 5, name: '周五', date: '7/01' },
+        { day: 6, name: '周六', date: '7/02', isHoliday: true },
+        { day: 7, name: '周日', date: '7/03', isHoliday: true },
+      ],
+    },
+  };
+
+  const activeWeekData = weekDatesMap[currentWeekIndex] || weekDatesMap[14];
 
   // 节次定义 (10节课)
   const periods = [
@@ -60,8 +97,8 @@ export const WeekGridView: React.FC = () => {
     {
       id: 'w-1',
       name: '高等数学 (AI与数据)',
-      teacher: '张晓华 教授',
-      location: '一教 A204',
+      teacher: '张晓华',
+      location: '第一教学楼 A204',
       day: 1,
       startPeriod: 1,
       span: 2,
@@ -71,8 +108,8 @@ export const WeekGridView: React.FC = () => {
     {
       id: 'w-2',
       name: '计算机系统结构',
-      teacher: '王工 讲师',
-      location: '实验楼 301',
+      teacher: '王工',
+      location: '信息实验楼 301实验室',
       day: 1,
       startPeriod: 5,
       span: 2,
@@ -81,9 +118,9 @@ export const WeekGridView: React.FC = () => {
     },
     {
       id: 'w-3',
-      name: '大学英语与写作',
-      teacher: 'Sarah 外教',
-      location: '外语楼 405',
+      name: '大学英语写作',
+      teacher: 'Sarah',
+      location: '外国语学院 405研讨室',
       day: 2,
       startPeriod: 3,
       span: 2,
@@ -93,8 +130,8 @@ export const WeekGridView: React.FC = () => {
     {
       id: 'w-4',
       name: '成人商务韩语',
-      teacher: 'Jennifer 老师',
-      location: '国际交流 302',
+      teacher: 'Jennifer',
+      location: '国际交流中心 302多媒体室',
       day: 3,
       startPeriod: 2,
       span: 2,
@@ -105,7 +142,7 @@ export const WeekGridView: React.FC = () => {
       id: 'w-5',
       name: 'TOPIK专攻精讲',
       teacher: 'Stefanee',
-      location: '视听实训 401',
+      location: '同声传译实训室 401',
       day: 3,
       startPeriod: 5,
       span: 2,
@@ -116,7 +153,7 @@ export const WeekGridView: React.FC = () => {
       id: 'w-6',
       name: '韩语口语1v1突破',
       teacher: 'Cipher',
-      location: '在线协同2室',
+      location: '线上协同音视频 2号房间',
       day: 3,
       startPeriod: 7,
       span: 2,
@@ -127,7 +164,7 @@ export const WeekGridView: React.FC = () => {
       id: 'w-7',
       name: '数据结构与算法',
       teacher: '李院长',
-      location: '计算机楼 208',
+      location: '软件工程学院 208机房',
       day: 4,
       startPeriod: 1,
       span: 2,
@@ -138,7 +175,7 @@ export const WeekGridView: React.FC = () => {
       id: 'w-8',
       name: '交互设计与UI艺术',
       teacher: '陈总监',
-      location: '设计工坊 102',
+      location: '创新设计工坊 102艺术厅',
       day: 5,
       startPeriod: 3,
       span: 3,
@@ -147,120 +184,198 @@ export const WeekGridView: React.FC = () => {
     },
   ];
 
-  const PERIOD_HEIGHT = 58;
+  // 基础单元格高度随缩放动态调整
+  const BASE_PERIOD_HEIGHT = 68;
+  const periodHeight = BASE_PERIOD_HEIGHT * zoomScale;
+  const colWidth = 72 * zoomScale; // 7列每列宽度随着缩放伸展
 
   return (
     <View style={styles.container}>
-      {/* 顶部星期表头 (含休假标识) */}
-      <View style={styles.headerRow}>
-        <View style={styles.periodColHeader}>
-          <Text style={styles.monthTag}>6月</Text>
+      {/* 顶部周次与日期切换栏 (支持切换上一周/下一周) */}
+      <View style={styles.weekNavHeader}>
+        <TouchableOpacity
+          style={styles.weekArrowBtn}
+          onPress={() => setCurrentWeekIndex((prev) => Math.max(1, prev - 1))}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="chevron-back" size={16} color={Colors.textPrimary} />
+          <Text style={styles.weekArrowText}>上一周</Text>
+        </TouchableOpacity>
+
+        <View style={styles.weekCenterTitle}>
+          <Text style={styles.weekTitleText}>第 {currentWeekIndex} 周</Text>
+          <Text style={styles.weekRangeText}>{activeWeekData.range}</Text>
         </View>
 
-        {weekColumns.map((col) => (
-          <View
-            key={col.day}
-            style={[
-              styles.dayHeaderCol,
-              col.isToday && styles.dayHeaderColToday,
-            ]}
-          >
-            {/* 休假标识 */}
-            {col.isHoliday && (
-              <View style={styles.holidayMiniBadge}>
-                <Text style={styles.holidayMiniBadgeText}>休</Text>
-              </View>
-            )}
-            <Text
-              style={[
-                styles.dayHeaderText,
-                col.isToday && styles.dayHeaderTextToday,
-              ]}
-            >
-              {col.name}
-            </Text>
-            <Text
-              style={[
-                styles.dateSubText,
-                col.isToday && styles.dateSubTextToday,
-              ]}
-            >
-              {col.date}
-            </Text>
-          </View>
-        ))}
+        <TouchableOpacity
+          style={styles.weekArrowBtn}
+          onPress={() => setCurrentWeekIndex((prev) => prev + 1)}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.weekArrowText}>下一周</Text>
+          <Ionicons name="chevron-forward" size={16} color={Colors.textPrimary} />
+        </TouchableOpacity>
       </View>
 
-      {/* 课表内容滚动网格 */}
-      <ScrollView style={styles.gridScroll} showsVerticalScrollIndicator={false}>
-        <View style={styles.gridBody}>
-          {/* 左侧节次与时间列 */}
-          <View style={styles.periodsColumn}>
-            {periods.map((p) => (
-              <View key={p.num} style={[styles.periodCell, { height: PERIOD_HEIGHT }]}>
-                <Text style={styles.periodNumber}>{p.num}</Text>
-                <Text style={styles.periodTime}>{p.time}</Text>
+      {/* 缩放手势提示与双指放大控制器 */}
+      <View style={styles.zoomControlBar}>
+        <Text style={styles.zoomHintText}>
+          🔍 支持双指捏合缩放（当前 {Math.round(zoomScale * 100)}%）
+        </Text>
+        <View style={styles.zoomPillsGroup}>
+          <TouchableOpacity
+            style={styles.zoomPillBtn}
+            onPress={() => setZoomScale((s) => Math.max(0.85, s - 0.15))}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="remove" size={14} color={Colors.textPrimary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.zoomPillBtn}
+            onPress={() => setZoomScale((s) => Math.min(1.8, s + 0.15))}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="add" size={14} color={Colors.textPrimary} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* 双向可滚动区域：支持双指放大 (maximumZoomScale & pinchGestureEnabled) */}
+      <ScrollView
+        style={styles.outerScroll}
+        maximumZoomScale={2.5}
+        minimumZoomScale={0.8}
+        pinchGestureEnabled={true}
+        showsVerticalScrollIndicator={false}
+      >
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ minWidth: colWidth * 7 + 42 }}
+        >
+          <View style={styles.tableWrapper}>
+            {/* 星期表头行 (含休假标识) */}
+            <View style={styles.headerRow}>
+              <View style={styles.periodColHeader}>
+                <Text style={styles.monthTag}>节\周</Text>
               </View>
-            ))}
-          </View>
 
-          {/* 7 列课程内容区域 */}
-          <View style={styles.columnsContainer}>
-            {/* 背景横向网格参考线 */}
-            {periods.map((p) => (
-              <View
-                key={`line-${p.num}`}
-                style={[
-                  styles.horizontalGridLine,
-                  { top: (p.num - 1) * PERIOD_HEIGHT, height: PERIOD_HEIGHT },
-                ]}
-              />
-            ))}
-
-            {/* 课程卡片绝对定位层 */}
-            {weekCourses.map((c) => {
-              const leftPercent = ((c.day - 1) / 7) * 100;
-              const topOffset = (c.startPeriod - 1) * PERIOD_HEIGHT + 2;
-              const cardHeight = c.span * PERIOD_HEIGHT - 4;
-
-              return (
-                <TouchableOpacity
-                  key={c.id}
+              {activeWeekData.days.map((col) => (
+                <View
+                  key={col.day}
                   style={[
-                    styles.courseBlock,
-                    {
-                      left: `${leftPercent}%`,
-                      top: topOffset,
-                      height: cardHeight,
-                      backgroundColor: c.colorScheme.bg,
-                      borderColor: c.colorScheme.border,
-                    },
+                    styles.dayHeaderCol,
+                    { width: colWidth },
+                    col.isToday && styles.dayHeaderColToday,
                   ]}
-                  onPress={() => setSelectedCourse(c)}
-                  activeOpacity={0.85}
                 >
-                  <Text
-                    style={[styles.courseBlockName, { color: c.colorScheme.text }]}
-                    numberOfLines={2}
-                  >
-                    {c.name}
-                  </Text>
-                  <Text
-                    style={[styles.courseBlockLoc, { color: c.colorScheme.text }]}
-                    numberOfLines={1}
-                  >
-                    @{c.location}
-                  </Text>
-                  {c.notesCount > 0 && (
-                    <View style={styles.noteIndicator}>
-                      <Ionicons name="document-text" size={10} color={c.colorScheme.text} />
+                  {col.isHoliday && (
+                    <View style={styles.holidayMiniBadge}>
+                      <Text style={styles.holidayMiniBadgeText}>休</Text>
                     </View>
                   )}
-                </TouchableOpacity>
-              );
-            })}
+                  <Text
+                    style={[
+                      styles.dayHeaderText,
+                      col.isToday && styles.dayHeaderTextToday,
+                    ]}
+                  >
+                    {col.name}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.dateSubText,
+                      col.isToday && styles.dateSubTextToday,
+                    ]}
+                  >
+                    {col.date}
+                  </Text>
+                </View>
+              ))}
+            </View>
+
+            {/* 表体：左侧节次 + 7列课程网格 */}
+            <View style={styles.gridBody}>
+              {/* 左侧节次与时间列 */}
+              <View style={styles.periodsColumn}>
+                {periods.map((p) => (
+                  <View key={p.num} style={[styles.periodCell, { height: periodHeight }]}>
+                    <Text style={styles.periodNumber}>{p.num}</Text>
+                    <Text style={styles.periodTime}>{p.time}</Text>
+                  </View>
+                ))}
+              </View>
+
+              {/* 7 列课程内容区域 */}
+              <View style={[styles.columnsContainer, { width: colWidth * 7 }]}>
+                {/* 背景水平网格线 */}
+                {periods.map((p) => (
+                  <View
+                    key={`line-${p.num}`}
+                    style={[
+                      styles.horizontalGridLine,
+                      { top: (p.num - 1) * periodHeight, height: periodHeight },
+                    ]}
+                  />
+                ))}
+
+                {/* 课程卡片绝对定位层 */}
+                {weekCourses.map((c) => {
+                  const leftPos = (c.day - 1) * colWidth + 2;
+                  const topOffset = (c.startPeriod - 1) * periodHeight + 2;
+                  const cardHeight = c.span * periodHeight - 4;
+                  const cardWidth = colWidth - 4;
+
+                  return (
+                    <TouchableOpacity
+                      key={c.id}
+                      style={[
+                        styles.courseBlock,
+                        {
+                          left: leftPos,
+                          top: topOffset,
+                          width: cardWidth,
+                          height: cardHeight,
+                          backgroundColor: c.colorScheme.bg,
+                          borderColor: c.colorScheme.border,
+                        },
+                      ]}
+                      onPress={() => setSelectedCourse(c)}
+                      activeOpacity={0.85}
+                    >
+                      {/* 上课内容与地点：按要求完整自动换行，绝不使用省略号裁剪 */}
+                      <View style={styles.courseTopArea}>
+                        <Text
+                          style={[styles.courseBlockName, { color: c.colorScheme.text }]}
+                        >
+                          {c.name}
+                        </Text>
+                        <Text
+                          style={[styles.courseBlockLoc, { color: c.colorScheme.text }]}
+                        >
+                          📍{c.location}
+                        </Text>
+                      </View>
+
+                      {/* 卡片底部：左下角常驻老师名字，右下角展示笔记勾标 */}
+                      <View style={styles.courseCardFooter}>
+                        <Text
+                          style={[styles.teacherNameText, { color: c.colorScheme.text }]}
+                          numberOfLines={1}
+                        >
+                          {c.teacher}
+                        </Text>
+                        <View style={styles.noteIndicator}>
+                          <AnimatedCheckmark checked={c.notesCount > 0} size={14} />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </ScrollView>
 
       {/* 课程详情与快速笔记浮层 */}
@@ -285,28 +400,39 @@ export const WeekGridView: React.FC = () => {
                 </View>
                 <View style={styles.metaBadge}>
                   <Ionicons name="time-outline" size={13} color={Colors.accentBlue} />
-                  <Text style={styles.metaText}>第 {selectedCourse.startPeriod}-{selectedCourse.startPeriod + selectedCourse.span - 1} 节</Text>
+                  <Text style={styles.metaText}>
+                    第 {selectedCourse.startPeriod}-{selectedCourse.startPeriod + selectedCourse.span - 1} 节
+                  </Text>
                 </View>
               </View>
 
               <View style={styles.detailNotesSection}>
-                <Text style={styles.notesSectionTitle}>
-                  📝 关联随堂笔记 ({selectedCourse.notesCount} 篇)
-                </Text>
+                <View style={styles.notesSectionHeader}>
+                  <AnimatedCheckmark checked={selectedCourse.notesCount > 0} size={16} />
+                  <Text style={styles.notesSectionTitle}>
+                    {selectedCourse.notesCount > 0 ? '已有随堂笔记' : '暂无随堂笔记'}
+                  </Text>
+                </View>
                 <Text style={styles.notesExcerpt}>
                   {selectedCourse.notesCount > 0
-                    ? '• 核心语法句式与课前重点回顾\n• 课堂重点板书已拍照归档至知识库'
-                    : '本门课程尚无随堂笔记，点击下方立即记录。'}
+                    ? '已自动关联归档到本课时，包含随堂速记要点与重点板书。'
+                    : '本门课程尚无随堂笔记，点击下方可直接跳转打开笔记页面进行记录。'}
                 </Text>
               </View>
 
               <TouchableOpacity
                 style={styles.addNoteActionBtn}
-                onPress={() => setSelectedCourse(null)}
+                onPress={() => {
+                  const c = selectedCourse;
+                  setSelectedCourse(null);
+                  if (onOpenNote) {
+                    onOpenNote(c.name, c.teacher);
+                  }
+                }}
                 activeOpacity={0.8}
               >
                 <Ionicons name="create-outline" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
-                <Text style={styles.addNoteActionText}>打开/添加随堂笔记</Text>
+                <Text style={styles.addNoteActionText}>打开随堂笔记编辑</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -321,25 +447,95 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
+  weekNavHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: '#F9FAFB',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  weekArrowBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    borderRadius: Rounded.pill,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  weekArrowText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: Colors.textSecondary,
+    marginHorizontal: 2,
+  },
+  weekCenterTitle: {
+    alignItems: 'center',
+  },
+  weekTitleText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+  },
+  weekRangeText: {
+    fontSize: 11,
+    color: Colors.textMuted,
+    marginTop: 2,
+  },
+  zoomControlBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    backgroundColor: '#F3F4F6',
+  },
+  zoomHintText: {
+    fontSize: 11,
+    color: Colors.textMuted,
+  },
+  zoomPillsGroup: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  zoomPillBtn: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  outerScroll: {
+    flex: 1,
+  },
+  tableWrapper: {
+    flexDirection: 'column',
+  },
   headerRow: {
     flexDirection: 'row',
     backgroundColor: '#F8FAF8',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
-    paddingVertical: 8,
+    paddingVertical: 6,
   },
   periodColHeader: {
-    width: 38,
+    width: 42,
     alignItems: 'center',
     justifyContent: 'center',
   },
   monthTag: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
     color: Colors.textMuted,
   },
   dayHeaderCol: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -351,7 +547,7 @@ const styles = StyleSheet.create({
   },
   holidayMiniBadge: {
     position: 'absolute',
-    top: -4,
+    top: -3,
     right: 2,
     backgroundColor: '#FF4D4F',
     borderRadius: 7,
@@ -384,15 +580,11 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontWeight: '600',
   },
-  gridScroll: {
-    flex: 1,
-  },
   gridBody: {
     flexDirection: 'row',
-    minHeight: 580,
   },
   periodsColumn: {
-    width: 38,
+    width: 42,
     backgroundColor: '#FAFAFA',
     borderRightWidth: 1,
     borderRightColor: '#F0F0F0',
@@ -414,7 +606,6 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   columnsContainer: {
-    flex: 1,
     position: 'relative',
   },
   horizontalGridLine: {
@@ -426,27 +617,42 @@ const styles = StyleSheet.create({
   },
   courseBlock: {
     position: 'absolute',
-    width: '14.28%',
     borderRadius: Rounded.md,
-    padding: 4,
+    padding: 5,
     borderWidth: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     overflow: 'hidden',
   },
+  courseTopArea: {
+    flex: 1,
+  },
   courseBlockName: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '700',
-    lineHeight: 13,
+    lineHeight: 14,
+    marginBottom: 3,
   },
   courseBlockLoc: {
-    fontSize: 9,
-    marginTop: 3,
-    lineHeight: 11,
+    fontSize: 9.5,
+    lineHeight: 12,
+    fontWeight: '500',
+  },
+  courseCardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 4,
+    paddingTop: 3,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(0,0,0,0.06)',
+  },
+  teacherNameText: {
+    fontSize: 9.5,
+    fontWeight: '700',
+    flex: 1,
   },
   noteIndicator: {
-    position: 'absolute',
-    bottom: 3,
-    right: 3,
+    marginLeft: 2,
   },
   modalBackdrop: {
     flex: 1,
@@ -505,11 +711,16 @@ const styles = StyleSheet.create({
     borderRadius: Rounded.md,
     marginBottom: 16,
   },
+  notesSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
   notesSectionTitle: {
     fontSize: 13,
     fontWeight: '700',
     color: Colors.primary,
-    marginBottom: 4,
   },
   notesExcerpt: {
     fontSize: 12,

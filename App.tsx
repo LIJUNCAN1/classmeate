@@ -10,15 +10,24 @@ import { Colors } from './src/constants/theme';
 export default function App() {
   // 底部三个精简页面：课程表、笔记、工具
   const [activeTab, setActiveTab] = useState<MainTabType>('schedule');
+  const [pendingNoteCourse, setPendingNoteCourse] = useState<string | undefined>(undefined);
+
+  const handleNavigateToNotes = (courseName: string) => {
+    setPendingNoteCourse(courseName);
+    setActiveTab('notes');
+  };
 
   return (
     <SafeAreaProvider>
       <View style={styles.root}>
         <View style={styles.content}>
           {activeTab === 'schedule' ? (
-            <ScheduleScreen />
+            <ScheduleScreen onNavigateToNotesTab={handleNavigateToNotes} />
           ) : activeTab === 'notes' ? (
-            <NotesScreen />
+            <NotesScreen
+              initialCourseName={pendingNoteCourse}
+              onClearInitialCourse={() => setPendingNoteCourse(undefined)}
+            />
           ) : (
             <ToolsScreen />
           )}

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Platform,
   StatusBar as RNStatusBar,
+  Animated,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,34 +20,86 @@ import { Course } from '../types/schedule';
 import { MOCK_IMPORTED_COURSES } from '../services/jwParser';
 import { AutoScheduleService, AutoDetectStatus } from '../services/autoScheduleDetector';
 
-export const ScheduleScreen: React.FC = () => {
+interface ScheduleScreenProps {
+  onNavigateToNotesTab?: (courseName: string) => void;
+}
+
+export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
+  onNavigateToNotesTab,
+}) => {
   const insets = useSafeAreaInsets();
   const topPadding = Math.max(
     insets.top,
     Platform.OS === 'android' ? (RNStatusBar.currentHeight || 36) : 44
   );
 
-  // 视图模式：日视图 (当天时间轴流) vs 周课表 (一整周 7 天全景大网格)
+  // 格式化今日真实日期 YYYY-MM-DD
+  const getTodayFormatted = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // 视图模式：日视图 vs 周课表
   const [scheduleViewMode, setScheduleViewMode] = useState<'day' | 'week'>('day');
-  const [selectedDate, setSelectedDate] = useState('2026-06-22');
+  const [selectedDate, setSelectedDate] = useState(getTodayFormatted());
   const [courses, setCourses] = useState<Course[]>(MOCK_IMPORTED_COURSES);
 
-  // 自动识别状态
+  // 自动识别与提醒 Toast 状态
   const [autoStatus, setAutoStatus] = useState<AutoDetectStatus | null>(null);
-  const [showAutoBanner, setShowAutoBanner] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // 页面加载时自动执行静默教务课表识别，无需用户手动点按
+  // 1. 每日 0:00 自动切换日期机制
+  useEffect(() => {
+    const checkAndSwitchDate = () => {
+      setSelectedDate(getTodayFormatted());
+    };
+
+    // 初始化对齐当前日期
+    checkAndSwitchDate();
+
+    // 计算距离今日午夜 00:00:01 的毫秒数
+    const now = new Date();
+    const tomorrowMidnight = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+      0,
+      0,
+      1
+    );
+    const msUntilMidnight = tomorrowMidnight.getTime() - now.getTime();
+
+    const midnightTimer = setTimeout(() => {
+      checkAndSwitchDate();
+      // 随后每 24 小时检查一次
+      const dailyInterval = setInterval(checkAndSwitchDate, 24 * 60 * 60 * 1000);
+      return () => clearInterval(dailyInterval);
+    }, msUntilMidnight);
+
+    return () => clearTimeout(midnightTimer);
+  }, []);
+
+  // 2. 页面加载静默自动识别课表
   useEffect(() => {
     AutoScheduleService.detectScheduleSilently().then((res) => {
       if (res.success) {
         setCourses(res.data);
         setAutoStatus(res.status);
-        setShowAutoBanner(true);
-        // 5秒后淡化提示胶囊
-        setTimeout(() => setShowAutoBanner(false), 5000);
       }
     });
   }, []);
+
+  // 3. 点击接入提醒事项处理
+  const handleToggleReminder = (course: Course, enabled: boolean) => {
+    const msg = enabled
+      ? `🔔 已接入提醒事项：【${course.name}】课前 15 分钟准时提醒`
+      : `🔕 已关闭【${course.name}】上课提醒`;
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
 
   // 计算本日剩余课数量
   const remainingCount = courses.filter((c) => c.status !== 'completed').length;
@@ -55,7 +108,7 @@ export const ScheduleScreen: React.FC = () => {
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      {/* 1. 顶部生机草木绿流体区域 (安全留出手机通知栏/灵动岛高度) */}
+      {/* 顶部生机草木绿流体区域 (安全留出手机通知栏/灵动岛高度) */}
       <View style={[styles.heroHeader, { paddingTop: topPadding + 6 }]}>
         {/* 用户信息栏 & 日/周课表切换器 */}
         <View style={styles.userInfoRow}>
@@ -65,7 +118,9 @@ export const ScheduleScreen: React.FC = () => {
             </View>
             <View style={styles.userMeta}>
               <Text style={styles.greetingText}>哈娜宝贝本宝 ✏️</Text>
-              <Text style={styles.subGreetingText}>第 14 周 · 夏学期</Text>
+              <Text style={styles.subGreetingText}>
+                今日 · 每天0:00自动对齐日程
+              </Text>
             </View>
           </View>
 
@@ -109,17 +164,7 @@ export const ScheduleScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* 自动识别成功状态胶囊提示 */}
-        {showAutoBanner && autoStatus && (
-          <View style={styles.autoDetectedBanner}>
-            <View style={styles.autoPulseDot} />
-            <Text style={styles.autoDetectedText}>
-              已自动识别教务系统课表 ({autoStatus.courseCount} 门课程已同步)
-            </Text>
-          </View>
-        )}
-
-        {/* 本日剩余课卡片 (日视图下高光展示) */}
+        {/* 本日剩余课卡片 (日视图下展示) */}
         {scheduleViewMode === 'day' && (
           <View style={styles.todayRemainingCard}>
             <View style={styles.todayRemainingLeft}>
@@ -128,7 +173,7 @@ export const ScheduleScreen: React.FC = () => {
               </View>
               <View>
                 <Text style={styles.todayRemainingLabel}>本日剩余课</Text>
-                <Text style={styles.todayRemainingSub}>按日程自动提醒 · 联动随堂知识库</Text>
+                <Text style={styles.todayRemainingSub}>课前 15 分钟系统提醒 · 关联随堂知识库</Text>
               </View>
             </View>
 
@@ -148,7 +193,15 @@ export const ScheduleScreen: React.FC = () => {
         )}
       </View>
 
-      {/* 2. 核心内容区域 (图1的常用工具金刚区已按要求彻底从本页移除，已迁移至“工具”页) */}
+      {/* 悬浮接入提醒事项 Toast 反馈 */}
+      {toastMessage && (
+        <View style={styles.toastFloatBar}>
+          <Ionicons name="information-circle" size={16} color="#FFFFFF" />
+          <Text style={styles.toastText}>{toastMessage}</Text>
+        </View>
+      )}
+
+      {/* 核心内容区 */}
       {scheduleViewMode === 'day' ? (
         <ScrollView
           style={styles.dayScrollArea}
@@ -158,25 +211,31 @@ export const ScheduleScreen: React.FC = () => {
           <View style={styles.scheduleSection}>
             <View style={styles.scheduleHeaderRow}>
               <View style={styles.scheduleTitleGroup}>
-                <Text style={styles.scheduleSectionTitle}>今日课程安排</Text>
+                <Text style={styles.scheduleSectionTitle}>今日课表安排</Text>
                 <View style={styles.courseCountBadge}>
                   <Text style={styles.courseCountText}>{courses.length} 门课</Text>
                 </View>
               </View>
 
               <View style={styles.syncStatusBadge}>
-                <Ionicons name="checkmark-circle" size={12} color={Colors.primary} />
-                <Text style={styles.syncStatusText}>教务已自动同步</Text>
+                <Ionicons name="flash" size={12} color={Colors.primary} />
+                <Text style={styles.syncStatusText}>教务已自动识别同步</Text>
               </View>
             </View>
 
-            {/* 时间轴与大圆角课程卡片 */}
+            {/* 时间轴与大圆角课程卡片 (点击记笔记直接打开笔记页面) */}
             <View style={styles.timelineList}>
               {courses.map((course, index) => (
                 <CourseCard
                   key={course.id}
                   course={course}
                   isLast={index === courses.length - 1}
+                  onNavigateToNotes={(c) => {
+                    if (onNavigateToNotesTab) {
+                      onNavigateToNotesTab(c.name);
+                    }
+                  }}
+                  onToggleReminder={handleToggleReminder}
                 />
               ))}
             </View>
@@ -185,9 +244,15 @@ export const ScheduleScreen: React.FC = () => {
           <View style={{ height: 28 }} />
         </ScrollView>
       ) : (
-        /* 周课表全景大网格视图 (一整周 7 天全部课程) */
+        /* 周课表全景大网格视图 (支持双指放大、位置完整换行、左下角教师名) */
         <View style={styles.weekGridWrapper}>
-          <WeekGridView />
+          <WeekGridView
+            onOpenNote={(courseName) => {
+              if (onNavigateToNotesTab) {
+                onNavigateToNotesTab(courseName);
+              }
+            }}
+          />
         </View>
       )}
     </View>
@@ -280,28 +345,6 @@ const styles = StyleSheet.create({
   modeBtnTextInactive: {
     color: '#FFFFFF',
   },
-  autoDetectedBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.16)',
-    marginHorizontal: 16,
-    paddingVertical: 5,
-    paddingHorizontal: 12,
-    borderRadius: Rounded.pill,
-    marginBottom: 10,
-    gap: 6,
-  },
-  autoPulseDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#A7F3D0',
-  },
-  autoDetectedText: {
-    fontSize: 11,
-    color: '#FFFFFF',
-    fontWeight: '500',
-  },
   todayRemainingCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -353,6 +396,28 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: 'rgba(255, 255, 255, 0.9)',
+  },
+  toastFloatBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1F2937',
+    marginHorizontal: 16,
+    marginTop: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: Rounded.pill,
+    gap: 6,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  toastText: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    fontWeight: '600',
+    flex: 1,
   },
   dayScrollArea: {
     flex: 1,
