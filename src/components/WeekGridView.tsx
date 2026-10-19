@@ -413,11 +413,11 @@ export const WeekGridView: React.FC<WeekGridViewProps> = ({ onOpenNote }) => {
                     {selectedCourse.notesCount > 0 ? '已有随堂笔记' : '暂无随堂笔记'}
                   </Text>
                 </View>
-                <Text style={styles.notesExcerpt}>
-                  {selectedCourse.notesCount > 0
-                    ? '已自动关联归档到本课时，包含随堂速记要点与重点板书。'
-                    : '本门课程尚无随堂笔记，点击下方可直接跳转打开笔记页面进行记录。'}
-                </Text>
+                {selectedCourse.notesCount > 0 && (
+                  <Text style={styles.notesExcerpt}>
+                    已自动关联归档到本课时，包含随堂速记要点与重点板书。
+                  </Text>
+                )}
               </View>
 
               <TouchableOpacity

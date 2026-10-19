@@ -161,15 +161,19 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
   // ================= 语音识别核心状态与交互 (图5 微信/iOS式全屏交互) =================
   const [isPressingVoice, setIsPressingVoice] = useState(false);
   const [isHoveringCancel, setIsHoveringCancel] = useState(false);
-  const [isHoveringText, setIsHoveringText] = useState(false);
   const [isHoveringLock, setIsHoveringLock] = useState(false);
   const [isVoiceLocked, setIsVoiceLocked] = useState(false);
   const [realtimeTranscript, setRealtimeTranscript] = useState('');
   const [voiceSeconds, setVoiceSeconds] = useState(0);
+  const [audioWaves, setAudioWaves] = useState<number[]>([10, 16, 24, 30, 22, 14, 20, 28, 16, 12]);
 
   const recognitionRef = useRef<any>(null);
   const timerRef = useRef<any>(null);
   const activeTranscriptRef = useRef('');
+  const audioContextRef = useRef<any>(null);
+  const analyserRef = useRef<any>(null);
+  const micStreamRef = useRef<any>(null);
+  const animFrameRef = useRef<any>(null);
 
   // 同步 ref 供闭包访问
   activeTranscriptRef.current = realtimeTranscript;
@@ -177,13 +181,9 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
   // 监听外部带参数打开
   useEffect(() => {
     if (initialCourseName) {
-      setInputCourseName(initialCourseName);
-      setInputTitle(`第 14 周 · ${initialCourseName} 随堂笔记`);
-      setInputContent('');
-      setEditingNoteId(null);
-      setShowCanvas(false);
-      setDrawStrokes([]);
-      setEditorVisible(true);
+      // 切换到对应课程文件夹筛选查看，不强制弹出空白新建卡片
+      setSelectedFolder(initialCourseName);
+      setEditorVisible(false);
       if (onClearInitialCourse) {
         onClearInitialCourse();
       }
@@ -198,6 +198,45 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     timerRef.current = setInterval(() => {
       setVoiceSeconds((s) => s + 1);
     }, 1000);
+
+    // 接入真实麦克风声波检测 (Web Audio API Analyser)
+    if (
+      typeof navigator !== 'undefined' &&
+      navigator.mediaDevices &&
+      navigator.mediaDevices.getUserMedia
+    ) {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          micStreamRef.current = stream;
+          const AudioCtx =
+            (window as any).AudioContext || (window as any).webkitAudioContext;
+          if (AudioCtx) {
+            const audioCtx = new AudioCtx();
+            audioContextRef.current = audioCtx;
+            const source = audioCtx.createMediaStreamSource(stream);
+            const analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 64;
+            source.connect(analyser);
+            analyserRef.current = analyser;
+
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            const updateVolume = () => {
+              if (!analyserRef.current) return;
+              analyserRef.current.getByteFrequencyData(dataArray);
+              const levels: number[] = [];
+              for (let i = 0; i < 10; i++) {
+                const val = dataArray[i * 2] || 0;
+                levels.push(Math.max(6, Math.min(36, 6 + (val / 255) * 32)));
+              }
+              setAudioWaves(levels);
+              animFrameRef.current = requestAnimationFrame(updateVolume);
+            };
+            updateVolume();
+          }
+        })
+        .catch(() => {});
+    }
 
     // 尝试接入浏览器 Web Speech API
     if (
@@ -285,17 +324,35 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
       setCursorSelection({ start: newPos, end: newPos });
     }
 
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
+    }
+    if (micStreamRef.current) {
+      try {
+        micStreamRef.current.getTracks().forEach((t: any) => t.stop());
+      } catch (e) {}
+      micStreamRef.current = null;
+    }
+    if (audioContextRef.current) {
+      try {
+        audioContextRef.current.close();
+      } catch (e) {}
+      audioContextRef.current = null;
+    }
+    analyserRef.current = null;
+    setAudioWaves([10, 16, 24, 30, 22, 14, 20, 28, 16, 12]);
+
     // 重置语音状态
     setIsPressingVoice(false);
     setIsHoveringCancel(false);
-    setIsHoveringText(false);
     setIsHoveringLock(false);
     setIsVoiceLocked(false);
     setRealtimeTranscript('');
     setVoiceSeconds(0);
   };
 
-  // 手指滑动识别 (图5手势：上滑左右划动选择 [取消 ✕] 或 [转文字 文])
+  // 手指滑动识别 (图5手势：上滑左右划动选择 [取消 ✕] 或 [锁定 🔒])
   const voicePanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -305,7 +362,6 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         if (isVoiceLocked) return;
         setIsPressingVoice(true);
         setIsHoveringCancel(false);
-        setIsHoveringText(false);
         setIsHoveringLock(false);
         startRecordingSession();
       },
@@ -316,17 +372,17 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         if (gestureState.dy < -35) {
           if (gestureState.dx < -30) {
             setIsHoveringCancel(true);
-            setIsHoveringText(false);
+            setIsHoveringLock(false);
           } else if (gestureState.dx > 30) {
-            setIsHoveringText(true);
+            setIsHoveringLock(true);
             setIsHoveringCancel(false);
           } else {
             setIsHoveringCancel(false);
-            setIsHoveringText(false);
+            setIsHoveringLock(false);
           }
         } else {
           setIsHoveringCancel(false);
-          setIsHoveringText(false);
+          setIsHoveringLock(false);
         }
       },
 
@@ -334,6 +390,11 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         if (isVoiceLocked) return;
         if (isHoveringCancel) {
           finishRecordingAndInsert(false);
+        } else if (isHoveringLock) {
+          // 松手在锁定按钮上：进入持续锁定录音模式！
+          setIsVoiceLocked(true);
+          setIsPressingVoice(false);
+          setIsHoveringLock(false);
         } else {
           finishRecordingAndInsert(true);
         }
@@ -831,21 +892,18 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
           {/* ================= 图5风格：全屏微信/iOS式语音交互遮罩 ================= */}
           {isPressingVoice && (
             <View style={styles.wechatVoiceOverlay} pointerEvents="none">
-              {/* 顶部/中部：绿色气泡与声音波形 (图5) */}
+              {/* 顶部/中部：绿色气泡与实际麦克风声波 (图5) */}
               <View style={styles.wechatSpeechBubble}>
                 <View style={styles.wechatWaveRow}>
-                  {[10, 18, 28, 22, 34, 16, 26, 20, 32, 14, 24, 12].map((baseH, idx) => {
-                    const waveH = Math.max(6, Math.min(36, baseH * (0.6 + Math.sin(voiceSeconds * 3 + idx) * 0.4)));
-                    return (
-                      <View
-                        key={idx}
-                        style={[
-                          styles.wechatWaveBar,
-                          { height: waveH },
-                        ]}
-                      />
-                    );
-                  })}
+                  {audioWaves.map((waveH, idx) => (
+                    <View
+                      key={idx}
+                      style={[
+                        styles.wechatWaveBar,
+                        { height: waveH },
+                      ]}
+                    />
+                  ))}
                 </View>
 
                 {realtimeTranscript ? (
@@ -858,7 +916,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
               {/* 气泡尖角 */}
               <View style={styles.wechatBubbleTriangle} />
 
-              {/* 左右两个大圆操作按钮（图5：左侧 ✕ 取消，右侧 文 转文字） */}
+              {/* 左右两个大圆操作按钮（图5：左侧 ✕ 取消，右侧 🔒 锁定） */}
               <View style={styles.wechatActionRow}>
                 {/* 左：取消 ✕ */}
                 <View
@@ -870,29 +928,29 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
                   <Ionicons name="close" size={32} color="#FFFFFF" />
                 </View>
 
-                {/* 右：转文字 文 */}
+                {/* 右：按要求将“文”改成锁定按钮 🔒 */}
                 <View
                   style={[
                     styles.wechatRoundBtn,
-                    isHoveringText && styles.wechatRoundBtnTextActive,
+                    isHoveringLock && styles.wechatRoundBtnLockActive,
                   ]}
                 >
-                  <Text style={styles.wechatRoundBtnLabel}>文</Text>
+                  <Ionicons name="lock-closed" size={28} color="#FFFFFF" />
                 </View>
               </View>
 
-              {/* 提示文案：松开 发送 / 松开 取消 / 松开 转为文字 */}
+              {/* 提示文案：松开 发送 / 松开 取消 / 松开 锁定 */}
               <Text
                 style={[
                   styles.wechatPromptText,
                   isHoveringCancel && { color: '#EF4444', fontWeight: '700' },
-                  isHoveringText && { color: '#10B981', fontWeight: '700' },
+                  isHoveringLock && { color: '#F59E0B', fontWeight: '700' },
                 ]}
               >
                 {isHoveringCancel
-                  ? '松开手指，取消发送'
-                  : isHoveringText
-                  ? '松开手指，转为文字'
+                  ? '松开手指，取消录音'
+                  : isHoveringLock
+                  ? '松开手指，锁定录音 🔒'
                   : '松开 发送'}
               </Text>
 
@@ -1689,6 +1747,10 @@ const styles = StyleSheet.create({
   },
   wechatRoundBtnCancelActive: {
     backgroundColor: '#EF4444',
+    transform: [{ scale: 1.15 }],
+  },
+  wechatRoundBtnLockActive: {
+    backgroundColor: '#F59E0B',
     transform: [{ scale: 1.15 }],
   },
   wechatRoundBtnTextActive: {

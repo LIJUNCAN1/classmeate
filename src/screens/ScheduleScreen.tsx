@@ -172,20 +172,58 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
   const [appleNotesEditorVisible, setAppleNotesEditorVisible] = useState(false);
   const [freeformVisible, setFreeformVisible] = useState(false);
 
-  // 点击卡片上的“记笔记”：弹出记录方式选择，直接开启对应编辑器
-  const handleStartNoteForCourse = (course: Course) => {
-    setSelectedCourseForNote(course);
-    setRecordModeModalVisible(true);
+  // 课程已有随堂笔记知识库映射（去查看直接打开已有笔记）
+  const COURSE_NOTE_LIBRARY: Record<string, { title: string; content: string }> = {
+    '高等数学': {
+      title: '第14周 · 多元函数微分学与梯度下降',
+      content: '二阶偏导数对称性几何意义；拉格朗日乘数法在约束极值求解中的工程应用。课堂例题第3道：如何通过海森矩阵判断多元函数鞍点。\n\n【核心考点】\n1. 偏导数连续是可微的充分条件。\n2. 梯度方向即为函数值增长最快的方向。',
+    },
+    '计算机系统结构': {
+      title: '第12周 · 指令级并行与流水线冲突',
+      content: '【核心架构】经典五级流水线（IF, ID, EX, MEM, WB）时序与旁路转发架构图谱。结构冲突、数据冲突与控制冲突的硬件解决方案对比。',
+    },
+    '商务韩语': {
+      title: '第14周 · 破冰洽谈与敬语句型',
+      content: '商务谈判中的开场礼仪；对客委婉语、谦逊语在合同初审时的严谨表述。需要重点注意双方落座顺序与初次交换名片的固定问候套语。',
+    },
+    'TOPIK': {
+      title: '第13周 · 阅读真题主旨归纳速判法',
+      content: '长难句倒装解构；段落首尾呼应词快筛技巧；历年错题第34-37题解析及高频副词总结。',
+    },
+    '数据结构': {
+      title: '第14周 · 红黑树旋转与平衡性质',
+      content: '红黑树的5大性质定理证明；插入节点后的双红修复逻辑，左旋与右旋变换的伪代码推导。',
+    },
+    '交互设计': {
+      title: '第14周 · 移动端交互设计与微动效规范',
+      content: '触控热区黄金法则、手势拖拽阻尼感计算公式以及高保真原型动效交付规范。',
+    },
   };
 
-  // 退出笔记时：按要求直接跳转并切换到笔记页面
+  const getExistingNote = (name?: string) => {
+    if (!name) return null;
+    for (const key of Object.keys(COURSE_NOTE_LIBRARY)) {
+      if (name.includes(key)) return COURSE_NOTE_LIBRARY[key];
+    }
+    return null;
+  };
+
+  // 点击卡片上的笔记操作：已有笔记直接打开，无笔记才弹出记录方式选择
+  const handleStartNoteForCourse = (course: Course) => {
+    setSelectedCourseForNote(course);
+    if (course.notesCount > 0) {
+      // 图4要求：已有笔记去查看直接打开，无需多余弹窗
+      setAppleNotesEditorVisible(true);
+    } else {
+      setRecordModeModalVisible(true);
+    }
+  };
+
+  // 退出笔记时：纯净关闭，不自动重复弹窗
   const handleExitNote = () => {
-    const targetCourse = selectedCourseForNote?.name;
     setAppleNotesEditorVisible(false);
     setFreeformVisible(false);
-    if (onNavigateToNotesTab && targetCourse) {
-      onNavigateToNotesTab(targetCourse);
-    }
+    setSelectedCourseForNote(null);
   };
 
   // 页面向下平滑出现的淡入向下动画 (Downward Entrance Animation)
@@ -210,10 +248,10 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     ]).start();
   };
 
-  // 页面初次加载时触发向下出现动画
+  // 页面初次加载时触发向下出现动画（去除 scheduleViewMode 依赖，防止周课表切换闪烁）
   useEffect(() => {
     triggerEntranceAnimation();
-  }, [scheduleViewMode]);
+  }, []);
 
   // 1. 每天 0:00 自动切换日期的机制
   useEffect(() => {
@@ -547,12 +585,16 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
         </TouchableOpacity>
       </Modal>
 
-      {/* 随堂速记编辑器（直接开启，退出时切至笔记页） */}
+      {/* 随堂速记编辑器（直接开启已有笔记或新建笔记，退出时不重复弹窗） */}
       {appleNotesEditorVisible && (
         <AppleNotesEditor
           visible={appleNotesEditorVisible}
           initialCourseName={selectedCourseForNote?.name}
-          initialTitle={`第 14 周 · ${selectedCourseForNote?.name} 随堂笔记`}
+          initialTitle={
+            getExistingNote(selectedCourseForNote?.name)?.title ||
+            `第 14 周 · ${selectedCourseForNote?.name} 随堂笔记`
+          }
+          initialContent={getExistingNote(selectedCourseForNote?.name)?.content || ''}
           onClose={handleExitNote}
           onSave={handleExitNote}
         />
