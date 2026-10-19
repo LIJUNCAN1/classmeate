@@ -4,166 +4,157 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity,
+  Platform,
+  StatusBar as RNStatusBar,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Rounded, Shadows } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { WeekCalendarStrip } from '../components/WeekCalendarStrip';
-import { ModeSwitch } from '../components/ModeSwitch';
 import { CourseCard } from '../components/CourseCard';
 import { QuickAccessGrid } from '../components/QuickAccessGrid';
 import { ImportModal } from '../components/ImportModal';
-import { BottomNavBar } from '../components/BottomNavBar';
-import { Course, ViewMode } from '../types/schedule';
+import { Course } from '../types/schedule';
 import { MOCK_IMPORTED_COURSES } from '../services/jwParser';
 
-export const ScheduleScreen: React.FC = () => {
-  const [currentMode, setCurrentMode] = useState<ViewMode>('calendar');
+interface ScheduleScreenProps {
+  onOpenImport?: () => void;
+}
+
+export const ScheduleScreen: React.FC<ScheduleScreenProps> = () => {
+  const insets = useSafeAreaInsets();
+  // 留出手机顶部状态栏/刘海屏安全距离 (适配 iOS 刘海/灵动岛、Android 状态栏及 Web 预览)
+  const topPadding = Math.max(
+    insets.top,
+    Platform.OS === 'android' ? (RNStatusBar.currentHeight || 36) : 44
+  );
+
   const [selectedDate, setSelectedDate] = useState('2026-06-22');
-  const [activeTab, setActiveTab] = useState('schedule');
   const [isImportModalVisible, setIsImportModalVisible] = useState(false);
   const [courses, setCourses] = useState<Course[]>(MOCK_IMPORTED_COURSES);
+
+  // 计算本日剩余课数量（未上课或上课中）
+  const remainingCount = courses.filter((c) => c.status !== 'completed').length;
 
   const handleImportSuccess = (importedCourses: Course[]) => {
     setCourses(importedCourses);
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.container}>
       <StatusBar style="light" />
 
-      <View style={styles.container}>
-        <ScrollView
-          style={styles.mainScrollView}
-          showsVerticalScrollIndicator={false}
-          bounces={true}
-        >
-          {/* 1. 顶部生机草木绿流体区域 (Hero Fluid Header) */}
-          <View style={styles.heroHeader}>
-            {/* 用户状态条 */}
-            <View style={styles.userInfoRow}>
-              <View style={styles.userProfile}>
-                <View style={styles.avatarCircle}>
-                  <Text style={styles.avatarEmoji}>🦖</Text>
-                </View>
-                <View style={styles.userMeta}>
-                  <Text style={styles.greetingText}>哈娜宝贝本宝 ✏️</Text>
-                  <Text style={styles.subGreetingText}>陪伴成长每一份好奇</Text>
-                </View>
+      <ScrollView
+        style={styles.mainScrollView}
+        showsVerticalScrollIndicator={false}
+        bounces={true}
+      >
+        {/* 1. 顶部生机草木绿流体区域 (Hero Fluid Header，已安全留出通知栏高位) */}
+        <View style={[styles.heroHeader, { paddingTop: topPadding + 8 }]}>
+          {/* 用户状态栏 (已移除签到有礼) */}
+          <View style={styles.userInfoRow}>
+            <View style={styles.userProfile}>
+              <View style={styles.avatarCircle}>
+                <Text style={styles.avatarEmoji}>🦖</Text>
               </View>
-
-              <TouchableOpacity style={styles.checkinBadge} activeOpacity={0.8}>
-                <Ionicons name="gift-outline" size={13} color="#FFFFFF" />
-                <Text style={styles.checkinText}>签到有礼</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* 统计指标卡片胶囊 */}
-            <View style={styles.statRow}>
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>16</Text>
-                <Text style={styles.statLabel}>剩余1v1</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>16</Text>
-                <Text style={styles.statLabel}>剩余小班课</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>21</Text>
-                <Text style={styles.statLabel}>剩余大班课</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>2</Text>
-                <Text style={styles.statLabel}>剩余公开课</Text>
+              <View style={styles.userMeta}>
+                <Text style={styles.greetingText}>哈娜宝贝本宝 ✏️</Text>
+                <Text style={styles.subGreetingText}>陪伴成长每一份好奇</Text>
               </View>
             </View>
 
-            {/* 模式切换 (教师模式 / 日历模式) 与导入入口 */}
-            <ModeSwitch
-              currentMode={currentMode}
-              onModeChange={setCurrentMode}
-              onOpenImport={() => setIsImportModalVisible(true)}
-            />
+            {/* 右侧快捷教务导入按钮 */}
+            <TouchableOpacity
+              style={styles.headerActionBtn}
+              onPress={() => setIsImportModalVisible(true)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="cloud-download-outline" size={16} color="#FFFFFF" />
+              <Text style={styles.headerActionText}>教务导入</Text>
+            </TouchableOpacity>
+          </View>
 
-            {/* 一周 7 天横向日历滑动轴 */}
-            {currentMode === 'calendar' && (
-              <WeekCalendarStrip
-                selectedDate={selectedDate}
-                onSelectDate={setSelectedDate}
+          {/* 2. 唯一定制卡片：本日剩余课 (已完全移除原先分散的1v1/小班/公开课等多列) */}
+          <View style={styles.todayRemainingCard}>
+            <View style={styles.todayRemainingLeft}>
+              <View style={styles.remainingIconCircle}>
+                <Ionicons name="time" size={16} color={Colors.primary} />
+              </View>
+              <View>
+                <Text style={styles.todayRemainingLabel}>本日剩余课</Text>
+                <Text style={styles.todayRemainingSub}>按日程准时提醒 · 自动挂载随堂笔记</Text>
+              </View>
+            </View>
+
+            <View style={styles.todayRemainingRight}>
+              <Text style={styles.todayRemainingNumber}>{remainingCount}</Text>
+              <Text style={styles.todayRemainingUnit}>节</Text>
+            </View>
+          </View>
+
+          {/* 3. 专注日程课表：一周 7 天横向日历滑动轴 (无需教师模式，纯粹专注课表) */}
+          <WeekCalendarStrip
+            selectedDate={selectedDate}
+            onSelectDate={setSelectedDate}
+          />
+        </View>
+
+        {/* 4. 常用工具金刚区 */}
+        <View style={styles.quickGridWrapper}>
+          <QuickAccessGrid
+            onOpenImport={() => setIsImportModalVisible(true)}
+          />
+        </View>
+
+        {/* 5. 课程表与随堂笔记垂直时间轴 */}
+        <View style={styles.scheduleSection}>
+          <View style={styles.scheduleHeaderRow}>
+            <View style={styles.scheduleTitleGroup}>
+              <Text style={styles.scheduleSectionTitle}>今日课表日程</Text>
+              <View style={styles.courseCountBadge}>
+                <Text style={styles.courseCountText}>{courses.length} 门课程</Text>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={styles.importHintPill}
+              onPress={() => setIsImportModalVisible(true)}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="sync-outline" size={12} color={Colors.primary} />
+              <Text style={styles.importHintText}>教务同步</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* 时间轴与大圆角课程卡片 */}
+          <View style={styles.timelineList}>
+            {courses.map((course, index) => (
+              <CourseCard
+                key={course.id}
+                course={course}
+                isLast={index === courses.length - 1}
               />
-            )}
+            ))}
           </View>
+        </View>
 
-          {/* 2. 常用工具金刚区 (含教务一键导入快捷入口) */}
-          <View style={styles.quickGridWrapper}>
-            <QuickAccessGrid
-              onOpenImport={() => setIsImportModalVisible(true)}
-            />
-          </View>
+        {/* 底部安全留白 */}
+        <View style={{ height: 28 }} />
+      </ScrollView>
 
-          {/* 3. 课程表与随堂笔记流 (Schedule & Note Stream) */}
-          <View style={styles.scheduleSection}>
-            <View style={styles.scheduleHeaderRow}>
-              <View style={styles.scheduleTitleGroup}>
-                <Text style={styles.scheduleSectionTitle}>今日课程安排</Text>
-                <View style={styles.courseCountBadge}>
-                  <Text style={styles.courseCountText}>{courses.length} 节</Text>
-                </View>
-              </View>
-
-              <TouchableOpacity
-                style={styles.importHintPill}
-                onPress={() => setIsImportModalVisible(true)}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="sync-outline" size={12} color={Colors.primary} />
-                <Text style={styles.importHintText}>教务同步</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* 时间轴与课程卡片 */}
-            <View style={styles.timelineList}>
-              {courses.map((course, index) => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  isLast={index === courses.length - 1}
-                />
-              ))}
-            </View>
-          </View>
-
-          {/* 底部留白，防止被 TabBar 遮挡 */}
-          <View style={{ height: 24 }} />
-        </ScrollView>
-
-        {/* 底部 5 标签导航栏 */}
-        <BottomNavBar
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
-
-        {/* 教务导入弹窗 */}
-        <ImportModal
-          visible={isImportModalVisible}
-          onClose={() => setIsImportModalVisible(false)}
-          onImportSuccess={handleImportSuccess}
-        />
-      </View>
-    </SafeAreaView>
+      {/* 教务导入弹窗 */}
+      <ImportModal
+        visible={isImportModalVisible}
+        onClose={() => setIsImportModalVisible(false)}
+        onImportSuccess={handleImportSuccess}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: Colors.primary,
-  },
   container: {
     flex: 1,
     backgroundColor: Colors.background,
@@ -175,7 +166,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
-    paddingTop: 12,
     shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.15,
@@ -187,7 +177,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    marginBottom: 14,
+    marginBottom: 16,
   },
   userProfile: {
     flexDirection: 'row',
@@ -220,10 +210,10 @@ const styles = StyleSheet.create({
   },
   subGreetingText: {
     fontSize: 11,
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: 'rgba(255, 255, 255, 0.88)',
     marginTop: 2,
   },
-  checkinBadge: {
+  headerActionBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
@@ -232,36 +222,62 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: Rounded.pill,
   },
-  checkinText: {
+  headerActionText: {
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '600',
   },
-  statRow: {
+  todayRemainingCard: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
+    marginHorizontal: 16,
+    borderRadius: Rounded.lg,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
   },
-  statItem: {
+  todayRemainingLeft: {
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: 10,
   },
-  statNumber: {
-    fontSize: 18,
+  remainingIconCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  todayRemainingLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  todayRemainingSub: {
+    fontSize: 10,
+    color: 'rgba(255, 255, 255, 0.85)',
+    marginTop: 1,
+  },
+  todayRemainingRight: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 2,
+  },
+  todayRemainingNumber: {
+    fontSize: 24,
     fontWeight: '800',
     color: '#FFFFFF',
     fontVariant: ['tabular-nums'],
   },
-  statLabel: {
-    fontSize: 11,
-    color: 'rgba(255, 255, 255, 0.8)',
-    marginTop: 2,
-  },
-  statDivider: {
-    width: 1,
-    height: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  todayRemainingUnit: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.9)',
   },
   quickGridWrapper: {
     marginTop: 16,
