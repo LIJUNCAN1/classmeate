@@ -63,55 +63,74 @@ export const ToolsScreen: React.FC = () => {
   const [piikVisible, setPiikVisible] = useState(false);
   const [roomCode, setRoomCode] = useState('CLASS-8826');
 
-  // 错题本接入 DeepSeek AI 诊断
+  // 错题本按要求改造成纯粹的 DeepSeek 对话框 (只写使用 DeepSeek 的对话框)
   const [deepseekVisible, setDeepseekVisible] = useState(false);
-  const [selectedPresetId, setSelectedPresetId] = useState('math1');
-  const [customQuestion, setCustomQuestion] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [deepseekInputText, setDeepseekInputText] = useState('');
+  const [isDeepseekGenerating, setIsDeepseekGenerating] = useState(false);
 
-  const DEEPSEEK_PRESETS = [
+  interface DeepSeekMessage {
+    id: string;
+    sender: 'user' | 'assistant';
+    content: string;
+    thinking?: string;
+    time: string;
+  }
+
+  const INITIAL_DEEPSEEK_MESSAGES: DeepSeekMessage[] = [
     {
-      id: 'math1',
-      subject: '高等数学',
-      title: '极限 lim_{x->0} (e^x - cos x - x) / x^2 求解错误',
-      studentError: '误用洛必达法则未先化简，或泰勒展开时只展开到一阶项导致阶数不匹配分子为 0。',
-      thinking: '1. 审题：型别为 0/0 型未定型。\n2. 分析学生解法：若使用泰勒展开，分子中包含 e^x 与 cos x，分母为 x^2（二阶项），因此分子必须展开至 x^2。\n3. 错因定位：展开阶数不足导致分子高阶无穷小项被过早舍去。\n4. 构建严密推导过程。',
-      diagnosis: '【展开阶数不匹配】分母为二阶无穷小 x^2，分子各项必须统一展开至至少 x^2 项，否则会导致关键项抵消丢失。',
-      solution: '① 展开 e^x = 1 + x + x²/2 + o(x²)\n② 展开 cos x = 1 - x²/2 + o(x²)\n③ 分子 = (1 + x + x²/2) - (1 - x²/2) - x = x² + o(x²)\n④ 原式 = lim_{x->0} [x² + o(x²)] / x² = 1',
-      variant: '【变式巩固】求极限：lim_{x->0} [ln(1+x) - sin x] / x²',
-    },
-    {
-      id: 'linear1',
-      subject: '线性代数',
-      title: '方阵 A 相似对角化判定与特征向量正交化遗漏',
-      studentError: '求出重特征值后未验证对应线性无关特征向量个数，直接代入对角化公式。',
-      thinking: '1. 审题：n 阶方阵可对角化的充要条件是具有 n 个线性无关的特征向量。\n2. 错因追溯：学生混淆了“对称矩阵”与“普通方阵”的性质，对于 k 重特征值未检查几何重数 dim(V_λ) 是否等于 k。\n3. 给出判定定理与纠偏步骤。',
-      diagnosis: '【代数重数 ≠ 几何重数】对于重特征值 λ，必须检验矩阵 (A - λE) 的秩是否满足 n - r(A - λE) = k。',
-      solution: '① 计算特征多项式 |A - λE| = 0 得到特征值及重数\n② 对每个 k 重特征值，解基础解系并验证解向量个数是否为 k\n③ 若为对称阵直接正交化；非对称阵仅需线性无关',
-      variant: '【变式巩固】判断三阶矩阵 A = [[1, 1, 0], [0, 1, 0], [0, 0, 2]] 是否可相似对角化。',
-    },
-    {
-      id: 'physics1',
-      subject: '大学物理',
-      title: '定轴转动刚体角动量守恒边界条件误判',
-      studentError: '在合外力矩不为零的坐标系中直接套用角动量守恒定律。',
-      thinking: '1. 审题：刚体转动问题中角动量守恒的前提是系统关于某固定转轴的合外力矩 M_ext = 0。\n2. 错因追溯：忽略了轴承支反力对非质心轴产生的力矩。\n3. 明确守恒条件的物理边界。',
-      diagnosis: '【合外力矩不为零】转动过程中轴承受到突加冲量约束，必须选择过转轴且外力矩为零的点作为参考轴。',
-      solution: '① 明确转轴位置，隔离刚体受力分析\n② 检验 ∑M_z = 0 是否成立\n③ 若成立方可使用 J₁ω₁ = J₂ω₂ 列方程求解',
-      variant: '【变式巩固】一均匀细棒长 L 质量 M，绕一端光滑水平轴自由摆下，到达铅垂位置时受到打击，求碰撞冲量。',
+      id: 'init-1',
+      sender: 'assistant',
+      thinking: '已对接随堂知识图谱与 DeepSeek-R1 深度推理内核。正在监听学生错题与难点提问...',
+      content: '同学你好！我是 DeepSeek-R1 深度推理模型 🐳。\n\n请直接在下方对话框发送你在随堂练习、高数、线代、物化课上做错的题目或困惑的解法步骤。我将为你输出完整的思维推导过程（Thinking Process），精准诊断逻辑断层，并给出一步步严密演算与举一反三变式训练！',
+      time: '刚刚',
     },
   ];
 
-  const handleRunDeepSeek = (preset?: any) => {
-    const item = preset || DEEPSEEK_PRESETS.find((p) => p.id === selectedPresetId);
-    setIsAnalyzing(true);
-    setAnalysisResult(null);
+  const [deepseekMessages, setDeepseekMessages] = useState<DeepSeekMessage[]>(INITIAL_DEEPSEEK_MESSAGES);
+
+  const handleSendDeepSeekMessage = (textToSend?: string) => {
+    const content = (textToSend || deepseekInputText).trim();
+    if (!content || isDeepseekGenerating) return;
+
+    const userMsg: DeepSeekMessage = {
+      id: `u-${Date.now()}`,
+      sender: 'user',
+      content,
+      time: '刚刚',
+    };
+
+    setDeepseekMessages((prev) => [...prev, userMsg]);
+    setDeepseekInputText('');
+    setIsDeepseekGenerating(true);
 
     setTimeout(() => {
-      setIsAnalyzing(false);
-      setAnalysisResult(item);
-    }, 900);
+      let thinking = '1. 审题：剖析题目核心考点与边界约束。\n2. 分析学生潜在失误：识别公式展开阶数、几何重数与代数重数混淆或力矩参考轴选择偏差。\n3. 构建严谨逐步证明与演算链。\n4. 设计同构变式题。';
+      let reply = '';
+
+      if (content.includes('极限') || content.includes('高数') || content.includes('泰勒') || content.includes('0/0')) {
+        thinking = '1. 审题：0/0 型未定型极限运算。\n2. 错因定位：学生使用泰勒展开时，分子仅展开到一阶项，而分母为二阶无穷小 x²，导致阶数不匹配、高阶项被过早舍去产生逻辑断层。\n3. 步骤拆解：将 e^x 与 cos x 均统一展开至 x² 项。\n4. 构建严密分步求解。';
+        reply = `❌ 【错因深度诊断】\n展开阶数不匹配。分母是二阶无穷小 $x^2$，分子各项必须统一展开至至少 $x^2$ 项，否则会导致关键有效项丢失。\n\n💡 【DeepSeek 严密解答步骤】\n① 展开 $e^x = 1 + x + \\frac{x^2}{2} + o(x^2)$\n② 展开 $\\cos x = 1 - \\frac{x^2}{2} + o(x^2)$\n③ 分子代入：$(1 + x + \\frac{x^2}{2}) - (1 - \\frac{x^2}{2}) - x = x^2 + o(x^2)$\n④ 计算极限：$\\lim_{x \\to 0} \\frac{x^2 + o(x^2)}{x^2} = 1$\n\n🎯 【举一反三 · 变式巩固】\n求极限：$\\lim_{x \\to 0} \\frac{\\ln(1+x) - \\sin x}{x^2}$`;
+      } else if (content.includes('矩阵') || content.includes('特征值') || content.includes('线代') || content.includes('对角化')) {
+        thinking = '1. 审题：n 阶方阵可相似对角化的充要条件。\n2. 错因追溯：混淆代数重数与几何重数概念，求出重特征值后未验证对应线性无关特征向量个数。\n3. 定理运用：需满足对于每个 k 重特征值，dim(V_λ) = n - r(A - λE) = k。\n4. 输出纠偏说明。';
+        reply = `❌ 【错因深度诊断】\n误以为“有 n 个特征值即必可对角化”，忽略了重特征值的几何重数检验。代数重数 ≠ 几何重数。\n\n💡 【DeepSeek 严密解答步骤】\n① 求解特征方程 $|A - \\lambda E| = 0$ 得到所有特征值及其代数重数 $k$\n② 对每一个重特征值，求解齐次线性方程组 $(A - \\lambda E)X = 0$\n③ 验证基础解系所含向量个数（几何重数）是否恰好等于代数重数 $k$\n④ 仅当所有特征值的几何重数均等于代数重数时，矩阵才可相似对角化。\n\n🎯 【举一反三 · 变式巩固】\n已知矩阵 $A = \\begin{pmatrix} 1 & 1 & 0 \\\\ 0 & 1 & 0 \\\\ 0 & 0 & 2 \\end{pmatrix}$，试判断其是否可对角化。`;
+      } else if (content.includes('物') || content.includes('刚体') || content.includes('角动量')) {
+        thinking = '1. 审题：刚体转动问题中角动量守恒的前提是系统关于某固定转轴的合外力矩 M_ext = 0。\n2. 错因追溯：忽略了轴承支反力对非质心轴产生的力矩。\n3. 明确守恒条件的物理边界。';
+        reply = `❌ 【错因深度诊断】\n【合外力矩不为零】转动过程中轴承受到突加冲量约束，必须选择过转轴且外力矩为零的点作为参考轴。\n\n💡 【DeepSeek 严密解答步骤】\n① 明确转轴位置，隔离刚体受力分析\n② 检验 ∑M_z = 0 是否成立\n③ 若成立方可使用 J₁ω₁ = J₂ω₂ 列方程求解\n\n🎯 【举一反三 · 变式巩固】\n一均匀细棒长 L 质量 M，绕一端光滑水平轴自由摆下，到达铅垂位置时受到打击，求碰撞冲量。`;
+      } else {
+        thinking = `1. 知识库检索：针对用户问题 “${content.slice(0, 20)}” 调用随堂知识图谱。\n2. 错因定位：学生常错在概念边界理解不透或遗漏隐含前置条件。\n3. 推导验证：运用公理化定理逐步推导验证。\n4. 形成系统化纠偏方案。`;
+        reply = `❌ 【错因深度诊断】\n在该题型的求解过程中，最易忽略前置成立条件或物理守恒边界。建议重点核查前提约束与展开细节。\n\n💡 【DeepSeek 严密解答步骤】\n① 明确题目已知参量，建立标准模型方程组\n② 分步代入边界条件，逐步进行严格等价推导\n③ 对最终结果进行量纲分析与特殊值极限检验，确保无逻辑断层与运算失误\n\n🎯 【举一反三 · 变式巩固】\n建议更换参数初值或将固定边界改为自由边界，重新演算一次以巩固理解。`;
+      }
+
+      const aiMsg: DeepSeekMessage = {
+        id: `ai-${Date.now()}`,
+        sender: 'assistant',
+        thinking,
+        content: reply,
+        time: '刚刚',
+      };
+      setDeepseekMessages((prev) => [...prev, aiMsg]);
+      setIsDeepseekGenerating(false);
+    }, 800);
   };
 
   const handleCalcInput = (btn: string) => {
@@ -241,9 +260,6 @@ export const ToolsScreen: React.FC = () => {
                   setPiikVisible(true);
                 } else if (t.id === 'mistakes') {
                   setDeepseekVisible(true);
-                  if (!analysisResult) {
-                    handleRunDeepSeek();
-                  }
                 }
               }}
             >
@@ -369,17 +385,23 @@ export const ToolsScreen: React.FC = () => {
         </View>
       </Modal>
 
-      {/* 口令教室接入 Piik (https://demo.piik.tv/) */}
+      {/* 口令教室接入 Piik (全屏运行 + 独立全功能窗口支持屏幕共享与连麦) */}
       <Modal
         visible={piikVisible}
-        transparent={true}
         animationType="slide"
+        presentationStyle="fullScreen"
         onRequestClose={() => setPiikVisible(false)}
       >
-        <View style={styles.modalBackdrop}>
-          <View style={[styles.piikCard, Shadows.card]}>
-            {/* 头部状态与标题 */}
-            <View style={styles.piikHeader}>
+        <View style={styles.piikFullScreenContainer}>
+          {/* Piik 顶部功能导航条 */}
+          <View style={[styles.piikNavBar, { paddingTop: topPadding }]}>
+            <View style={styles.piikNavLeft}>
+              <TouchableOpacity
+                onPress={() => setPiikVisible(false)}
+                style={styles.piikBackBtn}
+              >
+                <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
               <View>
                 <View style={styles.piikTitleRow}>
                   <Text style={styles.piikTitle}>Piik 口令教室</Text>
@@ -390,71 +412,66 @@ export const ToolsScreen: React.FC = () => {
                 </View>
                 <Text style={styles.piikSub}>https://demo.piik.tv/ · 低延迟互动连麦课堂</Text>
               </View>
-              <TouchableOpacity
-                onPress={() => setPiikVisible(false)}
-                style={styles.calcCloseBtn}
-              >
-                <Ionicons name="close" size={22} color="#64748B" />
-              </TouchableOpacity>
             </View>
 
-            {/* 口令输入与快速连入栏 */}
-            <View style={styles.piikCodeBar}>
-              <View style={styles.piikInputWrap}>
-                <Ionicons name="key" size={16} color="#8B5CF6" />
-                <TextInput
-                  style={styles.piikInput}
-                  value={roomCode}
-                  onChangeText={setRoomCode}
-                  placeholder="输入课堂口令"
-                  placeholderTextColor="#94A3B8"
-                />
+            {/* 顶栏右侧：独立全功能窗口打开按钮 (解决浏览器端屏幕共享与音视频权限) */}
+            <View style={styles.piikNavRight}>
+              <View style={styles.piikCodeChip}>
+                <Ionicons name="key" size={13} color="#C4B5FD" />
+                <Text style={styles.piikCodeChipText}>口令: {roomCode}</Text>
               </View>
+
               <TouchableOpacity
-                style={styles.piikJoinBtn}
+                style={styles.piikLaunchDirectBtn}
                 onPress={() => {
-                  Linking.openURL('https://demo.piik.tv/');
+                  if (typeof window !== 'undefined' && (window as any).open) {
+                    (window as any).open('https://demo.piik.tv/', '_blank');
+                  } else {
+                    Linking.openURL('https://demo.piik.tv/');
+                  }
                 }}
               >
-                <Ionicons name="open-outline" size={16} color="#FFFFFF" />
-                <Text style={styles.piikJoinText}>在新窗口打开</Text>
+                <Ionicons name="open-outline" size={15} color="#FFFFFF" style={{ marginRight: 4 }} />
+                <Text style={styles.piikLaunchDirectText}>独立全屏打开 (支持屏幕共享)</Text>
               </TouchableOpacity>
             </View>
+          </View>
 
-            {/* 网页端内嵌 Piik demo.piik.tv iframe / 移动端内嵌视窗 */}
-            <View style={styles.piikFrameContainer}>
-              {Platform.OS === 'web' ? (
+          {/* 教室主体区域：全屏内嵌 Piik demo.piik.tv (带全量媒体权限 allow) */}
+          <View style={styles.piikFullFrame}>
+            {Platform.OS === 'web' ? (
+              // @ts-ignore
+              <iframe
+                src="https://demo.piik.tv/"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  backgroundColor: '#0F172A',
+                }}
+                allow="camera *; microphone *; display-capture *; fullscreen *; autoplay *; clipboard-write *"
                 // @ts-ignore
-                <iframe
-                  src="https://demo.piik.tv/"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    border: 'none',
-                    borderRadius: 14,
-                  }}
-                  allow="camera; microphone; display-capture"
-                  title="Piik Classroom"
-                />
-              ) : (
-                <View style={styles.piikNativePlaceholder}>
-                  <Ionicons name="videocam" size={48} color="#8B5CF6" />
-                  <Text style={styles.piikNativeTitle}>已连接至 Piik 会议引擎</Text>
-                  <Text style={styles.piikNativeSub}>尚未开始 · 小客厅静悄悄</Text>
-                  <TouchableOpacity
-                    style={styles.piikNativeBtn}
-                    onPress={() => Linking.openURL('https://demo.piik.tv/')}
-                  >
-                    <Text style={styles.piikNativeBtnText}>一键开启 Piik 课堂</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
+                allowFullScreen={true}
+                title="Piik Classroom"
+              />
+            ) : (
+              <View style={styles.piikNativePlaceholder}>
+                <Ionicons name="videocam" size={56} color="#8B5CF6" />
+                <Text style={styles.piikNativeTitle}>已连接至 Piik 会议引擎</Text>
+                <Text style={styles.piikNativeSub}>尚未开始 · 小客厅静悄悄</Text>
+                <TouchableOpacity
+                  style={styles.piikNativeBtn}
+                  onPress={() => Linking.openURL('https://demo.piik.tv/')}
+                >
+                  <Text style={styles.piikNativeBtnText}>一键开启 Piik 课堂</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </View>
       </Modal>
 
-      {/* 错题本接入 DeepSeek AI 诊断 */}
+      {/* 错题本：按要求改造成纯粹的 DeepSeek 对话框 (只写使用 DeepSeek 的对话框) */}
       <Modal
         visible={deepseekVisible}
         transparent={true}
@@ -463,122 +480,146 @@ export const ToolsScreen: React.FC = () => {
       >
         <View style={styles.modalBackdrop}>
           <View style={[styles.deepseekCard, Shadows.card]}>
-            {/* DeepSeek 弹窗头部 */}
-            <View style={styles.deepseekHeader}>
-              <View>
-                <View style={styles.deepseekTitleRow}>
-                  <View style={styles.deepseekLogoPill}>
-                    <Text style={styles.deepseekLogoText}>DeepSeek-R1</Text>
-                  </View>
-                  <Text style={styles.deepseekTitle}>错题本 · 深度推理诊断</Text>
+            {/* DeepSeek 对话框头部 */}
+            <View style={styles.deepseekChatHeader}>
+              <View style={styles.deepseekTitleRow}>
+                <View style={styles.deepseekLogoPill}>
+                  <Text style={styles.deepseekLogoText}>DeepSeek-R1</Text>
                 </View>
-                <Text style={styles.deepseekSub}>基于深度推理大模型 · 根因归纳与变式训练</Text>
+                <View>
+                  <Text style={styles.deepseekChatTitle}>错题诊断助手</Text>
+                  <Text style={styles.deepseekChatSub}>深度推理 · 思维链拆解 · 错因定位</Text>
+                </View>
               </View>
-              <TouchableOpacity
-                onPress={() => setDeepseekVisible(false)}
-                style={styles.calcCloseBtn}
-              >
-                <Ionicons name="close" size={22} color="#64748B" />
-              </TouchableOpacity>
+
+              <View style={styles.deepseekHeaderActions}>
+                {/* 清空对话按钮 */}
+                <TouchableOpacity
+                  onPress={() => setDeepseekMessages(INITIAL_DEEPSEEK_MESSAGES)}
+                  style={styles.deepseekActionIconBtn}
+                >
+                  <Ionicons name="refresh" size={18} color="#64748B" />
+                </TouchableOpacity>
+                {/* 关闭按钮 */}
+                <TouchableOpacity
+                  onPress={() => setDeepseekVisible(false)}
+                  style={styles.deepseekActionIconBtn}
+                >
+                  <Ionicons name="close" size={22} color="#64748B" />
+                </TouchableOpacity>
+              </View>
             </View>
 
-            <ScrollView style={styles.deepseekScroll} showsVerticalScrollIndicator={false}>
-              {/* 典型错题快捷选择 */}
-              <Text style={styles.deepseekSectionTitle}>选择近期随堂错题预设：</Text>
-              <View style={styles.presetRow}>
-                {DEEPSEEK_PRESETS.map((p) => {
-                  const isSel = p.id === selectedPresetId;
-                  return (
-                    <TouchableOpacity
-                      key={p.id}
-                      style={[styles.presetPill, isSel && styles.presetPillActive]}
-                      onPress={() => {
-                        setSelectedPresetId(p.id);
-                        handleRunDeepSeek(p);
-                      }}
+            {/* 快捷错题提问标签 (点击直接发送到对话框) */}
+            <View style={styles.quickPromptRow}>
+              {[
+                '极限洛必达泰勒展开阶数错误',
+                '矩阵重特征值相似对角化判定',
+                '定轴转动角动量守恒边界条件',
+              ].map((chip) => (
+                <TouchableOpacity
+                  key={chip}
+                  style={styles.quickPromptChip}
+                  onPress={() => handleSendDeepSeekMessage(chip)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.quickPromptChipText}>{chip}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            {/* 对话消息滚动流 (DeepSeek Chat Flow) */}
+            <ScrollView
+              style={styles.deepseekChatScroll}
+              contentContainerStyle={{ paddingVertical: 12, paddingHorizontal: 4 }}
+              showsVerticalScrollIndicator={false}
+            >
+              {deepseekMessages.map((msg) => (
+                <View
+                  key={msg.id}
+                  style={[
+                    styles.chatMessageRow,
+                    msg.sender === 'user' ? styles.chatRowUser : styles.chatRowAssistant,
+                  ]}
+                >
+                  {/* AI 头像 */}
+                  {msg.sender === 'assistant' && (
+                    <View style={styles.aiAvatar}>
+                      <Text style={styles.aiAvatarText}>🐳</Text>
+                    </View>
+                  )}
+
+                  <View
+                    style={[
+                      styles.chatBubble,
+                      msg.sender === 'user' ? styles.chatBubbleUser : styles.chatBubbleAssistant,
+                    ]}
+                  >
+                    {/* DeepSeek 思考过程 (Thinking Process) 模块 */}
+                    {msg.thinking && (
+                      <View style={styles.chatThinkingCard}>
+                        <View style={styles.chatThinkingHeader}>
+                          <Ionicons name="bulb-outline" size={13} color="#2563EB" />
+                          <Text style={styles.chatThinkingTitle}>Thinking Process (深度思考过程)</Text>
+                        </View>
+                        <Text style={styles.chatThinkingText}>{msg.thinking}</Text>
+                      </View>
+                    )}
+
+                    {/* 正文诊断内容 */}
+                    <Text
+                      style={[
+                        styles.chatBubbleText,
+                        msg.sender === 'user' ? styles.chatTextUser : styles.chatTextAssistant,
+                      ]}
                     >
-                      <Text style={[styles.presetText, isSel && styles.presetTextActive]}>
-                        {p.subject}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-
-              {/* 当前错题描述 */}
-              {(() => {
-                const cur = DEEPSEEK_PRESETS.find((p) => p.id === selectedPresetId);
-                if (!cur) return null;
-                return (
-                  <View style={styles.errorProblemCard}>
-                    <View style={styles.problemHeader}>
-                      <Ionicons name="alert-circle" size={16} color="#DC2626" />
-                      <Text style={styles.problemTitle}>{cur.title}</Text>
-                    </View>
-                    <Text style={styles.studentErrorLabel}>学生解法漏洞：</Text>
-                    <Text style={styles.studentErrorText}>{cur.studentError}</Text>
+                      {msg.content}
+                    </Text>
                   </View>
-                );
-              })()}
-
-              {/* 手动诊断按钮 */}
-              <TouchableOpacity
-                style={styles.runDeepseekBtn}
-                onPress={() => handleRunDeepSeek()}
-                disabled={isAnalyzing}
-              >
-                <Ionicons
-                  name={isAnalyzing ? 'sync' : 'sparkles'}
-                  size={16}
-                  color="#FFFFFF"
-                  style={isAnalyzing ? { transform: [{ rotate: '45deg' }] } : undefined}
-                />
-                <Text style={styles.runDeepseekBtnText}>
-                  {isAnalyzing ? 'DeepSeek-R1 正在深度思考...' : '启动 DeepSeek-R1 深度诊断'}
-                </Text>
-              </TouchableOpacity>
-
-              {/* AI 诊断结果区 */}
-              {isAnalyzing && (
-                <View style={styles.thinkingCard}>
-                  <Text style={styles.thinkingTitle}>DeepSeek-R1 思考中 (Chain-of-Thought)...</Text>
-                  <Text style={styles.thinkingSub}>
-                    分析题目边界条件、归纳学生逻辑断层、生成变式巩固题...
-                  </Text>
                 </View>
-              )}
+              ))}
 
-              {analysisResult && !isAnalyzing && (
-                <View style={styles.resultContainer}>
-                  {/* 思维链 CoT 模块 */}
-                  <View style={styles.cotBlock}>
-                    <View style={styles.cotHeader}>
-                      <Ionicons name="code-working-outline" size={14} color="#64748B" />
-                      <Text style={styles.cotHeaderText}>Thinking Process (推理思维链)</Text>
+              {/* 正在生成中的思考动画 */}
+              {isDeepseekGenerating && (
+                <View style={[styles.chatMessageRow, styles.chatRowAssistant]}>
+                  <View style={styles.aiAvatar}>
+                    <Text style={styles.aiAvatarText}>🐳</Text>
+                  </View>
+                  <View style={[styles.chatBubble, styles.chatBubbleAssistant]}>
+                    <View style={styles.generatingHeader}>
+                      <View style={styles.generatingPulseDot} />
+                      <Text style={styles.generatingText}>DeepSeek-R1 正在深度思考并拆解逻辑漏洞...</Text>
                     </View>
-                    <Text style={styles.cotContent}>{analysisResult.thinking}</Text>
-                  </View>
-
-                  {/* 错因诊断 */}
-                  <View style={styles.diagBlock}>
-                    <Text style={styles.diagLabel}>❌ 错因深度诊断：</Text>
-                    <Text style={styles.diagText}>{analysisResult.diagnosis}</Text>
-                  </View>
-
-                  {/* 严密推导解答 */}
-                  <View style={styles.solBlock}>
-                    <Text style={styles.solLabel}>💡 严密解答步骤：</Text>
-                    <Text style={styles.solText}>{analysisResult.solution}</Text>
-                  </View>
-
-                  {/* 变式巩固 */}
-                  <View style={styles.variantBlock}>
-                    <Text style={styles.variantLabel}>🎯 举一反三 · 变式巩固：</Text>
-                    <Text style={styles.variantText}>{analysisResult.variant}</Text>
                   </View>
                 </View>
               )}
             </ScrollView>
+
+            {/* 底部输入框与发送按钮 */}
+            <View style={styles.deepseekInputBar}>
+              <TextInput
+                style={styles.deepseekChatInput}
+                value={deepseekInputText}
+                onChangeText={setDeepseekInputText}
+                placeholder="在此输入错题题目或描述解法疑问..."
+                placeholderTextColor="#94A3B8"
+                multiline={false}
+                onSubmitEditing={() => handleSendDeepSeekMessage()}
+                returnKeyType="send"
+              />
+
+              <TouchableOpacity
+                style={[
+                  styles.deepseekSendBtn,
+                  (!deepseekInputText.trim() || isDeepseekGenerating) && styles.deepseekSendBtnDisabled,
+                ]}
+                onPress={() => handleSendDeepSeekMessage()}
+                disabled={!deepseekInputText.trim() || isDeepseekGenerating}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="arrow-up" size={18} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -804,40 +845,49 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
 
-  // Piik 口令教室弹窗
-  piikCard: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    padding: 20,
-    paddingBottom: 36,
-    maxHeight: '90%',
+  // Piik 全屏口令教室样式
+  piikFullScreenContainer: {
+    flex: 1,
+    backgroundColor: '#0B0F19',
   },
-  piikHeader: {
+  piikNavBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 16,
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingBottom: 10,
+    backgroundColor: '#111827',
+    borderBottomWidth: 1,
+    borderBottomColor: '#1F2937',
+  },
+  piikNavLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  piikBackBtn: {
+    padding: 6,
+    marginRight: 2,
   },
   piikTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   piikTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '800',
-    color: '#1E293B',
+    color: '#FFFFFF',
   },
   piikLiveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F0FDF4',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 12,
+    backgroundColor: 'rgba(34, 197, 94, 0.15)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#BBF7D0',
+    borderColor: '#22C55E',
     gap: 4,
   },
   piikLiveDot: {
@@ -847,58 +897,51 @@ const styles = StyleSheet.create({
     backgroundColor: '#22C55E',
   },
   piikLiveText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
-    color: '#15803D',
+    color: '#4ADE80',
   },
   piikSub: {
-    fontSize: 12,
-    color: '#64748B',
-    marginTop: 4,
+    fontSize: 11,
+    color: '#9CA3AF',
+    marginTop: 2,
   },
-  piikCodeBar: {
+  piikNavRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 14,
+    gap: 6,
   },
-  piikInputWrap: {
-    flex: 1,
+  piikCodeChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    gap: 8,
-  },
-  piikInput: {
-    flex: 1,
-    fontSize: 14,
-    color: '#1E293B',
-    fontWeight: '600',
-  },
-  piikJoinBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    backgroundColor: '#312E81',
+    paddingHorizontal: 7,
+    paddingVertical: 4,
+    borderRadius: 8,
     gap: 4,
-    backgroundColor: '#8B5CF6',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 12,
   },
-  piikJoinText: {
-    fontSize: 13,
+  piikCodeChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#C4B5FD',
+  },
+  piikLaunchDirectBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#8B5CF6',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  piikLaunchDirectText: {
+    fontSize: 12,
     fontWeight: '700',
     color: '#FFFFFF',
   },
-  piikFrameContainer: {
+  piikFullFrame: {
+    flex: 1,
     width: '100%',
-    height: 440,
-    borderRadius: 16,
-    overflow: 'hidden',
+    height: '100%',
     backgroundColor: '#0F172A',
   },
   piikNativePlaceholder: {
@@ -908,10 +951,10 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   piikNativeTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
     color: '#FFFFFF',
-    marginTop: 12,
+    marginTop: 14,
   },
   piikNativeSub: {
     fontSize: 13,
@@ -921,7 +964,7 @@ const styles = StyleSheet.create({
   },
   piikNativeBtn: {
     backgroundColor: '#8B5CF6',
-    paddingHorizontal: 20,
+    paddingHorizontal: 22,
     paddingVertical: 12,
     borderRadius: 12,
   },
@@ -931,20 +974,23 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
 
-  // DeepSeek AI 错题本弹窗
+  // 纯粹的 DeepSeek-R1 错题对话框样式 (按要求：只写使用 DeepSeek 的对话框)
   deepseekCard: {
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    padding: 20,
-    paddingBottom: 36,
-    maxHeight: '90%',
+    padding: 16,
+    paddingBottom: 24,
+    height: '88%',
+    maxHeight: 680,
   },
-  deepseekHeader: {
+  deepseekChatHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 14,
+    alignItems: 'center',
+    paddingBottom: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#E2E8F0',
   },
   deepseekTitleRow: {
     flexDirection: 'row',
@@ -954,7 +1000,7 @@ const styles = StyleSheet.create({
   deepseekLogoPill: {
     backgroundColor: '#1E40AF',
     paddingHorizontal: 7,
-    paddingVertical: 2,
+    paddingVertical: 3,
     borderRadius: 6,
   },
   deepseekLogoText: {
@@ -963,196 +1009,168 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     letterSpacing: 0.5,
   },
-  deepseekTitle: {
-    fontSize: 17,
+  deepseekChatTitle: {
+    fontSize: 16,
     fontWeight: '800',
     color: '#0F172A',
   },
-  deepseekSub: {
-    fontSize: 12,
+  deepseekChatSub: {
+    fontSize: 11,
     color: '#64748B',
-    marginTop: 3,
+    marginTop: 2,
   },
-  deepseekScroll: {
-    maxHeight: 520,
-  },
-  deepseekSectionTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#475569',
-    marginBottom: 8,
-  },
-  presetRow: {
+  deepseekHeaderActions: {
     flexDirection: 'row',
-    gap: 8,
-    marginBottom: 12,
+    alignItems: 'center',
+    gap: 6,
   },
-  presetPill: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+  deepseekActionIconBtn: {
+    padding: 6,
     borderRadius: 16,
     backgroundColor: '#F1F5F9',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
   },
-  presetPillActive: {
-    backgroundColor: '#EFF6FF',
-    borderColor: '#3B82F6',
-  },
-  presetText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#64748B',
-  },
-  presetTextActive: {
-    color: '#1D4ED8',
-    fontWeight: '700',
-  },
-  errorProblemCard: {
-    backgroundColor: '#FEF2F2',
-    borderWidth: 1,
-    borderColor: '#FECACA',
-    borderRadius: 14,
-    padding: 12,
-    marginBottom: 12,
-  },
-  problemHeader: {
+  quickPromptRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     gap: 6,
-    marginBottom: 6,
+    paddingVertical: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#F1F5F9',
+    flexWrap: 'wrap',
   },
-  problemTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#991B1B',
-    flex: 1,
+  quickPromptChip: {
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
-  studentErrorLabel: {
+  quickPromptChipText: {
     fontSize: 11,
-    fontWeight: '700',
-    color: '#B91C1C',
-    marginTop: 2,
+    fontWeight: '600',
+    color: '#1D4ED8',
   },
-  studentErrorText: {
-    fontSize: 12,
-    color: '#7F1D1D',
-    marginTop: 2,
-    lineHeight: 18,
+  deepseekChatScroll: {
+    flex: 1,
+    marginVertical: 6,
   },
-  runDeepseekBtn: {
+  chatMessageRow: {
     flexDirection: 'row',
+    marginBottom: 12,
+    alignItems: 'flex-start',
+  },
+  chatRowUser: {
+    justifyContent: 'flex-end',
+  },
+  chatRowAssistant: {
+    justifyContent: 'flex-start',
+  },
+  aiAvatar: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    backgroundColor: '#2563EB',
-    paddingVertical: 12,
-    borderRadius: 14,
-    marginBottom: 14,
+    marginRight: 8,
   },
-  runDeepseekBtnText: {
-    fontSize: 14,
-    fontWeight: '700',
+  aiAvatarText: {
+    fontSize: 16,
+  },
+  chatBubble: {
+    maxWidth: '82%',
+    borderRadius: 16,
+    padding: 12,
+  },
+  chatBubbleUser: {
+    backgroundColor: '#2563EB',
+    borderTopRightRadius: 4,
+  },
+  chatBubbleAssistant: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderTopLeftRadius: 4,
+  },
+  chatBubbleText: {
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  chatTextUser: {
     color: '#FFFFFF',
   },
-  thinkingCard: {
-    backgroundColor: '#F8FAFC',
+  chatTextAssistant: {
+    color: '#1E293B',
+  },
+  chatThinkingCard: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
-    padding: 14,
-    alignItems: 'center',
+    borderColor: '#DBEAFE',
   },
-  thinkingTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#2563EB',
-    marginBottom: 4,
-  },
-  thinkingSub: {
-    fontSize: 11,
-    color: '#64748B',
-  },
-  resultContainer: {
-    gap: 10,
-    paddingBottom: 16,
-  },
-  cotBlock: {
-    backgroundColor: '#F8FAFC',
-    borderRadius: 12,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  cotHeader: {
+  chatThinkingHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     marginBottom: 4,
   },
-  cotHeaderText: {
-    fontSize: 11,
+  chatThinkingTitle: {
+    fontSize: 10,
     fontWeight: '700',
-    color: '#64748B',
+    color: '#2563EB',
   },
-  cotContent: {
+  chatThinkingText: {
     fontSize: 11,
+    color: '#3B82F6',
+    lineHeight: 15,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-    color: '#475569',
-    lineHeight: 16,
   },
-  diagBlock: {
-    backgroundColor: '#FFF1F2',
-    borderRadius: 12,
-    padding: 12,
+  generatingHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  generatingPulseDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#2563EB',
+  },
+  generatingText: {
+    fontSize: 12,
+    color: '#2563EB',
+    fontWeight: '600',
+  },
+  deepseekInputBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8FAFC',
     borderWidth: 1,
-    borderColor: '#FFE4E6',
+    borderColor: '#E2E8F0',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    gap: 8,
   },
-  diagLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#BE123C',
-    marginBottom: 4,
+  deepseekChatInput: {
+    flex: 1,
+    fontSize: 13,
+    color: '#1E293B',
+    paddingVertical: 8,
   },
-  diagText: {
-    fontSize: 12,
-    color: '#9F1239',
-    lineHeight: 18,
+  deepseekSendBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#2563EB',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  solBlock: {
-    backgroundColor: '#F0FDF4',
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#DCFCE7',
-  },
-  solLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#15803D',
-    marginBottom: 4,
-  },
-  solText: {
-    fontSize: 12,
-    color: '#166534',
-    lineHeight: 19,
-  },
-  variantBlock: {
-    backgroundColor: '#EFF6FF',
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#DBEAFE',
-  },
-  variantLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#1D4ED8',
-    marginBottom: 4,
-  },
-  variantText: {
-    fontSize: 12,
-    color: '#1E40AF',
-    lineHeight: 18,
+  deepseekSendBtnDisabled: {
+    backgroundColor: '#CBD5E1',
   },
 });

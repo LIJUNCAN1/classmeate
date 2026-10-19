@@ -1058,7 +1058,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
@@ -1143,10 +1143,10 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
 
-  // 引导重新导入弹窗样式
+  // 引导重新导入弹窗样式（按要求：去掉黑色遮罩改成纯阴影）
   importModalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'transparent',
     justifyContent: 'flex-end',
   },
   importModalCard: {
@@ -1156,6 +1156,13 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 36,
     maxHeight: '82%',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: -10 },
+    shadowOpacity: 0.16,
+    shadowRadius: 20,
+    elevation: 24,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
   },
   importModalHeader: {
     flexDirection: 'row',

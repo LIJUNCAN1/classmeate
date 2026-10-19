@@ -12,7 +12,7 @@ import {
   StatusBar as RNStatusBar,
 } from 'react-native';
 import { Colors, Rounded, Shadows, getCourseColorScheme } from '../constants/theme';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface AppleNotesEditorProps {
@@ -45,22 +45,39 @@ export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
 }) => {
   const insets = useSafeAreaInsets();
 
+  // 手动新建默认“未关联课程”，标题默认为空白
   const [inputCourseName, setInputCourseName] = useState(
-    initialCourseName || COURSES_CATALOG[0].name
+    initialCourseName || '未关联课程'
   );
-  const [inputTitle, setInputTitle] = useState(
-    initialTitle || `第 14 周 · ${initialCourseName || COURSES_CATALOG[0].name} 随堂笔记`
-  );
+  const [inputTitle, setInputTitle] = useState(initialTitle || '');
   const [inputContent, setInputContent] = useState(initialContent || '');
+  const [contentHeight, setContentHeight] = useState(380);
+  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
 
   useEffect(() => {
     if (initialCourseName) {
       setInputCourseName(initialCourseName);
-      if (!initialTitle) {
-        setInputTitle(`第 14 周 · ${initialCourseName} 随堂笔记`);
-      }
     }
-  }, [initialCourseName, initialTitle]);
+    if (initialTitle !== undefined) {
+      setInputTitle(initialTitle);
+    }
+    if (initialContent !== undefined) {
+      setInputContent(initialContent);
+    }
+  }, [initialCourseName, initialTitle, initialContent]);
+
+  // 格式化与对齐插入辅助函数
+  const handleInsertFormat = (prefix: string) => {
+    const start = Math.min(cursorSelection.start, inputContent.length);
+    const end = Math.min(cursorSelection.end, inputContent.length);
+    const before = inputContent.substring(0, start);
+    const after = inputContent.substring(end);
+    const needNewline = before.length > 0 && !before.endsWith('\n') ? '\n' : '';
+    const updated = before + needNewline + prefix + after;
+    setInputContent(updated);
+    const newPos = start + needNewline.length + prefix.length;
+    setCursorSelection({ start: newPos, end: newPos });
+  };
 
   // 光标位置追踪
   const [cursorSelection, setCursorSelection] = useState<{ start: number; end: number }>({
@@ -381,55 +398,169 @@ export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
             <Text style={styles.metaDateText}>
               {new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' })} · {inputContent.length} 字
             </Text>
+
+            {/* 文本对齐与段落工具条（按要求：全部使用 icon 显示，不要加文字写在按键下面） */}
+            <View style={styles.editorFormatToolbar}>
+              {/* 对齐工具组 */}
+              <View style={styles.formatGroup}>
+                <TouchableOpacity
+                  style={[styles.formatIconBtn, textAlign === 'left' && styles.formatIconBtnActive]}
+                  onPress={() => setTextAlign('left')}
+                  activeOpacity={0.7}
+                >
+                  <MaterialCommunityIcons
+                    name="format-align-left"
+                    size={18}
+                    color={textAlign === 'left' ? Colors.primary : '#64748B'}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.formatIconBtn, textAlign === 'center' && styles.formatIconBtnActive]}
+                  onPress={() => setTextAlign('center')}
+                  activeOpacity={0.7}
+                >
+                  <MaterialCommunityIcons
+                    name="format-align-center"
+                    size={18}
+                    color={textAlign === 'center' ? Colors.primary : '#64748B'}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.formatIconBtn, textAlign === 'right' && styles.formatIconBtnActive]}
+                  onPress={() => setTextAlign('right')}
+                  activeOpacity={0.7}
+                >
+                  <MaterialCommunityIcons
+                    name="format-align-right"
+                    size={18}
+                    color={textAlign === 'right' ? Colors.primary : '#64748B'}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.formatDivider} />
+
+              {/* 段落样式工具组 (纯Icon无文字) */}
+              <View style={styles.formatGroup}>
+                <TouchableOpacity
+                  style={styles.formatIconBtn}
+                  onPress={() => handleInsertFormat('# ')}
+                  activeOpacity={0.7}
+                >
+                  <MaterialCommunityIcons name="format-header-1" size={18} color="#64748B" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.formatIconBtn}
+                  onPress={() => handleInsertFormat('• ')}
+                  activeOpacity={0.7}
+                >
+                  <MaterialCommunityIcons name="format-list-bulleted" size={18} color="#64748B" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.formatIconBtn}
+                  onPress={() => handleInsertFormat('1. ')}
+                  activeOpacity={0.7}
+                >
+                  <MaterialCommunityIcons name="format-list-numbered" size={18} color="#64748B" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.formatIconBtn}
+                  onPress={() => handleInsertFormat('> ')}
+                  activeOpacity={0.7}
+                >
+                  <MaterialCommunityIcons name="format-quote-close" size={18} color="#64748B" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.formatIconBtn}
+                  onPress={() => handleInsertFormat('[ ] ')}
+                  activeOpacity={0.7}
+                >
+                  <MaterialCommunityIcons name="checkbox-marked-circle-outline" size={18} color="#64748B" />
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
 
+          {/* 随文字一直往下延伸的文本编辑框 */}
           <TextInput
-            style={styles.iosBodyInput}
+            style={[
+              styles.iosBodyInput,
+              {
+                textAlign,
+                minHeight: Math.max(380, contentHeight),
+              },
+            ]}
             placeholder="在此开始记录课堂要点、推导过程... 也可使用底部语音速记直接在光标处填入。"
             placeholderTextColor="#A0AEC0"
             value={inputContent}
             onChangeText={setInputContent}
             multiline={true}
+            scrollEnabled={false}
             textAlignVertical="top"
+            onContentSizeChange={(e) => {
+              setContentHeight(e.nativeEvent.contentSize.height);
+            }}
             onSelectionChange={(e) => {
               setCursorSelection(e.nativeEvent.selection);
             }}
           />
 
-          <View style={{ height: 160 }} />
+          <View style={{ height: 180 }} />
         </ScrollView>
-
-
 
         {/* 底部语音交互条 */}
         <View style={[styles.bottomVoiceDock, { paddingBottom: Math.max(insets.bottom, 12) }]}>
-          {isVoiceLocked ? (
-            <View style={styles.lockedVoiceBar}>
-              <View style={styles.lockedVoiceInfo}>
-                <View style={styles.pulsingVoiceIcon}>
-                  <Ionicons name="mic" size={16} color="#FFFFFF" />
+          {/* 录音锁定之后：在按住说话上方显示转文字内容框 (小框实时显示转文字内容) */}
+          {isVoiceLocked && (
+            <View style={styles.lockedTranscriptBox}>
+              <View style={styles.lockedBoxHeader}>
+                <View style={styles.lockedBoxLiveRow}>
+                  <View style={styles.lockedLiveDot} />
+                  <Text style={styles.lockedBoxTitle}>正在实时转文字...</Text>
+                  <Text style={styles.lockedBoxTimer}>{voiceSeconds}s</Text>
                 </View>
-                <Text style={styles.lockedVoiceTimerText}>录音中 {voiceSeconds}s</Text>
-                <Text style={styles.lockedVoiceHintText}>（上方键盘可同时打字）</Text>
+                <View style={styles.lockedWaveRow}>
+                  {audioWaves.slice(0, 8).map((h, i) => (
+                    <View key={i} style={[styles.lockedWaveBar, { height: Math.max(4, h * 0.45) }]} />
+                  ))}
+                </View>
               </View>
-
-              <View style={styles.lockedActionButtons}>
+              <ScrollView style={styles.lockedBoxScroll} nestedScrollEnabled={true}>
+                <Text style={styles.lockedBoxContent}>
+                  {realtimeTranscript ? realtimeTranscript : '正在聆听您的声音，随时将语音识别为文字...'}
+                </Text>
+              </ScrollView>
+              <View style={styles.lockedBoxActionRow}>
                 <TouchableOpacity
-                  style={styles.lockedCancelBtn}
+                  style={styles.lockedActionCancel}
                   onPress={() => finishRecordingAndInsert(false)}
                 >
-                  <Text style={styles.lockedCancelText}>取消</Text>
+                  <Ionicons name="trash-outline" size={14} color="#EF4444" />
+                  <Text style={styles.lockedActionCancelText}>放弃</Text>
                 </TouchableOpacity>
-
                 <TouchableOpacity
-                  style={styles.lockedFinishBtn}
+                  style={styles.lockedActionInsert}
                   onPress={() => finishRecordingAndInsert(true)}
                 >
-                  <Ionicons name="checkmark" size={15} color="#FFFFFF" style={{ marginRight: 2 }} />
-                  <Text style={styles.lockedFinishText}>插入光标处</Text>
+                  <Ionicons name="checkmark-done" size={16} color="#10B981" />
+                  <Text style={styles.lockedActionInsertText}>填入光标位置</Text>
                 </TouchableOpacity>
               </View>
             </View>
+          )}
+
+          {/* 底部按钮：锁定后变成“正在转文字...”，点击可直接完成转文字并插入 */}
+          {isVoiceLocked ? (
+            <TouchableOpacity
+              style={styles.voiceTouchAreaLocked}
+              onPress={() => finishRecordingAndInsert(true)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="mic" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+              <Text style={styles.voiceTouchTextLocked}>
+                正在转文字 · 点击完成
+              </Text>
+            </TouchableOpacity>
           ) : (
             <View
               style={[
@@ -711,11 +842,41 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#94A3B8',
   },
+  editorFormatToolbar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    padding: 3,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  formatGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  formatIconBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  formatIconBtnActive: {
+    backgroundColor: '#E0F2FE',
+  },
+  formatDivider: {
+    width: 1,
+    height: 16,
+    backgroundColor: '#CBD5E1',
+    marginHorizontal: 4,
+  },
   iosBodyInput: {
     fontSize: 16,
     lineHeight: 26,
     color: '#1E293B',
-    minHeight: 280,
+    minHeight: 380,
     padding: 0,
   },
   floatingSpeechHUD: {
@@ -823,6 +984,122 @@ const styles = StyleSheet.create({
   },
   voiceTouchTextActive: {
     color: '#FFFFFF',
+  },
+  voiceTouchAreaLocked: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#10B981',
+    borderRadius: 24,
+    paddingVertical: 12,
+  },
+  voiceTouchTextLocked: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  lockedTranscriptBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 4,
+  },
+  lockedBoxHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+    paddingBottom: 6,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#F1F5F9',
+  },
+  lockedBoxLiveRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  lockedLiveDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#EF4444',
+  },
+  lockedBoxTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  lockedBoxTimer: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#DC2626',
+    backgroundColor: '#FEE2E2',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 8,
+  },
+  lockedWaveRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    height: 18,
+  },
+  lockedWaveBar: {
+    width: 3,
+    backgroundColor: '#10B981',
+    borderRadius: 2,
+  },
+  lockedBoxScroll: {
+    maxHeight: 70,
+    marginBottom: 8,
+  },
+  lockedBoxContent: {
+    fontSize: 13,
+    color: '#334155',
+    lineHeight: 18,
+  },
+  lockedBoxActionRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap: 8,
+  },
+  lockedActionCancel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    backgroundColor: '#FEF2F2',
+  },
+  lockedActionCancelText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#EF4444',
+  },
+  lockedActionInsert: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 6,
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+  },
+  lockedActionInsertText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#15803D',
   },
   lockedVoiceBar: {
     flexDirection: 'row',
