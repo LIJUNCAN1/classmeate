@@ -16,6 +16,14 @@ import { Colors, Rounded, Shadows } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+// 导入课表预览示例课程数据（与课表页对齐）
+const IMPORTED_COURSES_SAMPLE = [
+  { id: 'c1', name: '高等数学 (AI与数据)', teacher: '陆教授', location: '理科教学楼 302', startTime: '08:00' },
+  { id: 'c2', name: '商务韩语口语', teacher: '朴老师', location: '外国语学院 405', startTime: '10:05' },
+  { id: 'c3', name: '计算机系统结构', teacher: '张副教授', location: '信息楼实验中心 B3', startTime: '14:00' },
+  { id: 'c4', name: '中国近代史纲要', teacher: '陈教授', location: '文科楼报告厅', startTime: '16:05' },
+];
+
 export const ToolsScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const topPadding = Math.max(
@@ -63,36 +71,34 @@ export const ToolsScreen: React.FC = () => {
   const [piikVisible, setPiikVisible] = useState(false);
   const [roomCode, setRoomCode] = useState('CLASS-8826');
 
-  // 智能课表导入状态与逻辑
+  // 引导重新导入课程表向导状态（与课程表页完全一致的引导流程）
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [importStep, setImportStep] = useState<'select' | 'scanning' | 'success'>('select');
-  const [scanProgress, setScanProgress] = useState(0);
-  const [selectedSource, setSelectedSource] = useState('zhifang');
+  const [importProgress, setImportProgress] = useState(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const handleStartImport = () => {
-    setImportStep('scanning');
-    setScanProgress(15);
-    setTimeout(() => {
-      setScanProgress(45);
-      setTimeout(() => {
-        setScanProgress(80);
-        setTimeout(() => {
-          setScanProgress(100);
-          setTimeout(() => {
-            setImportStep('success');
-          }, 250);
-        }, 300);
-      }, 350);
-    }, 350);
+  const handleOpenImportModal = () => {
+    setImportStep('select');
+    setImportProgress(0);
+    setImportModalVisible(true);
   };
 
-  const handleCompleteImport = () => {
-    setImportModalVisible(false);
-    setToastMessage('✅ 课表导入并对齐成功！已更新至今日课表与周视图');
+  const handleStartImportFlow = () => {
+    setImportStep('scanning');
+    setImportProgress(20);
+
+    setTimeout(() => setImportProgress(55), 400);
+    setTimeout(() => setImportProgress(85), 900);
     setTimeout(() => {
-      setToastMessage(null);
-    }, 3000);
+      setImportProgress(100);
+      setImportStep('success');
+    }, 1400);
+  };
+
+  const handleFinishImport = () => {
+    setImportModalVisible(false);
+    setToastMessage('🎉 教务课表已重新引导导入，已对齐最新学期教学日历！');
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
   // 错题本按要求改造成纯粹的 DeepSeek 对话框 (只写使用 DeepSeek 的对话框)
@@ -298,8 +304,7 @@ export const ToolsScreen: React.FC = () => {
                 } else if (t.id === 'mistakes') {
                   setDeepseekVisible(true);
                 } else if (t.id === 'import') {
-                  setImportStep('select');
-                  setImportModalVisible(true);
+                  handleOpenImportModal();
                 }
               }}
             >
@@ -311,13 +316,10 @@ export const ToolsScreen: React.FC = () => {
                 {t.id === 'import' && (
                   <TouchableOpacity
                     style={styles.cardImportPillBtn}
-                    onPress={() => {
-                      setImportStep('select');
-                      setImportModalVisible(true);
-                    }}
+                    onPress={handleOpenImportModal}
                     activeOpacity={0.8}
                   >
-                    <Ionicons name="cloud-download-outline" size={12} color="#FFFFFF" />
+                    <Ionicons name="download-outline" size={12} color="#FFFFFF" />
                     <Text style={styles.cardImportPillText}>导入</Text>
                   </TouchableOpacity>
                 )}
@@ -674,144 +676,190 @@ export const ToolsScreen: React.FC = () => {
         </View>
       </Modal>
 
-      {/* 教务课表智能导入弹窗 (无黑色压抑遮罩，支持教务系统/截图/ICS一键导入同步) */}
+      {/* 重新导入课程表引导向导弹窗（与课程表页完全一致的引导流程） */}
       <Modal
         visible={importModalVisible}
         transparent={true}
-        animationType="fade"
+        animationType="slide"
         onRequestClose={() => setImportModalVisible(false)}
       >
         <View style={styles.importModalBackdrop}>
           <View style={[styles.importModalCard, Shadows.card]}>
-            {/* 弹窗顶部栏 */}
-            <View style={styles.importHeader}>
-              <View style={styles.importTitleRow}>
-                <Ionicons name="sync-circle" size={22} color={Colors.primary} />
-                <Text style={styles.importTitle}>教务课表智能导入</Text>
+            {/* 顶部标题与关闭 */}
+            <View style={styles.importModalHeader}>
+              <View>
+                <Text style={styles.importModalTitle}>
+                  {importStep === 'select'
+                    ? '教务课程表智能引导导入'
+                    : importStep === 'scanning'
+                    ? '正在智能嗅探识别教务课表...'
+                    : '🎉 课表重新导入完成！'}
+                </Text>
+                <Text style={styles.importModalSub}>
+                  {importStep === 'select'
+                    ? '支持高校教务免密自动识别 / 统一身份认证 / 课表文件'
+                    : importStep === 'scanning'
+                    ? '已建立安全连接，正在智能提取本学期排课数据'
+                    : '已成功同步学期完整排课与知识库节次绑定'}
+                </Text>
               </View>
+
               <TouchableOpacity
                 onPress={() => setImportModalVisible(false)}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                style={styles.importCloseBtn}
               >
-                <Ionicons name="close-circle" size={24} color="#94A3B8" />
+                <Ionicons name="close" size={20} color="#64748B" />
               </TouchableOpacity>
             </View>
 
+            {/* 步骤 1：选择导入来源与引导 */}
             {importStep === 'select' && (
-              <View style={styles.importContent}>
-                <Text style={styles.importHint}>
-                  支持全国高校常用教务系统、截屏识别与日历文件导入：
-                </Text>
+              <View style={styles.importStepContent}>
+                <View style={styles.importSourcesList}>
+                  {/* 方式 1：高校教务系统一键识别 */}
+                  <TouchableOpacity
+                    style={[styles.importSourceCard, styles.importSourceCardActive]}
+                    activeOpacity={0.8}
+                    onPress={handleStartImportFlow}
+                  >
+                    <View style={[styles.importSourceIconWrap, { backgroundColor: '#F0FDF4' }]}>
+                      <Ionicons name="school" size={24} color={Colors.primary} />
+                    </View>
+                    <View style={styles.importSourceTextWrap}>
+                      <View style={styles.importSourceTitleRow}>
+                        <Text style={styles.importSourceTitle}>高校教务系统一键识别</Text>
+                        <View style={styles.recommendTag}>
+                          <Text style={styles.recommendTagText}>推荐</Text>
+                        </View>
+                      </View>
+                      <Text style={styles.importSourceDesc}>
+                        免密直连正方、强智、青果、树人等主流高校教务平台
+                      </Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={16} color={Colors.primary} />
+                  </TouchableOpacity>
 
-                <View style={styles.sourceList}>
-                  {[
-                    { id: 'zhifang', title: '正方教务管理系统', tag: '智能直连', icon: 'school-outline' },
-                    { id: 'qiangzhi', title: '强智教务系统', tag: '推荐', icon: 'globe-outline' },
-                    { id: 'image_ocr', title: '教务网截图 / 照片识别', tag: 'AI解析', icon: 'image-outline' },
-                    { id: 'ics', title: 'iCalendar 日历文件 (.ics)', tag: '通用格式', icon: 'calendar-outline' },
-                  ].map((s) => (
-                    <TouchableOpacity
-                      key={s.id}
-                      style={[
-                        styles.sourceItem,
-                        selectedSource === s.id && styles.sourceItemActive,
-                      ]}
-                      onPress={() => setSelectedSource(s.id)}
-                      activeOpacity={0.8}
-                    >
-                      <View style={styles.sourceLeft}>
-                        <Ionicons
-                          name={s.icon as any}
-                          size={18}
-                          color={selectedSource === s.id ? Colors.primary : '#64748B'}
-                        />
-                        <Text
-                          style={[
-                            styles.sourceTitle,
-                            selectedSource === s.id && styles.sourceTitleActive,
-                          ]}
-                        >
-                          {s.title}
-                        </Text>
-                      </View>
-                      <View
-                        style={[
-                          styles.sourceTag,
-                          selectedSource === s.id && styles.sourceTagActive,
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.sourceTagText,
-                            selectedSource === s.id && styles.sourceTagTextActive,
-                          ]}
-                        >
-                          {s.tag}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  ))}
+                  {/* 方式 2：课表文件与截图识别 */}
+                  <TouchableOpacity
+                    style={styles.importSourceCard}
+                    activeOpacity={0.8}
+                    onPress={handleStartImportFlow}
+                  >
+                    <View style={[styles.importSourceIconWrap, { backgroundColor: '#EFF6FF' }]}>
+                      <Ionicons name="document-attach" size={24} color="#3B82F6" />
+                    </View>
+                    <View style={styles.importSourceTextWrap}>
+                      <Text style={styles.importSourceTitle}>导入 ICS 日历 / 课表文件</Text>
+                      <Text style={styles.importSourceDesc}>
+                        支持 Excel / CSV / ICS 日历格式及课表截图 OCR 解析
+                      </Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
+                  </TouchableOpacity>
+
+                  {/* 方式 3：统一身份认证登录 */}
+                  <TouchableOpacity
+                    style={styles.importSourceCard}
+                    activeOpacity={0.8}
+                    onPress={handleStartImportFlow}
+                  >
+                    <View style={[styles.importSourceIconWrap, { backgroundColor: '#FAF5FF' }]}>
+                      <Ionicons name="key" size={24} color="#8B5CF6" />
+                    </View>
+                    <View style={styles.importSourceTextWrap}>
+                      <Text style={styles.importSourceTitle}>统一身份认证授权登录</Text>
+                      <Text style={styles.importSourceDesc}>
+                        使用校园统一身份认证学号与密码安全对接
+                      </Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
+                  </TouchableOpacity>
                 </View>
 
                 <TouchableOpacity
-                  style={styles.startImportBtn}
-                  onPress={handleStartImport}
-                  activeOpacity={0.85}
+                  style={styles.importStartBtn}
+                  onPress={handleStartImportFlow}
+                  activeOpacity={0.8}
                 >
-                  <Ionicons name="cloud-download" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
-                  <Text style={styles.startImportBtnText}>开始智能识别并导入</Text>
+                  <Ionicons name="flash" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
+                  <Text style={styles.importStartBtnText}>开始自动识别并导入</Text>
                 </TouchableOpacity>
               </View>
             )}
 
+            {/* 步骤 2：识别扫描中（进度条与流水线步骤） */}
             {importStep === 'scanning' && (
-              <View style={styles.scanningContent}>
-                <View style={styles.scanAnimationCircle}>
+              <View style={styles.importScanningContent}>
+                <View style={styles.scanningPulseWrap}>
                   <Ionicons name="sync" size={36} color={Colors.primary} />
                 </View>
-                <Text style={styles.scanStatusText}>正在解析教务课表数据...</Text>
-                <Text style={styles.scanDetailText}>
-                  {scanProgress < 40
-                    ? '正在连接校园教务接口...'
-                    : scanProgress < 80
-                    ? '已抓取学期周历，正在解析课程与教室...'
-                    : '课程、任课教师与节次对齐完成！'}
-                </Text>
 
-                <View style={styles.progressBarWrapper}>
-                  <View style={[styles.progressBarFill, { width: `${scanProgress}%` }]} />
+                {/* 进度条 */}
+                <View style={styles.progressBarTrack}>
+                  <View style={[styles.progressBarFill, { width: `${importProgress}%` }]} />
                 </View>
-                <Text style={styles.scanProgressText}>{scanProgress}%</Text>
+                <Text style={styles.progressPercentText}>{importProgress}%</Text>
+
+                {/* 步骤校验 */}
+                <View style={styles.scanChecklist}>
+                  <View style={styles.checkItem}>
+                    <Ionicons name="checkmark-circle" size={16} color={Colors.primary} />
+                    <Text style={styles.checkItemText}>已建立教务网关安全握手通道</Text>
+                  </View>
+                  <View style={styles.checkItem}>
+                    <Ionicons
+                      name={importProgress >= 55 ? 'checkmark-circle' : 'ellipsis-horizontal-circle'}
+                      size={16}
+                      color={importProgress >= 55 ? Colors.primary : '#94A3B8'}
+                    />
+                    <Text style={styles.checkItemText}>检索 2025-2026 夏学期周历排课数据</Text>
+                  </View>
+                  <View style={styles.checkItem}>
+                    <Ionicons
+                      name={importProgress >= 85 ? 'checkmark-circle' : 'ellipsis-horizontal-circle'}
+                      size={16}
+                      color={importProgress >= 85 ? Colors.primary : '#94A3B8'}
+                    />
+                    <Text style={styles.checkItemText}>匹配教室地点、任课教师与节次作息</Text>
+                  </View>
+                </View>
               </View>
             )}
 
+            {/* 步骤 3：导入成功结果展示 */}
             {importStep === 'success' && (
-              <View style={styles.successContent}>
-                <View style={styles.successBadge}>
-                  <Ionicons name="checkmark-circle" size={48} color="#10B981" />
+              <View style={styles.importSuccessContent}>
+                <View style={styles.successIconBadge}>
+                  <Ionicons name="checkmark-done" size={28} color="#FFFFFF" />
                 </View>
-                <Text style={styles.successTitle}>课表导入成功！</Text>
-                <Text style={styles.successDesc}>
-                  共识别出本学期 7 门核心课程、34 节上课排期。已自动关联任课教师、上课地点与周次！
+
+                <Text style={styles.successHeading}>本学期课程已成功全量导入！</Text>
+                <Text style={styles.successDetailText}>
+                  共更新 8 门学期课程 · 教学日历与节次时间均已精准对齐
                 </Text>
 
-                <View style={styles.coursesPreviewBox}>
-                  <View style={styles.courseTagRow}>
-                    <Text style={styles.previewTag}>高等数学 (AI与数据)</Text>
-                    <Text style={styles.previewTag}>商务韩语口语</Text>
-                  </View>
-                  <View style={styles.courseTagRow}>
-                    <Text style={styles.previewTag}>计算机系统结构</Text>
-                    <Text style={styles.previewTag}>近代史纲要</Text>
-                  </View>
-                </View>
+                <ScrollView style={styles.importedCoursesPreview} showsVerticalScrollIndicator={false}>
+                  {IMPORTED_COURSES_SAMPLE.map((c) => (
+                    <View key={c.id} style={styles.previewCourseRow}>
+                      <View style={styles.previewCourseLeft}>
+                        <Text style={styles.previewCourseName}>{c.name}</Text>
+                        <Text style={styles.previewCourseMeta}>
+                          {c.teacher} · @ {c.location}
+                        </Text>
+                      </View>
+                      <View style={styles.previewTag}>
+                        <Text style={styles.previewTagText}>{c.startTime}</Text>
+                      </View>
+                    </View>
+                  ))}
+                </ScrollView>
 
                 <TouchableOpacity
-                  style={styles.finishImportBtn}
-                  onPress={handleCompleteImport}
-                  activeOpacity={0.85}
+                  style={styles.importFinishActionBtn}
+                  onPress={handleFinishImport}
+                  activeOpacity={0.8}
                 >
-                  <Text style={styles.finishImportBtnText}>完成并同步至课表</Text>
+                  <Text style={styles.importFinishActionText}>立即应用并查看课表</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -959,225 +1007,249 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     lineHeight: 16,
   },
+  // 引导重新导入弹窗样式（按要求：去掉黑色遮罩改成纯阴影，与课表页完全一致）
   importModalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.25)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    backgroundColor: 'transparent',
+    justifyContent: 'flex-end',
   },
   importModalCard: {
-    width: '100%',
-    maxWidth: 420,
     backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 22,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.2,
-    shadowRadius: 24,
-    elevation: 12,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    padding: 20,
+    paddingBottom: 36,
+    maxHeight: '82%',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: -10 },
+    shadowOpacity: 0.16,
+    shadowRadius: 20,
+    elevation: 24,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
   },
-  importHeader: {
+  importModalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 16,
+    paddingBottom: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#F1F5F9',
   },
-  importTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  importTitle: {
+  importModalTitle: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '800',
     color: '#0F172A',
   },
-  importContent: {
+  importModalSub: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 3,
+  },
+  importCloseBtn: {
+    padding: 4,
+  },
+  importStepContent: {
     marginTop: 4,
   },
-  importHint: {
-    fontSize: 13,
-    color: '#64748B',
-    marginBottom: 14,
-    lineHeight: 18,
-  },
-  sourceList: {
+  importSourcesList: {
     gap: 10,
     marginBottom: 20,
   },
-  sourceItem: {
+  importSourceCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 14,
+    padding: 14,
     borderRadius: 14,
     backgroundColor: '#F8FAFC',
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: '#E2E8F0',
   },
-  sourceItemActive: {
+  importSourceCardActive: {
+    borderColor: '#86EFAC',
     backgroundColor: '#F0FDF4',
-    borderColor: Colors.primary,
   },
-  sourceLeft: {
+  importSourceIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  importSourceTextWrap: {
+    flex: 1,
+  },
+  importSourceTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 6,
+    marginBottom: 3,
   },
-  sourceTitle: {
+  importSourceTitle: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#334155',
-  },
-  sourceTitleActive: {
-    color: '#0F172A',
     fontWeight: '700',
+    color: '#1E293B',
   },
-  sourceTag: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-    backgroundColor: '#E2E8F0',
+  recommendTag: {
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 4,
   },
-  sourceTagActive: {
-    backgroundColor: Colors.primary,
+  recommendTagText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#15803D',
   },
-  sourceTagText: {
+  importSourceDesc: {
     fontSize: 11,
     color: '#64748B',
-    fontWeight: '600',
+    lineHeight: 15,
   },
-  sourceTagTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-  },
-  startImportBtn: {
+  importStartBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.primary,
     paddingVertical: 14,
-    borderRadius: 14,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 3,
+    borderRadius: Rounded.pill,
   },
-  startImportBtnText: {
+  importStartBtnText: {
     fontSize: 15,
     fontWeight: '700',
     color: '#FFFFFF',
   },
-  scanningContent: {
+  importScanningContent: {
     alignItems: 'center',
-    paddingVertical: 24,
+    paddingVertical: 20,
   },
-  scanAnimationCircle: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: '#DCFCE7',
+  scanningPulseWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: '#F0FDF4',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
-  },
-  scanStatusText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: 6,
-  },
-  scanDetailText: {
-    fontSize: 13,
-    color: '#64748B',
     marginBottom: 20,
-    textAlign: 'center',
+    borderWidth: 2,
+    borderColor: '#BBF7D0',
   },
-  progressBarWrapper: {
+  progressBarTrack: {
     width: '100%',
     height: 8,
-    backgroundColor: '#E2E8F0',
     borderRadius: 4,
+    backgroundColor: '#E2E8F0',
     overflow: 'hidden',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   progressBarFill: {
     height: '100%',
     backgroundColor: Colors.primary,
     borderRadius: 4,
   },
-  scanProgressText: {
+  progressPercentText: {
     fontSize: 13,
     fontWeight: '700',
     color: Colors.primary,
-  },
-  successContent: {
-    alignItems: 'center',
-    paddingVertical: 12,
-  },
-  successBadge: {
-    marginBottom: 12,
-  },
-  successTitle: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#0F172A',
-    marginBottom: 6,
-  },
-  successDesc: {
-    fontSize: 13,
-    color: '#64748B',
-    textAlign: 'center',
-    lineHeight: 18,
-    marginBottom: 16,
-    paddingHorizontal: 10,
-  },
-  coursesPreviewBox: {
-    width: '100%',
-    backgroundColor: '#F8FAFC',
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    gap: 8,
     marginBottom: 20,
   },
-  courseTagRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    gap: 8,
-  },
-  previewTag: {
-    flex: 1,
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#334155',
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    borderRadius: 6,
-    textAlign: 'center',
+  scanChecklist: {
+    width: '100%',
+    gap: 10,
+    backgroundColor: '#F8FAFC',
+    padding: 16,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
-  finishImportBtn: {
+  checkItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  checkItemText: {
+    fontSize: 13,
+    color: '#334155',
+    fontWeight: '500',
+  },
+  importSuccessContent: {
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  successIconBadge: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  successHeading: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginBottom: 4,
+  },
+  successDetailText: {
+    fontSize: 12,
+    color: '#64748B',
+    marginBottom: 16,
+  },
+  importedCoursesPreview: {
+    width: '100%',
+    maxHeight: 180,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 14,
+    padding: 10,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  previewCourseRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#E2E8F0',
+  },
+  previewCourseLeft: {
+    flex: 1,
+  },
+  previewCourseName: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1E293B',
+  },
+  previewCourseMeta: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 2,
+  },
+  previewTag: {
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  previewTagText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#2563EB',
+  },
+  importFinishActionBtn: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     paddingVertical: 14,
-    borderRadius: 14,
-    shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 3,
+    borderRadius: Rounded.pill,
   },
-  finishImportBtnText: {
+  importFinishActionText: {
     fontSize: 15,
     fontWeight: '700',
     color: '#FFFFFF',

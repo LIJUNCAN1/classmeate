@@ -552,23 +552,23 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
             </TouchableOpacity>
           </View>
         </View>
-      </View>
 
-      {/* 搜索框 */}
-      <View style={styles.searchBarWrapper}>
-        <Ionicons name="search" size={16} color="#9CA3AF" style={{ marginRight: 8 }} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="搜索全部随堂笔记、关键词或课程..."
-          placeholderTextColor="#9CA3AF"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-        {searchQuery.length > 0 && (
-          <TouchableOpacity onPress={() => setSearchQuery('')}>
-            <Ionicons name="close-circle" size={16} color="#9CA3AF" />
-          </TouchableOpacity>
-        )}
+        {/* 搜索框（按图1要求置于绿色顶部栏内部） */}
+        <View style={styles.searchBarWrapper}>
+          <Ionicons name="search" size={16} color="#94A3B8" style={{ marginRight: 8 }} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="搜索全部随堂笔记、关键词或课程..."
+            placeholderTextColor="#94A3B8"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery('')}>
+              <Ionicons name="close-circle" size={16} color="#94A3B8" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {/* 文件夹分类横滑胶囊条 */}
@@ -1308,17 +1308,21 @@ const styles = StyleSheet.create({
   searchBarWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EDF2F7',
-    marginHorizontal: 16,
-    marginTop: 12,
+    backgroundColor: '#FFFFFF',
+    marginTop: 14,
     paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
+    paddingVertical: 9,
+    borderRadius: 14,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
   },
   searchInput: {
     flex: 1,
     fontSize: 14,
-    color: '#1A202C',
+    color: '#1E293B',
     padding: 0,
   },
   folderStripArea: {
