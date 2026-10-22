@@ -368,13 +368,12 @@ export const ToolsScreen: React.FC = () => {
           ))}
         </View>
 
-        {/* 底部版本号信息展示（用户要求：在工具栏底部增加版本号 每次更新自然递增 现在0.5.0） */}
+        {/* 底部版本号信息展示（用户要求：课星球左边的绿点去掉改成灰色 classplant，去掉已是最新版本） */}
         <View style={styles.footerVersionContainer}>
           <View style={styles.footerVersionPill}>
-            <View style={styles.footerVersionDot} />
-            <Text style={styles.footerVersionText}>课星球 v{APP_VERSION}</Text>
+            <View style={styles.footerVersionDotGray} />
+            <Text style={styles.footerVersionText}>classplant v{APP_VERSION}</Text>
           </View>
-          <Text style={styles.footerVersionSubText}>已是最新版本 · 陪伴你的大学每一天</Text>
         </View>
 
         <View style={{ height: 90 }} />
@@ -2038,21 +2037,17 @@ const styles = StyleSheet.create({
     borderRadius: Rounded.pill,
     marginBottom: 6,
   },
-  footerVersionDot: {
+  footerVersionDotGray: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#10B981',
+    backgroundColor: '#94A3B8',
     marginRight: 6,
   },
   footerVersionText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#475569',
+    color: '#64748B',
     fontVariant: ['tabular-nums'],
-  },
-  footerVersionSubText: {
-    fontSize: 11,
-    color: '#94A3B8',
   },
 });

@@ -748,6 +748,30 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
               courses={coursesList}
             />
           )}
+
+          {/* 顶部绿色色块新增展开模块（支持一键展开/收起今日课程看板） */}
+          {scheduleViewMode === 'day' && (
+            <TouchableOpacity
+              style={styles.heroExpandModuleBtn}
+              onPress={() => setIsSummaryCollapsed((prev) => !prev)}
+              activeOpacity={0.8}
+            >
+              <View style={styles.heroExpandPillInner}>
+                <Ionicons name="time-outline" size={13} color="#FFFFFF" style={{ marginRight: 5 }} />
+                <Text style={styles.heroExpandPillText}>
+                  {isSummaryCollapsed
+                    ? `今日剩余 ${todayRemainingSummary.remainingCount} 节课 · 点击展开看板`
+                    : '收起今日课程看板'}
+                </Text>
+                <Ionicons
+                  name={isSummaryCollapsed ? 'chevron-down' : 'chevron-up'}
+                  size={14}
+                  color="#FFFFFF"
+                  style={{ marginLeft: 4 }}
+                />
+              </View>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
@@ -776,50 +800,28 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
             bounces={true}
           >
             <View style={[styles.scheduleSection, isTablet && styles.contentContainerTablet]}>
-              {/* 今日剩余课卡片（图4设计：从上到下是距离放学时间、剩余X节课、今日计划、进度条，右边月亮怪兽插画，支持折叠收起） */}
-              <View style={styles.todayRemainingWidgetCard}>
-                {isSummaryCollapsed ? (
-                  // 收起状态：只显示剩余几节课与展开图标
-                  <TouchableOpacity
-                    style={styles.summaryCollapsedRow}
-                    onPress={() => setIsSummaryCollapsed(false)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={styles.summaryCollapsedLeft}>
-                      <Ionicons name="time-outline" size={18} color="#16A34A" style={{ marginRight: 6 }} />
-                      <Text style={styles.summaryCollapsedTitle}>
-                        剩余 <Text style={styles.summaryCollapsedHighlight}>{todayRemainingSummary.remainingCount}</Text> 节课
-                      </Text>
-                      <Text style={styles.summaryCollapsedSub}>
-                        · {todayRemainingSummary.dismissalText}
-                      </Text>
-                    </View>
-                    <Ionicons name="chevron-down" size={18} color="#64748B" />
-                  </TouchableOpacity>
-                ) : (
-                  // 展开状态：图4标准排版
+              {/* 今日剩余课卡片（图1设计：从上到下严格为：1.距离放学时间 2.剩余X节课 3.今日计划 4.进度条，底部与框的底部严格对齐） */}
+              {!isSummaryCollapsed && (
+                <View style={styles.todayRemainingWidgetCard}>
                   <View style={styles.summaryExpandedContent}>
-                    {/* 右侧插画（月亮小怪兽）：顶部超出边框，盖在顶部绿色色块下方 */}
+                    {/* 右侧插画（透明背景跳舞小怪兽）：底部严格与卡片边框底部对齐，顶部自然超出边框盖在绿色色块下方 */}
                     <Image
-                      source={require('../../assets/monster-moon.png')}
-                      style={styles.summaryMoonMonsterImage}
+                      source={require('../../assets/dancing-monster.png')}
+                      style={styles.summaryDancingMonsterImage}
                       resizeMode="contain"
                     />
 
-                    {/* 左侧信息列（从上到下：距离放学时间、剩余X节课、今日计划、进度条） */}
+                    {/* 左侧信息列（严格从上到下：1.距离放学时间 2.剩余X节课 3.今日计划 4.进度条） */}
                     <View style={styles.summaryLeftCol}>
                       {/* 第1行：距离放学时间 */}
                       <View style={styles.summaryDismissalRow}>
-                        <Text style={styles.summaryDateText}>{todayRemainingSummary.curDateStr}</Text>
-                        <Text style={styles.summaryDismissalDot}>·</Text>
                         <Text style={styles.summaryDismissalText}>{todayRemainingSummary.dismissalText}</Text>
                       </View>
 
-                      {/* 第2行：剩余X节课（大字粗体） */}
+                      {/* 第2行：剩余X节课（纯中文大字粗体） */}
                       <View style={styles.summaryCountRow}>
                         <Text style={styles.summaryClassesBigText}>
-                          {todayRemainingSummary.remainingCount}{' '}
-                          <Text style={styles.summaryClassesBigUnit}>Classes</Text>
+                          剩余 <Text style={styles.summaryClassesBigNum}>{todayRemainingSummary.remainingCount}</Text> 节课
                         </Text>
                       </View>
 
@@ -831,7 +833,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                         </Text>
                       </View>
 
-                      {/* 第4行：浅绿水平进度条 */}
+                      {/* 第4行：浅绿水平进度条（底部与框的底部严格对齐） */}
                       <View style={styles.summaryProgressTrack}>
                         <View
                           style={[
@@ -852,8 +854,8 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                       <Ionicons name="chevron-up" size={16} color="#94A3B8" />
                     </TouchableOpacity>
                   </View>
-                )}
-              </View>
+                </View>
+              )}
 
               {/* 当天课程列表：随选中日期动态切换 */}
               {coursesList.length === 0 ? (
@@ -1287,12 +1289,31 @@ const styles = StyleSheet.create({
   modeBtnTextInactive: {
     color: '#FFFFFF',
   },
-  // 本日剩余课卡片（图4设计：间距紧凑，浅薄荷绿柔和质感底色，右侧3D月亮小怪兽插画超出边框盖在绿色色块下）
+  // 顶部绿色色块新增展开模块按钮
+  heroExpandModuleBtn: {
+    alignSelf: 'center',
+    paddingVertical: 4.5,
+    paddingHorizontal: 14,
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
+    borderRadius: Rounded.pill,
+    marginBottom: 8,
+  },
+  heroExpandPillInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroExpandPillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  // 本日剩余课卡片（图1设计：间距紧凑，浅薄荷绿柔和质感底色，右侧3D透明小怪兽插画底部贴合框底）
   todayRemainingWidgetCard: {
     backgroundColor: '#F2FAF4',
     marginHorizontal: 16,
     marginTop: 6,
-    marginBottom: 10,
+    marginBottom: 12,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#DCFCE7',
@@ -1335,77 +1356,67 @@ const styles = StyleSheet.create({
   summaryExpandedContent: {
     paddingHorizontal: 16,
     paddingTop: 12,
-    paddingBottom: 12,
+    paddingBottom: 10,
     position: 'relative',
+    justifyContent: 'space-between',
   },
-  summaryMoonMonsterImage: {
+  summaryDancingMonsterImage: {
     position: 'absolute',
-    right: 0,
-    top: -16,
-    width: 126,
-    height: 106,
+    right: 8,
+    bottom: 0, // 底部严格与卡片边框底部对齐！
+    width: 120,
+    height: 98,
     zIndex: 2,
   },
   summaryLeftCol: {
-    width: '62%',
+    width: '64%',
     zIndex: 3,
   },
   summaryDismissalRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
     marginBottom: 4,
   },
-  summaryDateText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#64748B',
-  },
-  summaryDismissalDot: {
-    fontSize: 12,
-    color: '#94A3B8',
-    marginHorizontal: 4,
-  },
   summaryDismissalText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '700',
     color: '#16A34A',
   },
   summaryCountRow: {
     marginBottom: 6,
   },
   summaryClassesBigText: {
-    fontSize: 24,
-    fontWeight: '800',
+    fontSize: 26,
+    fontWeight: '900',
     color: '#0F172A',
     letterSpacing: -0.5,
   },
-  summaryClassesBigUnit: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1E293B',
+  summaryClassesBigNum: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#15803D',
   },
   summaryPlanRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    marginBottom: 6,
   },
   summaryPlanLabel: {
-    fontSize: 11.5,
-    fontWeight: '600',
+    fontSize: 12,
+    fontWeight: '700',
     color: '#64748B',
   },
   summaryPlanRatio: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '800',
     color: '#0F172A',
     fontVariant: ['tabular-nums'],
   },
   summaryProgressTrack: {
-    height: 7,
+    height: 8,
     backgroundColor: '#DCFCE7',
     borderRadius: 4,
     overflow: 'hidden',
+    marginBottom: 0,
   },
   summaryProgressFill: {
     height: '100%',
