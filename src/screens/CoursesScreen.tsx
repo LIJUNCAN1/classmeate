@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Platform,
   StatusBar as RNStatusBar,
+  Animated,
 } from 'react-native';
 import { Colors, Rounded, Shadows } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +16,28 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export const CoursesScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const topPadding = Math.max(insets.top, Platform.OS === 'android' ? (RNStatusBar.currentHeight || 36) : 44);
+
+  // 顶部草木绿区域向下浮现动效
+  const headerDropAnim = useRef(new Animated.Value(-28)).current;
+  const headerFadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    headerDropAnim.setValue(-28);
+    headerFadeAnim.setValue(0);
+    Animated.parallel([
+      Animated.spring(headerDropAnim, {
+        toValue: 0,
+        friction: 7,
+        tension: 85,
+        useNativeDriver: true,
+      }),
+      Animated.timing(headerFadeAnim, {
+        toValue: 1,
+        duration: 260,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   const [activeTab, setActiveTab] = useState<'teachers' | 'myCourses'>('teachers');
   const [courseFilter, setCourseFilter] = useState<'all' | '1v1' | 'small' | 'large'>('all');
@@ -95,8 +118,17 @@ export const CoursesScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* 顶部蓝/绿色渐变导航区 */}
-      <View style={[styles.headerGradient, { paddingTop: topPadding + 10 }]}>
+      {/* 顶部蓝/绿色渐变导航区（带向下浮现动画） */}
+      <Animated.View
+        style={[
+          styles.headerGradient,
+          {
+            paddingTop: topPadding + 10,
+            opacity: headerFadeAnim,
+            transform: [{ translateY: headerDropAnim }],
+          },
+        ]}
+      >
         <View style={styles.headerTitleRow}>
           <Text style={styles.headerTitle}>课程与名师</Text>
           <TouchableOpacity style={styles.searchIconBtn}>
@@ -136,7 +168,7 @@ export const CoursesScreen: React.FC = () => {
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
 
       <ScrollView
         style={styles.scrollArea}

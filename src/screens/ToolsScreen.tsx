@@ -34,27 +34,44 @@ export const ToolsScreen: React.FC = () => {
     Platform.OS === 'android' ? (RNStatusBar.currentHeight || 36) : 44
   );
 
+  // 顶部生机草木绿区域向下浮现入场动效（与课表页对齐）
+  const headerDropAnim = useRef(new Animated.Value(-28)).current;
+  const headerFadeAnim = useRef(new Animated.Value(0)).current;
+
   // 页面向下出现的平滑与生长动效 (translateY + scale + opacity)
-  const dropAnim = useRef(new Animated.Value(-24)).current;
+  const dropAnim = useRef(new Animated.Value(-20)).current;
   const scaleAnim = useRef(new Animated.Value(0.96)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    dropAnim.setValue(-24);
+    headerDropAnim.setValue(-28);
+    headerFadeAnim.setValue(0);
+    dropAnim.setValue(-20);
     scaleAnim.setValue(0.96);
     fadeAnim.setValue(0);
 
     Animated.parallel([
+      Animated.spring(headerDropAnim, {
+        toValue: 0,
+        friction: 7,
+        tension: 85,
+        useNativeDriver: true,
+      }),
+      Animated.timing(headerFadeAnim, {
+        toValue: 1,
+        duration: 260,
+        useNativeDriver: true,
+      }),
       Animated.spring(dropAnim, {
         toValue: 0,
-        friction: 6,
-        tension: 80,
+        friction: 7,
+        tension: 85,
         useNativeDriver: true,
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
         friction: 7,
-        tension: 80,
+        tension: 85,
         useNativeDriver: true,
       }),
       Animated.timing(fadeAnim, {
@@ -251,12 +268,21 @@ export const ToolsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* 顶部生机草木绿流体区域（标准统一头部高度与坐标） */}
-      <View style={[styles.heroHeader, { paddingTop: topPadding + 8 }]}>
+      {/* 顶部生机草木绿流体区域（带向下浮现入场动效） */}
+      <Animated.View
+        style={[
+          styles.heroHeader,
+          {
+            paddingTop: topPadding + 8,
+            opacity: headerFadeAnim,
+            transform: [{ translateY: headerDropAnim }],
+          },
+        ]}
+      >
         <View style={styles.headerTopBar}>
           <Text style={styles.screenMainTitle}>工具</Text>
         </View>
-      </View>
+      </Animated.View>
 
       {/* 提醒 Toast 浮条 */}
       {toastMessage && (

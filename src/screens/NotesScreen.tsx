@@ -66,23 +66,41 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     Platform.OS === 'android' ? (RNStatusBar.currentHeight || 40) : 48
   );
 
-  // 页面向下出现平滑动画
-  const dropAnim = useRef(new Animated.Value(-18)).current;
+  // 顶部生机草木绿流体色块向下浮现入场动效（与课表页对齐）
+  const headerDropAnim = useRef(new Animated.Value(-28)).current;
+  const headerFadeAnim = useRef(new Animated.Value(0)).current;
+
+  // 页面下方内容向下出现平滑动画
+  const dropAnim = useRef(new Animated.Value(-20)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    dropAnim.setValue(-18);
+    headerDropAnim.setValue(-28);
+    headerFadeAnim.setValue(0);
+    dropAnim.setValue(-20);
     fadeAnim.setValue(0);
+
     Animated.parallel([
+      Animated.spring(headerDropAnim, {
+        toValue: 0,
+        friction: 7,
+        tension: 85,
+        useNativeDriver: true,
+      }),
+      Animated.timing(headerFadeAnim, {
+        toValue: 1,
+        duration: 260,
+        useNativeDriver: true,
+      }),
       Animated.spring(dropAnim, {
         toValue: 0,
-        friction: 6,
-        tension: 80,
+        friction: 7,
+        tension: 85,
         useNativeDriver: true,
       }),
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 250,
+        duration: 260,
         useNativeDriver: true,
       }),
     ]).start();
@@ -560,8 +578,17 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* 顶部生机草木绿流体区域（标准统一头部高度与坐标） */}
-      <View style={[styles.heroHeader, { paddingTop: topPadding + 8 }]}>
+      {/* 顶部生机草木绿流体区域（带向下浮现入场动画） */}
+      <Animated.View
+        style={[
+          styles.heroHeader,
+          {
+            paddingTop: topPadding + 8,
+            opacity: headerFadeAnim,
+            transform: [{ translateY: headerDropAnim }],
+          },
+        ]}
+      >
         <View style={styles.headerTopRow}>
           <Text style={styles.screenMainTitle}>笔记</Text>
 
@@ -608,7 +635,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
             </TouchableOpacity>
           )}
         </View>
-      </View>
+      </Animated.View>
 
       {/* 提醒事项 Toast 浮条 */}
       {toastMessage && (
@@ -618,8 +645,16 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         </View>
       )}
 
-      {/* 文件夹分类横滑胶囊条 */}
-      <View style={styles.folderStripArea}>
+      {/* 文件夹分类横滑胶囊条（带向下入场动画） */}
+      <Animated.View
+        style={[
+          styles.folderStripArea,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY: dropAnim }],
+          },
+        ]}
+      >
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.folderScroll}>
           {folderList.map((folder) => {
             const isSelected = selectedFolder === folder.id;
@@ -648,7 +683,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
             );
           })}
         </ScrollView>
-      </View>
+      </Animated.View>
 
       {/* 笔记卡片流（带向下入场平滑动效） */}
       <Animated.ScrollView
