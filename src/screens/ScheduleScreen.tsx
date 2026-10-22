@@ -550,8 +550,8 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     const finishedCount = Math.max(0, totalCount - remainingCount);
     const progressPercent = totalCount > 0 ? Math.round((finishedCount / totalCount) * 100) : 100;
 
-    // 计算放学时间与倒计时
-    let dismissalText = '今日无排课';
+    // 计算放学时间与倒计时（用户要求：今日无排课改成今日没课）
+    let dismissalText = '今日没课';
     if (totalCount > 0) {
       const lastCourse = realTodayCourses[realTodayCourses.length - 1];
       const lastEnd = lastCourse.endTime || todayEndTime || '17:40';
@@ -710,10 +710,11 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      {/* 顶部生机草木绿流体区域（带向下浮现入场动画，图2区域） */}
+      {/* 顶部生机草木绿流体区域（带向下浮现入场动画，图2区域，周课表时底部边缘适当往下延展） */}
       <Animated.View
         style={[
           styles.heroHeader,
+          scheduleViewMode === 'week' && styles.heroHeaderWeek,
           {
             paddingTop: topPadding + 8,
             opacity: headerFadeAnim,
@@ -835,92 +836,104 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
             bounces={true}
           >
             <View style={[styles.scheduleSection, isTablet && styles.contentContainerTablet]}>
-              {/* 今日剩余课卡片（支持开展收起平滑动画，未填充纯白、已填充鲜绿，消除顶部过大空隙） */}
-              {isSummaryCollapsed ? (
-                <TouchableOpacity
-                  style={styles.summaryCollapsedBar}
-                  onPress={toggleSummaryCollapse}
-                  activeOpacity={0.8}
-                >
-                  <View style={styles.summaryCollapsedLeft}>
-                    <Ionicons name="time-outline" size={16} color="#16A34A" style={{ marginRight: 6 }} />
-                    <Text style={styles.summaryCollapsedTitle}>
-                      剩余 <Text style={styles.summaryCollapsedHighlight}>{todayRemainingSummary.remainingCount}</Text> 节课
-                    </Text>
-                    <Text style={styles.summaryCollapsedSub}>· {todayRemainingSummary.dismissalText}</Text>
-                  </View>
-                  <Ionicons name="chevron-down" size={16} color="#64748B" />
-                </TouchableOpacity>
-              ) : (
-                <Animated.View
-                  style={[
-                    styles.todayRemainingWidgetCard,
-                    {
-                      opacity: summaryCollapseAnim,
-                      transform: [
-                        {
-                          translateY: summaryCollapseAnim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [-14, 0],
-                          }),
-                        },
-                      ],
-                    },
-                  ]}
-                >
-                  <View style={styles.summaryExpandedContent}>
-                    {/* 右侧插画（透明背景跳舞小怪兽）：底部严格与卡片边框底部对齐，顶部自然超出边框盖在绿色色块下方 */}
-                    <Image
-                      source={require('../../assets/dancing-monster.png')}
-                      style={styles.summaryDancingMonsterImage}
-                      resizeMode="contain"
-                    />
-
-                    {/* 左侧信息列（严格从上到下：1.距离放学时间 2.剩余X节课 3.今日计划 4.进度条） */}
-                    <View style={styles.summaryLeftCol}>
-                      {/* 第1行：距离放学时间 */}
-                      <View style={styles.summaryDismissalRow}>
-                        <Text style={styles.summaryDismissalText}>{todayRemainingSummary.dismissalText}</Text>
-                      </View>
-
-                      {/* 第2行：剩余X节课（纯中文大字粗体） */}
-                      <View style={styles.summaryCountRow}>
-                        <Text style={styles.summaryClassesBigText}>
-                          剩余 <Text style={styles.summaryClassesBigNum}>{todayRemainingSummary.remainingCount}</Text> 节课
-                        </Text>
-                      </View>
-
-                      {/* 第3行：今日计划与完成进度比例 */}
-                      <View style={styles.summaryPlanRow}>
-                        <Text style={styles.summaryPlanLabel}>今日计划</Text>
-                        <Text style={styles.summaryPlanRatio}>
-                          {todayRemainingSummary.finishedCount}/{Math.max(todayRemainingSummary.totalCount, 1)}
-                        </Text>
-                      </View>
-
-                      {/* 第4行：浅绿水平进度条（图3：未填充是纯白色，已填充是绿色，底部严格对齐） */}
-                      <View style={styles.summaryProgressTrack}>
-                        <View
-                          style={[
-                            styles.summaryProgressFill,
-                            { width: `${Math.min(100, Math.max(0, todayRemainingSummary.progressPercent))}%` },
-                          ]}
-                        />
-                      </View>
+              {/* 今日剩余课卡片（槽位在无课时维持固定高度，确保下方图1暂无数据插画不随展开收起晃动位移） */}
+              <View style={[dayCourses.length === 0 && styles.summaryCardSlotFixed]}>
+                {isSummaryCollapsed ? (
+                  <TouchableOpacity
+                    style={styles.summaryCollapsedBar}
+                    onPress={toggleSummaryCollapse}
+                    activeOpacity={0.8}
+                  >
+                    <View style={styles.summaryCollapsedLeft}>
+                      <Ionicons name="time-outline" size={16} color="#16A34A" style={{ marginRight: 6 }} />
+                      <Text style={styles.summaryCollapsedTitle}>
+                        {todayRemainingSummary.remainingCount === 0 ? (
+                          '今天没课了'
+                        ) : (
+                          <>
+                            剩余 <Text style={styles.summaryCollapsedHighlight}>{todayRemainingSummary.remainingCount}</Text> 节课
+                          </>
+                        )}
+                      </Text>
+                      <Text style={styles.summaryCollapsedSub}>· {todayRemainingSummary.dismissalText}</Text>
                     </View>
+                    <Ionicons name="chevron-down" size={16} color="#64748B" />
+                  </TouchableOpacity>
+                ) : (
+                  <Animated.View
+                    style={[
+                      styles.todayRemainingWidgetCard,
+                      {
+                        opacity: summaryCollapseAnim,
+                        transform: [
+                          {
+                            translateY: summaryCollapseAnim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [-14, 0],
+                            }),
+                          },
+                        ],
+                      },
+                    ]}
+                  >
+                    <View style={styles.summaryExpandedContent}>
+                      {/* 右侧插画（透明背景跳舞小怪兽）：底部严格与卡片边框底部对齐，顶部自然超出边框盖在绿色色块下方 */}
+                      <Image
+                        source={require('../../assets/dancing-monster.png')}
+                        style={styles.summaryDancingMonsterImage}
+                        resizeMode="contain"
+                      />
 
-                    {/* 卡片右上角折叠收起按钮 */}
-                    <TouchableOpacity
-                      style={styles.summaryCollapseTrigger}
-                      onPress={toggleSummaryCollapse}
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                      activeOpacity={0.7}
-                    >
-                      <Ionicons name="chevron-up" size={16} color="#94A3B8" />
-                    </TouchableOpacity>
-                  </View>
-                </Animated.View>
-              )}
+                      {/* 左侧信息列（严格从上到下：1.距离放学时间 2.剩余X节课 3.今日计划 4.进度条） */}
+                      <View style={styles.summaryLeftCol}>
+                        {/* 第1行：距离放学时间 / 今日没课 */}
+                        <View style={styles.summaryDismissalRow}>
+                          <Text style={styles.summaryDismissalText}>{todayRemainingSummary.dismissalText}</Text>
+                        </View>
+
+                        {/* 第2行：剩余X节课（纯中文大字粗体，用户要求剩余0节课时显示今天没课了） */}
+                        <View style={styles.summaryCountRow}>
+                          {todayRemainingSummary.remainingCount === 0 ? (
+                            <Text style={styles.summaryClassesBigText}>今天没课了</Text>
+                          ) : (
+                            <Text style={styles.summaryClassesBigText}>
+                              剩余 <Text style={styles.summaryClassesBigNum}>{todayRemainingSummary.remainingCount}</Text> 节课
+                            </Text>
+                          )}
+                        </View>
+
+                        {/* 第3行：今日计划与完成进度比例 */}
+                        <View style={styles.summaryPlanRow}>
+                          <Text style={styles.summaryPlanLabel}>今日计划</Text>
+                          <Text style={styles.summaryPlanRatio}>
+                            {todayRemainingSummary.finishedCount}/{Math.max(todayRemainingSummary.totalCount, 1)}
+                          </Text>
+                        </View>
+
+                        {/* 第4行：浅绿水平进度条（图3：未填充是纯白色，已填充是绿色，底部严格对齐） */}
+                        <View style={styles.summaryProgressTrack}>
+                          <View
+                            style={[
+                              styles.summaryProgressFill,
+                              { width: `${Math.min(100, Math.max(0, todayRemainingSummary.progressPercent))}%` },
+                            ]}
+                          />
+                        </View>
+                      </View>
+
+                      {/* 卡片右上角折叠收起按钮 */}
+                      <TouchableOpacity
+                        style={styles.summaryCollapseTrigger}
+                        onPress={toggleSummaryCollapse}
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        activeOpacity={0.7}
+                      >
+                        <Ionicons name="chevron-up" size={16} color="#94A3B8" />
+                      </TouchableOpacity>
+                    </View>
+                  </Animated.View>
+                )}
+              </View>
 
               {/* 当天课程列表：随选中日期动态切换 */}
               {coursesList.length === 0 ? (
@@ -1231,6 +1244,9 @@ const styles = StyleSheet.create({
     elevation: 4,
     width: '100%',
   },
+  heroHeaderWeek: {
+    paddingBottom: 22,
+  },
   heroHeaderInner: {
     width: '100%',
   },
@@ -1350,6 +1366,9 @@ const styles = StyleSheet.create({
   },
   modeBtnTextInactive: {
     color: '#FFFFFF',
+  },
+  summaryCardSlotFixed: {
+    minHeight: 116,
   },
   // 本日剩余课收起状态胶囊条（紧凑间距，带开展收起动画）
   summaryCollapsedBar: {
