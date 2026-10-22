@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Animated, Dimensions } from 'react-
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export type MainTabType = 'schedule' | 'notes' | 'tools' | 'profile';
+export type MainTabType = 'schedule' | 'notes' | 'tools';
 
 interface BottomNavBarProps {
   activeTab: MainTabType;
@@ -14,14 +14,13 @@ const TABS: { id: MainTabType; icon: string; activeIcon: string }[] = [
   { id: 'schedule', icon: 'home-outline', activeIcon: 'home' },
   { id: 'notes', icon: 'calendar-outline', activeIcon: 'calendar' },
   { id: 'tools', icon: 'stats-chart-outline', activeIcon: 'stats-chart' },
-  { id: 'profile', icon: 'person-outline', activeIcon: 'person' },
 ];
 
-const CAPSULE_WIDTH = 276;
+const CAPSULE_WIDTH = 216;
 const PADDING_H = 8;
-const TAB_WIDTH = (CAPSULE_WIDTH - PADDING_H * 2) / TABS.length; // 65px
+const TAB_WIDTH = (CAPSULE_WIDTH - PADDING_H * 2) / TABS.length; // 66.7px
 const DOT_SIZE = 4;
-const DOT_OFFSET = (TAB_WIDTH - DOT_SIZE) / 2; // 30.5px
+const DOT_OFFSET = (TAB_WIDTH - DOT_SIZE) / 2;
 
 const getDotX = (tabId: MainTabType) => {
   const index = TABS.findIndex((t) => t.id === tabId);

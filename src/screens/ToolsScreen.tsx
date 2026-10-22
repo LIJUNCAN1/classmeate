@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Rect, Path, G } from 'react-native-svg';
 import { ImportModal } from '../components/ImportModal';
+import { APP_VERSION } from '../constants/version';
 
 // 导入课表预览示例课程数据（与课表页对齐）
 const IMPORTED_COURSES_SAMPLE = [
@@ -366,6 +367,17 @@ export const ToolsScreen: React.FC = () => {
             </TouchableOpacity>
           ))}
         </View>
+
+        {/* 底部版本号信息展示（用户要求：在工具栏底部增加版本号 每次更新自然递增 现在0.5.0） */}
+        <View style={styles.footerVersionContainer}>
+          <View style={styles.footerVersionPill}>
+            <View style={styles.footerVersionDot} />
+            <Text style={styles.footerVersionText}>课星球 v{APP_VERSION}</Text>
+          </View>
+          <Text style={styles.footerVersionSubText}>已是最新版本 · 陪伴你的大学每一天</Text>
+        </View>
+
+        <View style={{ height: 90 }} />
       </Animated.ScrollView>
 
       {/* 科学计算器弹窗交互 */}
@@ -2009,5 +2021,38 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 8,
     gap: 10,
+  },
+  // 底部版本信息
+  footerVersionContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 24,
+    marginBottom: 8,
+  },
+  footerVersionPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: Rounded.pill,
+    marginBottom: 6,
+  },
+  footerVersionDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#10B981',
+    marginRight: 6,
+  },
+  footerVersionText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#475569',
+    fontVariant: ['tabular-nums'],
+  },
+  footerVersionSubText: {
+    fontSize: 11,
+    color: '#94A3B8',
   },
 });
