@@ -1,0 +1,5 @@
+<resources>
+  <string name="app_name">课星球</string>
+  <string name="widget_name">课星球 · 课程速览</string>
+  <string name="widget_description">实时查看今日剩余课程数量、放学时间与下节课教室</string>
+</resources>

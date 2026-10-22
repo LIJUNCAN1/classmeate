@@ -20,13 +20,13 @@ const TABS: { id: MainTabType; icon: string; activeIcon: string }[] = [
 const CAPSULE_WIDTH = 276;
 const PADDING_H = 8;
 const TAB_WIDTH = (CAPSULE_WIDTH - PADDING_H * 2) / TABS.length; // 65px
-const CIRCLE_SIZE = 46;
-const CIRCLE_OFFSET = (TAB_WIDTH - CIRCLE_SIZE) / 2; // 9.5px
+const DOT_SIZE = 4;
+const DOT_OFFSET = (TAB_WIDTH - DOT_SIZE) / 2; // 30.5px
 
-const getTabX = (tabId: MainTabType) => {
+const getDotX = (tabId: MainTabType) => {
   const index = TABS.findIndex((t) => t.id === tabId);
   const idx = index !== -1 ? index : 0;
-  return PADDING_H + idx * TAB_WIDTH + CIRCLE_OFFSET;
+  return PADDING_H + idx * TAB_WIDTH + DOT_OFFSET;
 };
 
 export const BottomNavBar: React.FC<BottomNavBarProps> = ({
@@ -36,28 +36,28 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   const insets = useSafeAreaInsets();
   const bottomOffset = insets.bottom > 0 ? insets.bottom + 6 : 16;
 
-  // 悬浮指示球水平滑动动效 (translateX) 与微弹性形变动效 (scale)
-  const slideAnim = useRef(new Animated.Value(getTabX(activeTab))).current;
+  // 底部指示圆点水平滑动动效 (translateX) 与微弹性形变动效 (scale)
+  const slideAnim = useRef(new Animated.Value(getDotX(activeTab))).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    const targetX = getTabX(activeTab);
+    const targetX = getDotX(activeTab);
     Animated.parallel([
       Animated.spring(slideAnim, {
         toValue: targetX,
-        tension: 72,
+        tension: 80,
         friction: 9,
         useNativeDriver: true,
       }),
       Animated.sequence([
         Animated.timing(scaleAnim, {
-          toValue: 0.9,
+          toValue: 0.6,
           duration: 90,
           useNativeDriver: true,
         }),
         Animated.spring(scaleAnim, {
           toValue: 1,
-          tension: 80,
+          tension: 90,
           friction: 6,
           useNativeDriver: true,
         }),
@@ -68,10 +68,10 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   return (
     <View style={[styles.outerWrapper, { bottom: bottomOffset }]} pointerEvents="box-none">
       <View style={styles.floatingCapsule}>
-        {/* 动态平移滑动的浅绿色圆圈底衬（严格对齐用户图片与移动动画） */}
+        {/* 用户要求：选中的时候和之前一样填色icon和下面一个点（带平滑滑动动画） */}
         <Animated.View
           style={[
-            styles.activeIndicatorCircle,
+            styles.activeIndicatorDot,
             {
               transform: [
                 { translateX: slideAnim },
@@ -94,7 +94,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
               <Ionicons
                 name={(isActive ? tab.activeIcon : tab.icon) as any}
                 size={23}
-                color={isActive ? '#15803D' : '#5A6578'}
+                color={isActive ? '#16A34A' : '#64748B'}
               />
             </TouchableOpacity>
           );
@@ -115,8 +115,8 @@ const styles = StyleSheet.create({
   },
   floatingCapsule: {
     width: CAPSULE_WIDTH,
-    height: 58,
-    borderRadius: 29,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'center',
@@ -130,19 +130,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.05)',
   },
-  activeIndicatorCircle: {
+  activeIndicatorDot: {
     position: 'absolute',
     left: 0,
-    width: CIRCLE_SIZE,
-    height: CIRCLE_SIZE,
-    borderRadius: CIRCLE_SIZE / 2,
-    backgroundColor: '#EDFAEF', // 淡浅绿高光圆底（参考图）
+    bottom: 9,
+    width: DOT_SIZE,
+    height: DOT_SIZE,
+    borderRadius: DOT_SIZE / 2,
+    backgroundColor: '#16A34A', // 经典草木绿指示圆点
   },
   tabButton: {
     width: TAB_WIDTH,
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingBottom: 4,
     zIndex: 2,
   },
 });

@@ -51,11 +51,55 @@ export const CourseCard: React.FC<CourseCardProps> = ({
     return '通识课';
   }, [displayName]);
 
-  // 计算标准节次与起止时间
+  // 计算标准节次与起止时间（动态根据课程信息/时间真实计算，绝不固定为1-2节）
   const { startTime, endTime, sectionLabel } = useMemo(() => {
-    const s = course.startPeriod || 1;
-    const span = course.span || 2;
-    const e = s + span - 1;
+    let s: number | undefined = undefined;
+    let e: number | undefined = undefined;
+
+    // 1. 尝试从 stageTag 匹配节次 (例如 "周一5-6节", "3-4节", "第7-8节")
+    const tagMatch = (course.stageTag || '').match(/(?:第)?(\d+)(?:-(\d+))?节/);
+    if (tagMatch) {
+      s = parseInt(tagMatch[1], 10);
+      e = tagMatch[2] ? parseInt(tagMatch[2], 10) : s + 1;
+    }
+
+    // 2. 尝试从课程名/地点/原始字符串中匹配
+    if (!s) {
+      const rawMatch = `${course.name || ''} ${course.location || ''}`.match(/(?:第)?(\d+)(?:-(\d+))?节/);
+      if (rawMatch) {
+        s = parseInt(rawMatch[1], 10);
+        e = rawMatch[2] ? parseInt(rawMatch[2], 10) : s + 1;
+      }
+    }
+
+    // 3. 检查是否有明确设置的 startPeriod
+    if (!s && course.startPeriod && course.startPeriod > 0) {
+      s = course.startPeriod;
+      const span = course.span || 2;
+      e = s + span - 1;
+    }
+
+    // 4. 根据真实 startTime 智能推导大学标准节次
+    const rawStart = course.startTime || '';
+    if (!s && rawStart) {
+      const [h, m] = rawStart.split(':').map(Number);
+      const startMins = (h || 0) * 60 + (m || 0);
+      if (startMins < 9 * 60 + 30) {
+        s = 1; e = 2;
+      } else if (startMins < 12 * 60) {
+        s = 3; e = 4;
+      } else if (startMins < 15 * 60 + 30) {
+        s = 5; e = 6;
+      } else if (startMins < 18 * 60 + 30) {
+        s = 7; e = 8;
+      } else {
+        s = 9; e = 10;
+      }
+    }
+
+    // 最终默认兜底
+    if (!s) s = 1;
+    if (!e) e = s + 1;
 
     const periodTimes: { [k: number]: { start: string; end: string } } = {
       1: { start: '08:00', end: '08:45' },
@@ -110,16 +154,17 @@ export const CourseCard: React.FC<CourseCardProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* 左侧每节课时间展示（图4：节次居上，起始时间居中，结束时间居下，左右空隙均匀，且和右边卡片上下居中） */}
+      {/* 左侧每节课时间展示（图1：支持上下连线，真实节次与起止时间） */}
       <View style={styles.timelineCol}>
         <Text style={styles.sectionText}>{sectionLabel}</Text>
         <Text style={styles.startTimeText}>{startTime}</Text>
         <Text style={styles.endTimeText}>{endTime}</Text>
+        {!isLast && <View style={styles.timelineLine} />}
       </View>
 
       {/* 右侧课程卡片 */}
       <View style={[styles.cardSurface, Shadows.card]}>
-        {/* 卡片头部：课程名称（前缀加实心圆圈背景）与右侧随堂笔记操作按钮 */}
+        {/* 卡片头部：课程名称 + 必修课等tag（右侧），右上角随堂笔记操作按钮 */}
         <View style={styles.cardHeader}>
           <View style={styles.nameRow}>
             {hasTiao && (
@@ -135,9 +180,32 @@ export const CourseCard: React.FC<CourseCardProps> = ({
             <Text style={styles.courseName} numberOfLines={1}>
               {displayName}
             </Text>
+
+            {/* 用户要求：图2部分把必修课等tag放在课程名称右边 */}
+            <View
+              style={[
+                styles.categoryPill,
+                category === '必修课' && styles.categoryPillRequired,
+                category === '选修课' && styles.categoryPillElective,
+                category === '专业课' && styles.categoryPillMajor,
+                category === '通识课' && styles.categoryPillGeneral,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.categoryPillText,
+                  category === '必修课' && styles.categoryTextRequired,
+                  category === '选修课' && styles.categoryTextElective,
+                  category === '专业课' && styles.categoryTextMajor,
+                  category === '通识课' && styles.categoryTextGeneral,
+                ]}
+              >
+                {category}
+              </Text>
+            </View>
           </View>
 
-          {/* 右上角的笔记：去掉外框，左边有一个圆圈，没有笔记是白色圆圈，有的时候是一笔成型的勾，文字颜色区分 */}
+          {/* 右上角的笔记：与右下角状态标签严格右对齐 */}
           <TouchableOpacity
             style={styles.minimalNoteBtn}
             onPress={() => onNavigateToNotes && onNavigateToNotes(course)}
@@ -161,38 +229,19 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           </TouchableOpacity>
         </View>
 
-        {/* 必修课等分类 tag 与紧随其后的老师名字（去掉tag后面的·） */}
-        <View style={styles.tagAndTeacherRow}>
-          <View
-            style={[
-              styles.categoryPill,
-              category === '必修课' && styles.categoryPillRequired,
-              category === '选修课' && styles.categoryPillElective,
-              category === '专业课' && styles.categoryPillMajor,
-              category === '通识课' && styles.categoryPillGeneral,
-            ]}
-          >
-            <Text
-              style={[
-                styles.categoryPillText,
-                category === '必修课' && styles.categoryTextRequired,
-                category === '选修课' && styles.categoryTextElective,
-                category === '专业课' && styles.categoryTextMajor,
-                category === '通识课' && styles.categoryTextGeneral,
-              ]}
-            >
-              {category}
-            </Text>
+        {/* 紧随其后的老师名字 */}
+        {displayTeacher ? (
+          <View style={styles.teacherRow}>
+            <Text style={styles.teacherInlineText}>{displayTeacher}</Text>
           </View>
-          <Text style={styles.teacherInlineText}>{displayTeacher}</Text>
-        </View>
+        ) : null}
 
         {/* 上课地点：去掉“上课地点：”字样，去掉“16位同学也在用” */}
         <View style={styles.locationRow}>
           <Text style={styles.locationText}>{displayLoc}</Text>
         </View>
 
-        {/* 状态徽章改在卡片右下角，造型参考图5（适配右下角） */}
+        {/* 状态徽章：位于卡片右下角，与右上角记笔记严格右对齐 */}
         <View
           style={[
             styles.cornerStatusBadge,
@@ -231,6 +280,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+    position: 'relative',
+  },
+  timelineLine: {
+    position: 'absolute',
+    top: 54,
+    bottom: -22,
+    width: 2,
+    backgroundColor: '#E2E8F0',
+    borderRadius: 1,
+    zIndex: -1,
   },
   sectionText: {
     fontSize: 14,
@@ -344,6 +403,16 @@ const styles = StyleSheet.create({
     color: '#64748B',
   },
 
+  // 教师行
+  teacherRow: {
+    marginBottom: 4,
+  },
+  teacherInlineText: {
+    fontSize: 12.5,
+    color: '#64748B',
+    fontWeight: '500',
+  },
+
   // 类别与老师接在后面（去掉·）
   tagAndTeacherRow: {
     flexDirection: 'row',
@@ -354,6 +423,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 1.5,
     borderRadius: 4,
+    marginLeft: 6,
   },
   categoryPillRequired: {
     backgroundColor: '#EFF6FF',
@@ -383,12 +453,6 @@ const styles = StyleSheet.create({
   categoryTextGeneral: {
     color: '#D97706',
   },
-  teacherInlineText: {
-    fontSize: 12.5,
-    color: '#475569',
-    fontWeight: '600',
-    marginLeft: 6,
-  },
 
   // 地点显示（去掉“上课地点: ”与同学计数）
   locationRow: {
@@ -402,15 +466,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // 右下角状态标签（造型参考图5，平滑贴合右下角）
+  // 右下角状态标签（与右上角记笔记严格右对齐）
   cornerStatusBadge: {
     position: 'absolute',
-    right: 0,
-    bottom: 0,
-    borderTopLeftRadius: 12,
-    borderBottomRightRadius: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 4.5,
+    right: 16,
+    bottom: 12,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 3.5,
     flexDirection: 'row',
     alignItems: 'center',
   },

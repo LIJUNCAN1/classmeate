@@ -232,22 +232,6 @@ export const ToolsScreen: React.FC = () => {
       bgColor: Colors.primaryLight,
     },
     {
-      id: 'mistakes',
-      title: '错题本',
-      desc: 'DeepSeek-R1 满血深度推理错因诊断',
-      icon: 'bulb-outline',
-      color: Colors.accentBlue,
-      bgColor: Colors.accentBlueLight,
-    },
-    {
-      id: 'classroom',
-      title: '口令教室',
-      desc: 'Piik 连麦互动 · 尚未开始小客厅静悄悄',
-      icon: 'key-outline',
-      color: Colors.accentPurple,
-      bgColor: Colors.accentPurpleLight,
-    },
-    {
       id: 'calculator',
       title: '科学计算器',
       desc: '三角函数/方根/微积分高级运算',
@@ -320,21 +304,24 @@ export const ToolsScreen: React.FC = () => {
                 }
               }}
             >
-              <View style={[styles.toolIconWrapper, { backgroundColor: t.bgColor }]}>
-                <Ionicons name={t.icon as any} size={24} color={t.color} />
-              </View>
-              <View style={styles.toolTitleRow}>
-                <Text style={styles.toolTitle}>{t.title}</Text>
+              {/* 图标与导入 CTA 在同一行（用户要求：教务课表的导入CTA要在icon右边） */}
+              <View style={styles.toolIconAndCtaRow}>
+                <View style={[styles.toolIconWrapper, { backgroundColor: t.bgColor }]}>
+                  <Ionicons name={t.icon as any} size={24} color={t.color} />
+                </View>
                 {t.id === 'import' && (
                   <TouchableOpacity
                     style={styles.cardImportPillBtn}
                     onPress={handleOpenImportModal}
                     activeOpacity={0.8}
                   >
-                    <Ionicons name="download-outline" size={12} color="#FFFFFF" />
+                    <Ionicons name="download-outline" size={12} color="#FFFFFF" style={{ marginRight: 3 }} />
                     <Text style={styles.cardImportPillText}>导入</Text>
                   </TouchableOpacity>
                 )}
+              </View>
+              <View style={styles.toolTitleRow}>
+                <Text style={styles.toolTitle}>{t.title}</Text>
               </View>
               <Text style={styles.toolDesc} numberOfLines={2}>
                 {t.desc}
@@ -907,31 +894,42 @@ export const ToolsScreen: React.FC = () => {
               </View>
             </View>
 
+            {/* OPPO / Android 桌面原子组件添加指引 */}
+            <View style={styles.oppoGuideBox}>
+              <View style={styles.oppoGuideHeader}>
+                <Ionicons name="phone-portrait-outline" size={15} color="#16A34A" style={{ marginRight: 5 }} />
+                <Text style={styles.oppoGuideTitle}>OPPO ColorOS 原子组件添加说明</Text>
+              </View>
+              <Text style={styles.oppoGuideStep}>1. 回到手机主屏幕，双指在桌面空白处捏合（或长按空白处）</Text>
+              <Text style={styles.oppoGuideStep}>2. 点击底部菜单栏的【卡片】或【原子组件】（或【插件】）</Text>
+              <Text style={styles.oppoGuideStep}>3. 在列表中找到【课星球】，选择 2x2 或 2x4 规格即可添加！</Text>
+            </View>
+
             {/* 底部功能按钮 */}
             <View style={styles.widgetActionsCol}>
               <TouchableOpacity
                 style={styles.qrPrimaryActionBtn}
                 onPress={() => {
-                  setToastMessage('📱 已生成小组件配置，长按手机桌面即可添加【课星球】！');
+                  setToastMessage('✅ OPPO ColorOS 原子组件配置已激活！返回桌面即可添加');
                   setWidgetModalVisible(false);
-                  setTimeout(() => setToastMessage(null), 3000);
+                  setTimeout(() => setToastMessage(null), 3500);
                 }}
                 activeOpacity={0.8}
               >
-                <Ionicons name="add-circle-outline" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
-                <Text style={styles.qrPrimaryActionBtnText}>添加至手机主屏幕</Text>
+                <Ionicons name="checkmark-circle-outline" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
+                <Text style={styles.qrPrimaryActionBtnText}>已完成配置 · 去桌面添加</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.qrSecondaryActionBtn}
                 onPress={() => {
-                  setToastMessage('🔄 小组件数据已与当前最新课表同步！');
+                  setToastMessage('🔄 桌面原子组件数据已与当前课表成功同步！');
                   setTimeout(() => setToastMessage(null), 2500);
                 }}
                 activeOpacity={0.8}
               >
                 <Ionicons name="refresh-outline" size={16} color={Colors.primary} style={{ marginRight: 6 }} />
-                <Text style={styles.qrSecondaryActionBtnText}>刷新小组件数据</Text>
+                <Text style={styles.qrSecondaryActionBtnText}>同步原子组件实时数据</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -1033,13 +1031,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#F3F4F6',
   },
+  toolIconAndCtaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
   toolIconWrapper: {
     width: 48,
     height: 48,
     borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
     position: 'relative',
   },
   toolTitleRow: {
@@ -1976,6 +1979,31 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#047857',
     flexShrink: 1,
+  },
+  oppoGuideBox: {
+    width: '100%',
+    backgroundColor: '#F0FDF4',
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#DCFCE7',
+    marginVertical: 10,
+  },
+  oppoGuideHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  oppoGuideTitle: {
+    fontSize: 12.5,
+    fontWeight: '800',
+    color: '#15803D',
+  },
+  oppoGuideStep: {
+    fontSize: 11,
+    color: '#334155',
+    lineHeight: 16,
+    marginBottom: 2,
   },
   widgetActionsCol: {
     width: '100%',

@@ -335,6 +335,10 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     triggerEntranceAnimation();
   };
 
+  // 周课表生长动画 (Scale Growth Animation)
+  const weekScaleAnim = useRef(new Animated.Value(1)).current;
+  const [isSummaryCollapsed, setIsSummaryCollapsed] = useState(false);
+
   const handleSwitchToWeek = () => {
     setScheduleViewMode('week');
     Animated.spring(toggleSlideAnim, {
@@ -343,6 +347,16 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
       tension: 100,
       useNativeDriver: true,
     }).start();
+
+    // 周课表的显示动画改为生长
+    weekScaleAnim.setValue(0.88);
+    Animated.spring(weekScaleAnim, {
+      toValue: 1,
+      friction: 6,
+      tension: 80,
+      useNativeDriver: true,
+    }).start();
+
     triggerEntranceAnimation();
   };
 
@@ -351,9 +365,18 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
   const [currentWeekNumber, setCurrentWeekNumber] = useState(7); // 当前正在查看的周次 (默认为第7周)
   const [realCurrentWeekNumber, setRealCurrentWeekNumber] = useState(7); // 现实中当前周/本周
 
-  // 监听周次切换触发向上浮现动效
+  // 监听周次切换触发向上浮现与周课表生长动效
   useEffect(() => {
     triggerEntranceAnimation();
+    if (scheduleViewMode === 'week') {
+      weekScaleAnim.setValue(0.92);
+      Animated.spring(weekScaleAnim, {
+        toValue: 1,
+        friction: 6,
+        tension: 85,
+        useNativeDriver: true,
+      }).start();
+    }
   }, [currentWeekNumber]);
 
   // 课程总表状态（初始为空，导入后即时全量更新并刷新日视图与周视图）
@@ -459,7 +482,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     };
   }, [realTodayCourses, todayEndTime]);
 
-  // 计算本日剩余课与放学时间/下节课倒计时（用户要求：之后还有课显示下节课还有多久，最后一节课显示还有几分钟放学）
+  // 计算本日剩余课与放学时间/下节课倒计时（图4：距离放学时间、剩余X节课、今日计划、进度条）
   const todayRemainingSummary = useMemo(() => {
     const now = new Date();
     const curMinutes = now.getHours() * 60 + now.getMinutes();
@@ -473,66 +496,42 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     });
 
     const remainingCount = remainingCourses.length;
+    const totalCount = realTodayCourses.length;
+    const finishedCount = Math.max(0, totalCount - remainingCount);
+    const progressPercent = totalCount > 0 ? Math.round((finishedCount / totalCount) * 100) : 100;
 
-    if (realTodayCourses.length === 0) {
-      return {
-        remainingCount: 0,
-        subTitleText: '今日无排课 · 享受充实一天',
-      };
-    }
-
-    if (remainingCount === 0) {
-      return {
-        remainingCount: 0,
-        subTitleText: '今日课程已全部结束 · 已放学',
-      };
-    }
-
-    // 最后一节课：计算还有几分钟放学
-    if (remainingCount === 1) {
-      const lastC = remainingCourses[0];
-      const e = lastC.endTime || '20:35';
-      const [eh, em] = e.split(':').map(Number);
+    // 计算放学时间与倒计时
+    let dismissalText = '今日无排课';
+    if (totalCount > 0) {
+      const lastCourse = realTodayCourses[realTodayCourses.length - 1];
+      const lastEnd = lastCourse.endTime || todayEndTime || '17:40';
+      const [eh, em] = lastEnd.split(':').map(Number);
       const endMin = (eh || 0) * 60 + (em || 0);
-      const diffEnd = Math.max(0, endMin - curMinutes);
-      const h = Math.floor(diffEnd / 60);
-      const m = diffEnd % 60;
-      const timeStr = h > 0 ? `${h}小时${m}分` : `${m}分钟`;
-      return {
-        remainingCount: 1,
-        subTitleText: `最后一节课 · 距放学还有 ${timeStr}`,
-      };
-    }
+      const diff = endMin - curMinutes;
 
-    // 之后还有多节课：计算下一节课还有多久
-    let nextStartMin: number | null = null;
-    for (const c of remainingCourses) {
-      const s = c.startTime || '08:00';
-      const [sh, sm] = s.split(':').map(Number);
-      const sMin = (sh || 0) * 60 + (sm || 0);
-      if (sMin > curMinutes) {
-        if (nextStartMin === null || sMin < nextStartMin) {
-          nextStartMin = sMin;
-        }
+      if (diff <= 0) {
+        dismissalText = '今日课程已结束 · 已放学';
+      } else {
+        const h = Math.floor(diff / 60);
+        const m = diff % 60;
+        const timeStr = h > 0 ? `${h}小时${m}分` : `${m}分钟`;
+        dismissalText = `距放学还有 ${timeStr}`;
       }
     }
 
-    if (nextStartMin !== null) {
-      const diffStart = nextStartMin - curMinutes;
-      const h = Math.floor(diffStart / 60);
-      const m = diffStart % 60;
-      const timeStr = h > 0 ? `${h}小时${m}分` : `${m}分钟`;
-      return {
-        remainingCount,
-        subTitleText: `距下节课还有 ${timeStr}`,
-      };
-    } else {
-      return {
-        remainingCount,
-        subTitleText: `上课中 · 本日剩余 ${remainingCount} 节课`,
-      };
-    }
-  }, [realTodayCourses]);
+    const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+    const curDateStr = `Today, ${monthNames[now.getMonth()]}${now.getDate()}日`;
+
+    return {
+      remainingCount,
+      totalCount,
+      finishedCount,
+      progressPercent,
+      dismissalText,
+      curDateStr,
+      subTitleText: dismissalText,
+    };
+  }, [realTodayCourses, todayEndTime]);
 
   // 引导重新导入课程表向导状态
   const [reimportModalVisible, setReimportModalVisible] = useState(false);
@@ -777,26 +776,83 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
             bounces={true}
           >
             <View style={[styles.scheduleSection, isTablet && styles.contentContainerTablet]}>
-              {/* 今日剩余课卡片（用户要求：左边icon不要背景，右边换成剩余课程数量，去掉下节课整行，副标题按逻辑显示倒计时/放学时间） */}
+              {/* 今日剩余课卡片（图4设计：从上到下是距离放学时间、剩余X节课、今日计划、进度条，右边月亮怪兽插画，支持折叠收起） */}
               <View style={styles.todayRemainingWidgetCard}>
-                <View style={styles.widgetTopRow}>
-                  <View style={styles.widgetTitleGroup}>
-                    {/* 用户要求：本日剩余课左边的icon不要背景 */}
-                    <Ionicons name="time-outline" size={22} color={Colors.primary} style={{ marginRight: 8 }} />
-                    <View>
-                      <Text style={styles.widgetMainTitle}>本日剩余课</Text>
-                      <Text style={styles.widgetEndTimeSub}>
-                        {todayRemainingSummary.subTitleText}
+                {isSummaryCollapsed ? (
+                  // 收起状态：只显示剩余几节课与展开图标
+                  <TouchableOpacity
+                    style={styles.summaryCollapsedRow}
+                    onPress={() => setIsSummaryCollapsed(false)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={styles.summaryCollapsedLeft}>
+                      <Ionicons name="time-outline" size={18} color="#16A34A" style={{ marginRight: 6 }} />
+                      <Text style={styles.summaryCollapsedTitle}>
+                        剩余 <Text style={styles.summaryCollapsedHighlight}>{todayRemainingSummary.remainingCount}</Text> 节课
+                      </Text>
+                      <Text style={styles.summaryCollapsedSub}>
+                        · {todayRemainingSummary.dismissalText}
                       </Text>
                     </View>
-                  </View>
+                    <Ionicons name="chevron-down" size={18} color="#64748B" />
+                  </TouchableOpacity>
+                ) : (
+                  // 展开状态：图4标准排版
+                  <View style={styles.summaryExpandedContent}>
+                    {/* 右侧插画（月亮小怪兽）：顶部超出边框，盖在顶部绿色色块下方 */}
+                    <Image
+                      source={require('../../assets/monster-moon.png')}
+                      style={styles.summaryMoonMonsterImage}
+                      resizeMode="contain"
+                    />
 
-                  {/* 用户要求：图3部分把重新导入去掉换成剩余的课程数量 */}
-                  <View style={styles.widgetRemainingCountBadge}>
-                    <Text style={styles.widgetRemainingCountNum}>{todayRemainingSummary.remainingCount}</Text>
-                    <Text style={styles.widgetRemainingCountUnit}>节</Text>
+                    {/* 左侧信息列（从上到下：距离放学时间、剩余X节课、今日计划、进度条） */}
+                    <View style={styles.summaryLeftCol}>
+                      {/* 第1行：距离放学时间 */}
+                      <View style={styles.summaryDismissalRow}>
+                        <Text style={styles.summaryDateText}>{todayRemainingSummary.curDateStr}</Text>
+                        <Text style={styles.summaryDismissalDot}>·</Text>
+                        <Text style={styles.summaryDismissalText}>{todayRemainingSummary.dismissalText}</Text>
+                      </View>
+
+                      {/* 第2行：剩余X节课（大字粗体） */}
+                      <View style={styles.summaryCountRow}>
+                        <Text style={styles.summaryClassesBigText}>
+                          {todayRemainingSummary.remainingCount}{' '}
+                          <Text style={styles.summaryClassesBigUnit}>Classes</Text>
+                        </Text>
+                      </View>
+
+                      {/* 第3行：今日计划与完成进度比例 */}
+                      <View style={styles.summaryPlanRow}>
+                        <Text style={styles.summaryPlanLabel}>今日计划</Text>
+                        <Text style={styles.summaryPlanRatio}>
+                          {todayRemainingSummary.finishedCount}/{Math.max(todayRemainingSummary.totalCount, 1)}
+                        </Text>
+                      </View>
+
+                      {/* 第4行：浅绿水平进度条 */}
+                      <View style={styles.summaryProgressTrack}>
+                        <View
+                          style={[
+                            styles.summaryProgressFill,
+                            { width: `${Math.min(100, Math.max(0, todayRemainingSummary.progressPercent))}%` },
+                          ]}
+                        />
+                      </View>
+                    </View>
+
+                    {/* 卡片右上角折叠收起按钮 */}
+                    <TouchableOpacity
+                      style={styles.summaryCollapseTrigger}
+                      onPress={() => setIsSummaryCollapsed(true)}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      activeOpacity={0.7}
+                    >
+                      <Ionicons name="chevron-up" size={16} color="#94A3B8" />
+                    </TouchableOpacity>
                   </View>
-                </View>
+                )}
               </View>
 
               {/* 当天课程列表：随选中日期动态切换 */}
@@ -853,8 +909,8 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
             <View style={{ height: 32 }} />
           </ScrollView>
         ) : (
-          /* 周课表全景网格视图 */
-          <View style={styles.weekGridWrapper}>
+          /* 周课表全景网格视图（周课表显示动画改为生长动画） */
+          <Animated.View style={[styles.weekGridWrapper, { transform: [{ scale: weekScaleAnim }] }]}>
             <WeekGridView
               courses={coursesList}
               currentWeekIndex={currentWeekNumber}
@@ -869,7 +925,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                 if (found) handleStartNoteForCourse(found);
               }}
             />
-          </View>
+          </Animated.View>
         )}
       </Animated.View>
 
@@ -1137,7 +1193,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     height: 38,
     minHeight: 38,
-    marginBottom: 12,
+    marginBottom: 4,
   },
   drawerTriggerBtn: {
     marginRight: 8,
@@ -1231,20 +1287,137 @@ const styles = StyleSheet.create({
   modeBtnTextInactive: {
     color: '#FFFFFF',
   },
-  // 本日剩余课卡片（移至内容区，集成放学时间、倒计时与下节课组件）
+  // 本日剩余课卡片（图4设计：间距紧凑，浅薄荷绿柔和质感底色，右侧3D月亮小怪兽插画超出边框盖在绿色色块下）
   todayRemainingWidgetCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F2FAF4',
     marginHorizontal: 16,
-    marginBottom: 16,
-    borderRadius: 16,
-    padding: 16,
+    marginTop: 6,
+    marginBottom: 10,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
+    borderColor: '#DCFCE7',
+    position: 'relative',
+    overflow: 'visible',
+    shadowColor: '#16A34A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
     elevation: 2,
+    zIndex: 1,
+  },
+  summaryCollapsedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  summaryCollapsedLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  summaryCollapsedTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  summaryCollapsedHighlight: {
+    color: '#16A34A',
+    fontWeight: '800',
+    fontSize: 16,
+  },
+  summaryCollapsedSub: {
+    fontSize: 12,
+    color: '#64748B',
+    marginLeft: 6,
+  },
+  summaryExpandedContent: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
+    position: 'relative',
+  },
+  summaryMoonMonsterImage: {
+    position: 'absolute',
+    right: 0,
+    top: -16,
+    width: 126,
+    height: 106,
+    zIndex: 2,
+  },
+  summaryLeftCol: {
+    width: '62%',
+    zIndex: 3,
+  },
+  summaryDismissalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  summaryDateText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  summaryDismissalDot: {
+    fontSize: 12,
+    color: '#94A3B8',
+    marginHorizontal: 4,
+  },
+  summaryDismissalText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#16A34A',
+  },
+  summaryCountRow: {
+    marginBottom: 6,
+  },
+  summaryClassesBigText: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#0F172A',
+    letterSpacing: -0.5,
+  },
+  summaryClassesBigUnit: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1E293B',
+  },
+  summaryPlanRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  summaryPlanLabel: {
+    fontSize: 11.5,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  summaryPlanRatio: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#0F172A',
+    fontVariant: ['tabular-nums'],
+  },
+  summaryProgressTrack: {
+    height: 7,
+    backgroundColor: '#DCFCE7',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  summaryProgressFill: {
+    height: '100%',
+    backgroundColor: '#22C55E',
+    borderRadius: 4,
+  },
+  summaryCollapseTrigger: {
+    position: 'absolute',
+    top: 10,
+    right: 12,
+    padding: 4,
+    zIndex: 5,
   },
   widgetTopRow: {
     flexDirection: 'row',

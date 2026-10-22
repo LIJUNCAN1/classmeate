@@ -279,7 +279,7 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingTop: 10,
     paddingBottom: 14,
   },
   headerRow: {
