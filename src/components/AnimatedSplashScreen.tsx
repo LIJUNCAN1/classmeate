@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Image, Text, Dimensions } from 'react-native';
+import { StyleSheet, Animated, Image, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -9,16 +9,15 @@ interface AnimatedSplashScreenProps {
 
 export const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({ onFinish }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.78)).current;
-  const floatAnim = useRef(new Animated.Value(24)).current;
-  const textFadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.85)).current;
+  const floatAnim = useRef(new Animated.Value(18)).current;
 
   useEffect(() => {
     // 1. 浮现出场（渐显 + 微缩放弹性浮起）
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 650,
+        duration: 600,
         useNativeDriver: true,
       }),
       Animated.spring(scaleAnim, {
@@ -29,43 +28,35 @@ export const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({ onFi
       }),
       Animated.timing(floatAnim, {
         toValue: 0,
-        duration: 650,
+        duration: 600,
         useNativeDriver: true,
       }),
     ]).start(() => {
-      // 文字随之显现
-      Animated.timing(textFadeAnim, {
-        toValue: 1,
-        duration: 350,
-        useNativeDriver: true,
-      }).start();
-
-      // 2. 驻留 1.3 秒后平滑渐隐退场
+      // 2. 驻留 1.2 秒后平滑渐隐退场
       const timeout = setTimeout(() => {
         Animated.parallel([
           Animated.timing(fadeAnim, {
             toValue: 0,
-            duration: 500,
+            duration: 450,
             useNativeDriver: true,
           }),
           Animated.timing(scaleAnim, {
-            toValue: 1.08,
-            duration: 500,
-            useNativeDriver: true,
-          }),
-          Animated.timing(textFadeAnim, {
-            toValue: 0,
-            duration: 300,
+            toValue: 1.05,
+            duration: 450,
             useNativeDriver: true,
           }),
         ]).start(() => {
           onFinish();
         });
-      }, 1300);
+      }, 1200);
 
       return () => clearTimeout(timeout);
     });
-  }, [fadeAnim, scaleAnim, floatAnim, textFadeAnim, onFinish]);
+  }, [fadeAnim, scaleAnim, floatAnim, onFinish]);
+
+  // 计算小怪兽居中展示的最佳比例尺寸（原图宽高比 1024 x 809）
+  const monsterWidth = Math.min(width * 0.72, 300);
+  const monsterHeight = monsterWidth * (809 / 1024);
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
@@ -73,20 +64,17 @@ export const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({ onFi
         style={[
           styles.logoWrapper,
           {
+            width: monsterWidth,
+            height: monsterHeight,
             transform: [{ scale: scaleAnim }, { translateY: floatAnim }],
           },
         ]}
       >
         <Image
-          source={require('../../assets/splash-monster.png')}
+          source={require('../../assets/dancing-monster.png')}
           style={styles.logoImage}
           resizeMode="contain"
         />
-      </Animated.View>
-
-      <Animated.View style={[styles.titleWrapper, { opacity: textFadeAnim }]}>
-        <Text style={styles.brandTitle}>课星球</Text>
-        <Text style={styles.brandSubtitle}>课表驱动知识流 · 随堂全景学习</Text>
       </Animated.View>
     </Animated.View>
   );
@@ -105,39 +93,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logoWrapper: {
-    width: Math.min(width * 0.65, 260),
-    height: Math.min(width * 0.65, 260),
     alignItems: 'center',
     justifyContent: 'center',
   },
   logoImage: {
     width: '100%',
     height: '100%',
-  },
-  titleWrapper: {
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  brandTitle: {
-    fontSize: 28,
-    fontWeight: '900',
-    color: '#10B981',
-    letterSpacing: -0.5,
-  },
-  brandSubtitle: {
-    fontSize: 13,
-    color: '#6B7280',
-    fontWeight: '500',
-    marginTop: 6,
-    letterSpacing: 0.5,
-  },
-  footerNote: {
-    position: 'absolute',
-    bottom: 40,
-    alignSelf: 'center',
-  },
-  footerText: {
-    fontSize: 11,
-    color: '#9CA3AF',
   },
 });
