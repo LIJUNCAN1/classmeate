@@ -149,7 +149,12 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
                 styles.dayItem,
                 isSelected && styles.dayItemSelected,
               ]}
-              onPress={() => onSelectDate(item.dateStr, item.dayOfWeek)}
+              onPress={() => {
+                // 限制不能重复点击现在正在查看的日期
+                if (isSelected) return;
+                onSelectDate(item.dateStr, item.dayOfWeek);
+              }}
+              disabled={isSelected}
               activeOpacity={0.8}
             >
               <View style={styles.dayNameContainer}>

@@ -244,15 +244,23 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     setSelectedCourseForNote(null);
   };
 
-  // 页面向上平滑浮现的淡入向上动画 (Upward Floating Entrance Animation，切换周课表与日期时触发)
-  const floatUpAnim = useRef(new Animated.Value(24)).current;
+  // 页面向下平滑浮现动画 (Downward Floating Entrance Animation，切换周课表与日期时触发)
+  const floatDownAnim = useRef(new Animated.Value(-24)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
+  // 顶部绿色色块向下浮现入场动画 (图2入场动画)
+  const headerDropAnim = useRef(new Animated.Value(-28)).current;
+  const headerFadeAnim = useRef(new Animated.Value(0)).current;
+
+  // 剩余X节课卡片展开与收起平滑动画
+  const summaryCollapseAnim = useRef(new Animated.Value(1)).current;
+  const [isSummaryCollapsed, setIsSummaryCollapsed] = useState(false);
+
   const triggerEntranceAnimation = () => {
-    floatUpAnim.setValue(24);
+    floatDownAnim.setValue(-24);
     fadeAnim.setValue(0);
     Animated.parallel([
-      Animated.spring(floatUpAnim, {
+      Animated.spring(floatDownAnim, {
         toValue: 0,
         friction: 7,
         tension: 85,
@@ -266,9 +274,49 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     ]).start();
   };
 
-  // 页面初次加载时触发向下出现动画，并自动从本地持久化存储加载课程表
+  const triggerHeaderAnimation = () => {
+    headerDropAnim.setValue(-28);
+    headerFadeAnim.setValue(0);
+    Animated.parallel([
+      Animated.spring(headerDropAnim, {
+        toValue: 0,
+        friction: 7,
+        tension: 85,
+        useNativeDriver: true,
+      }),
+      Animated.timing(headerFadeAnim, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const toggleSummaryCollapse = () => {
+    if (!isSummaryCollapsed) {
+      Animated.timing(summaryCollapseAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => {
+        setIsSummaryCollapsed(true);
+      });
+    } else {
+      setIsSummaryCollapsed(false);
+      summaryCollapseAnim.setValue(0);
+      Animated.spring(summaryCollapseAnim, {
+        toValue: 1,
+        friction: 7,
+        tension: 85,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+  // 页面初次加载时触发向下浮现动画与顶部绿色色块入场动效
   useEffect(() => {
     triggerEntranceAnimation();
+    triggerHeaderAnimation();
 
     let isMounted = true;
     loadScheduleData().then((stored) => {
@@ -310,8 +358,11 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     return () => clearTimeout(midnightTimer);
   }, []);
 
-  // 2. 切换日期处理函数（点击日历轴任意一天，立刻切换过滤出该天的课表）
+  // 2. 切换日期处理函数（点击日历轴任意一天，立刻切换过滤出该天的课表；限制不能重复点击现在正在查看的日期）
   const handleSelectDate = (dateStr: string, dayOfWeek: number) => {
+    if (dateStr === selectedDate) {
+      return; // 限制不能重复点击现在正在查看的日期
+    }
     setSelectedDate(dateStr);
     setSelectedDayOfWeek(dayOfWeek);
     triggerEntranceAnimation();
@@ -335,9 +386,8 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     triggerEntranceAnimation();
   };
 
-  // 周课表生长动画 (Scale Growth Animation)
-  const weekScaleAnim = useRef(new Animated.Value(1)).current;
-  const [isSummaryCollapsed, setIsSummaryCollapsed] = useState(false);
+  // 周课表向下浮现动画 (Downward Floating Entrance)
+  const weekDropAnim = useRef(new Animated.Value(-24)).current;
 
   const handleSwitchToWeek = () => {
     setScheduleViewMode('week');
@@ -348,12 +398,12 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
       useNativeDriver: true,
     }).start();
 
-    // 周课表的显示动画改为生长
-    weekScaleAnim.setValue(0.88);
-    Animated.spring(weekScaleAnim, {
-      toValue: 1,
-      friction: 6,
-      tension: 80,
+    // 周课表改为向下浮现动画
+    weekDropAnim.setValue(-24);
+    Animated.spring(weekDropAnim, {
+      toValue: 0,
+      friction: 7,
+      tension: 85,
       useNativeDriver: true,
     }).start();
 
@@ -365,14 +415,14 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
   const [currentWeekNumber, setCurrentWeekNumber] = useState(7); // 当前正在查看的周次 (默认为第7周)
   const [realCurrentWeekNumber, setRealCurrentWeekNumber] = useState(7); // 现实中当前周/本周
 
-  // 监听周次切换触发向上浮现与周课表生长动效
+  // 监听周次切换触发向下浮现动效
   useEffect(() => {
     triggerEntranceAnimation();
     if (scheduleViewMode === 'week') {
-      weekScaleAnim.setValue(0.92);
-      Animated.spring(weekScaleAnim, {
-        toValue: 1,
-        friction: 6,
+      weekDropAnim.setValue(-24);
+      Animated.spring(weekDropAnim, {
+        toValue: 0,
+        friction: 7,
         tension: 85,
         useNativeDriver: true,
       }).start();
@@ -660,8 +710,17 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      {/* 顶部生机草木绿流体区域（标准统一头部高度与坐标） */}
-      <View style={[styles.heroHeader, { paddingTop: topPadding + 8 }]}>
+      {/* 顶部生机草木绿流体区域（带向下浮现入场动画，图2区域） */}
+      <Animated.View
+        style={[
+          styles.heroHeader,
+          {
+            paddingTop: topPadding + 8,
+            opacity: headerFadeAnim,
+            transform: [{ translateY: headerDropAnim }],
+          },
+        ]}
+      >
         <View style={[styles.heroHeaderInner, isTablet && styles.heroHeaderInnerTablet]}>
           {/* 用户信息与 【今日 | 周课表】 切换 */}
           <View style={styles.userInfoRow}>
@@ -748,32 +807,8 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
               courses={coursesList}
             />
           )}
-
-          {/* 顶部绿色色块新增展开模块（支持一键展开/收起今日课程看板） */}
-          {scheduleViewMode === 'day' && (
-            <TouchableOpacity
-              style={styles.heroExpandModuleBtn}
-              onPress={() => setIsSummaryCollapsed((prev) => !prev)}
-              activeOpacity={0.8}
-            >
-              <View style={styles.heroExpandPillInner}>
-                <Ionicons name="time-outline" size={13} color="#FFFFFF" style={{ marginRight: 5 }} />
-                <Text style={styles.heroExpandPillText}>
-                  {isSummaryCollapsed
-                    ? `今日剩余 ${todayRemainingSummary.remainingCount} 节课 · 点击展开看板`
-                    : '收起今日课程看板'}
-                </Text>
-                <Ionicons
-                  name={isSummaryCollapsed ? 'chevron-down' : 'chevron-up'}
-                  size={14}
-                  color="#FFFFFF"
-                  style={{ marginLeft: 4 }}
-                />
-              </View>
-            </TouchableOpacity>
-          )}
         </View>
-      </View>
+      </Animated.View>
 
       {/* 提醒事项 Toast 浮条 */}
       {toastMessage && (
@@ -783,13 +818,13 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
         </View>
       )}
 
-      {/* 核心内容区（带向上浮现的平滑动画） */}
+      {/* 核心内容区（向下浮现平滑动画） */}
       <Animated.View
         style={[
           styles.animatedContentWrapper,
           {
             opacity: fadeAnim,
-            transform: [{ translateY: floatUpAnim }],
+            transform: [{ translateY: floatDownAnim }],
           },
         ]}
       >
@@ -800,9 +835,39 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
             bounces={true}
           >
             <View style={[styles.scheduleSection, isTablet && styles.contentContainerTablet]}>
-              {/* 今日剩余课卡片（图1设计：从上到下严格为：1.距离放学时间 2.剩余X节课 3.今日计划 4.进度条，底部与框的底部严格对齐） */}
-              {!isSummaryCollapsed && (
-                <View style={styles.todayRemainingWidgetCard}>
+              {/* 今日剩余课卡片（支持开展收起平滑动画，未填充纯白、已填充鲜绿，消除顶部过大空隙） */}
+              {isSummaryCollapsed ? (
+                <TouchableOpacity
+                  style={styles.summaryCollapsedBar}
+                  onPress={toggleSummaryCollapse}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.summaryCollapsedLeft}>
+                    <Ionicons name="time-outline" size={16} color="#16A34A" style={{ marginRight: 6 }} />
+                    <Text style={styles.summaryCollapsedTitle}>
+                      剩余 <Text style={styles.summaryCollapsedHighlight}>{todayRemainingSummary.remainingCount}</Text> 节课
+                    </Text>
+                    <Text style={styles.summaryCollapsedSub}>· {todayRemainingSummary.dismissalText}</Text>
+                  </View>
+                  <Ionicons name="chevron-down" size={16} color="#64748B" />
+                </TouchableOpacity>
+              ) : (
+                <Animated.View
+                  style={[
+                    styles.todayRemainingWidgetCard,
+                    {
+                      opacity: summaryCollapseAnim,
+                      transform: [
+                        {
+                          translateY: summaryCollapseAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [-14, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                >
                   <View style={styles.summaryExpandedContent}>
                     {/* 右侧插画（透明背景跳舞小怪兽）：底部严格与卡片边框底部对齐，顶部自然超出边框盖在绿色色块下方 */}
                     <Image
@@ -833,7 +898,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                         </Text>
                       </View>
 
-                      {/* 第4行：浅绿水平进度条（底部与框的底部严格对齐） */}
+                      {/* 第4行：浅绿水平进度条（图3：未填充是纯白色，已填充是绿色，底部严格对齐） */}
                       <View style={styles.summaryProgressTrack}>
                         <View
                           style={[
@@ -847,14 +912,14 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                     {/* 卡片右上角折叠收起按钮 */}
                     <TouchableOpacity
                       style={styles.summaryCollapseTrigger}
-                      onPress={() => setIsSummaryCollapsed(true)}
+                      onPress={toggleSummaryCollapse}
                       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                       activeOpacity={0.7}
                     >
                       <Ionicons name="chevron-up" size={16} color="#94A3B8" />
                     </TouchableOpacity>
                   </View>
-                </View>
+                </Animated.View>
               )}
 
               {/* 当天课程列表：随选中日期动态切换 */}
@@ -866,9 +931,6 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                     resizeMode="contain"
                   />
                   <Text style={styles.emptyScheduleTitle}>课程表暂无数据</Text>
-                  <Text style={styles.emptyScheduleSub}>
-                    尚未导入任何课程。可点击下方按钮一键导入高校教务课表
-                  </Text>
                   <TouchableOpacity
                     style={[styles.emptyScheduleBtn, isTablet && styles.emptyScheduleBtnTablet]}
                     onPress={handleOpenReimportModal}
@@ -911,8 +973,8 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
             <View style={{ height: 32 }} />
           </ScrollView>
         ) : (
-          /* 周课表全景网格视图（周课表显示动画改为生长动画） */
-          <Animated.View style={[styles.weekGridWrapper, { transform: [{ scale: weekScaleAnim }] }]}>
+          /* 周课表全景网格视图（向下浮现动画） */
+          <Animated.View style={[styles.weekGridWrapper, { transform: [{ translateY: weekDropAnim }] }]}>
             <WeekGridView
               courses={coursesList}
               currentWeekIndex={currentWeekNumber}
@@ -1289,31 +1351,32 @@ const styles = StyleSheet.create({
   modeBtnTextInactive: {
     color: '#FFFFFF',
   },
-  // 顶部绿色色块新增展开模块按钮
-  heroExpandModuleBtn: {
-    alignSelf: 'center',
-    paddingVertical: 4.5,
-    paddingHorizontal: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.22)',
-    borderRadius: Rounded.pill,
-    marginBottom: 8,
-  },
-  heroExpandPillInner: {
+  // 本日剩余课收起状态胶囊条（紧凑间距，带开展收起动画）
+  summaryCollapsedBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#F2FAF4',
+    marginHorizontal: 16,
+    marginTop: 2,
+    marginBottom: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#DCFCE7',
+    shadowColor: '#16A34A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1,
   },
-  heroExpandPillText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  // 本日剩余课卡片（图1设计：间距紧凑，浅薄荷绿柔和质感底色，右侧3D透明小怪兽插画底部贴合框底）
+  // 本日剩余课卡片（图1设计：间距紧凑，消除顶部过大空隙，右侧3D透明跳舞小怪兽插画底部贴合框底）
   todayRemainingWidgetCard: {
     backgroundColor: '#F2FAF4',
     marginHorizontal: 16,
-    marginTop: 6,
-    marginBottom: 12,
+    marginTop: 2,
+    marginBottom: 10,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#DCFCE7',
@@ -1413,10 +1476,12 @@ const styles = StyleSheet.create({
   },
   summaryProgressTrack: {
     height: 8,
-    backgroundColor: '#DCFCE7',
+    backgroundColor: '#FFFFFF', // 图3：未填充是纯白色，已填充是绿色！
     borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 0,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(0, 0, 0, 0.04)',
   },
   summaryProgressFill: {
     height: '100%',
@@ -1607,7 +1672,7 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
   scheduleSection: {
-    paddingTop: 16,
+    paddingTop: 4,
     paddingBottom: 96,
   },
   scheduleHeaderRow: {

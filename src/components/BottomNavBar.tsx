@@ -13,7 +13,7 @@ interface BottomNavBarProps {
 const TABS: { id: MainTabType; icon: string; activeIcon: string }[] = [
   { id: 'schedule', icon: 'home-outline', activeIcon: 'home' },
   { id: 'notes', icon: 'calendar-outline', activeIcon: 'calendar' },
-  { id: 'tools', icon: 'stats-chart-outline', activeIcon: 'stats-chart' },
+  { id: 'tools', icon: 'grid-outline', activeIcon: 'grid' },
 ];
 
 const CAPSULE_WIDTH = 216;
