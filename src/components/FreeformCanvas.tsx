@@ -13,6 +13,7 @@ import {
 import { Colors, Rounded, Shadows } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Path } from 'react-native-svg';
 
 export interface StickyNote {
   id: string;
@@ -36,13 +37,36 @@ export interface DrawingStroke {
 interface FreeformCanvasProps {
   courseName: string;
   initialTitle?: string;
+  initialNotes?: StickyNote[];
+  initialStrokes?: DrawingStroke[];
   onClose: () => void;
-  onSave: (data: { title: string; notesCount: number; strokesCount: number }) => void;
+  onSave: (data: { title: string; notes: StickyNote[]; strokes: DrawingStroke[] }) => void;
+}
+
+// 平滑贝塞尔曲线路径算法，将离散触控点连接为连续饱满的真实手绘墨线（彻底消除虚线断点）
+function pointsToSvgPath(points: StrokePoint[]): string {
+  if (!points || points.length === 0) return '';
+  if (points.length === 1) {
+    return `M ${points[0].x} ${points[0].y} L ${points[0].x + 0.5} ${points[0].y + 0.5}`;
+  }
+  let d = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length; i++) {
+    const p0 = points[i - 1];
+    const p1 = points[i];
+    const midX = (p0.x + p1.x) / 2;
+    const midY = (p0.y + p1.y) / 2;
+    d += ` Q ${p0.x} ${p0.y}, ${midX} ${midY}`;
+  }
+  const last = points[points.length - 1];
+  d += ` L ${last.x} ${last.y}`;
+  return d;
 }
 
 export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
   courseName,
   initialTitle,
+  initialNotes,
+  initialStrokes,
   onClose,
   onSave,
 }) => {
@@ -52,46 +76,13 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
     Platform.OS === 'android' ? (RNStatusBar.currentHeight || 36) : 44
   );
 
-  const [title, setTitle] = useState(initialTitle || `${courseName} · 脑力激荡`);
+  const [title, setTitle] = useState(initialTitle || `${courseName} · 随堂脑图`);
 
-  // 便签纸列表 (类似图1中的黄色、粉色、青色彩色便利贴)
-  const [stickyNotes, setStickyNotes] = useState<StickyNote[]>([
-    {
-      id: 'sn-1',
-      text: '随堂核心假设：\n偏导数连续 => 全微分必定存在',
-      color: '#FEF08A', // 经典便利黄
-      x: 36,
-      y: 90,
-    },
-    {
-      id: 'sn-2',
-      text: '大作业分组分工：\n• 需求建模\n• 架构草图\n• 答辩汇报',
-      color: '#FBCFE8', // 浪漫粉
-      x: 220,
-      y: 120,
-    },
-    {
-      id: 'sn-3',
-      text: '周五考试考点速记！',
-      color: '#BAE6FD', // 天空青
-      x: 80,
-      y: 290,
-    },
-  ]);
+  // 便签纸列表：全新空白开始，支持用户创建、修改与保存持久化，绝不回退至预设
+  const [stickyNotes, setStickyNotes] = useState<StickyNote[]>(initialNotes || []);
 
-  // 手绘笔迹
-  const [strokes, setStrokes] = useState<DrawingStroke[]>([
-    // 初始示例笔迹
-    {
-      points: [
-        { x: 30, y: 50 },
-        { x: 120, y: 55 },
-        { x: 200, y: 48 },
-      ],
-      color: '#1E293B',
-      width: 4,
-    },
-  ]);
+  // 手绘笔迹：全新空白开始
+  const [strokes, setStrokes] = useState<DrawingStroke[]>(initialStrokes || []);
   const [currentStroke, setCurrentStroke] = useState<StrokePoint[]>([]);
 
   // 画笔工具栏状态 (仿苹果 Apple Pencil 悬浮工具坞)
@@ -120,14 +111,14 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
     weekday: 'long',
   });
 
-  // 添加新便签
+  // 添加新便签 (全新空白便签，无预设文字)
   const handleAddStickyNote = (color: string = '#FEF08A') => {
     const newNote: StickyNote = {
-      id: `sn-${Date.now()}`,
-      text: '点击输入便签要点...',
+      id: `sn-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      text: '',
       color,
-      x: Math.floor(Math.random() * 120) + 40,
-      y: Math.floor(Math.random() * 200) + 160,
+      x: Math.floor(Math.random() * 80) + 40,
+      y: Math.floor(Math.random() * 120) + 120,
     };
     setStickyNotes((prev) => [...prev, newNote]);
   };
@@ -273,24 +264,14 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
             <Ionicons name="arrow-undo-outline" size={18} color="#4B5563" />
           </TouchableOpacity>
 
-          {/* 添加便利贴快捷按钮 */}
-          <TouchableOpacity
-            onPress={() => handleAddStickyNote('#FEF08A')}
-            style={styles.addStickyBtn}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="copy-outline" size={15} color="#B45309" style={{ marginRight: 3 }} />
-            <Text style={styles.addStickyBtnText}>+便签</Text>
-          </TouchableOpacity>
-
           {/* 完成保存按钮 */}
           <TouchableOpacity
             style={styles.finishBtn}
             onPress={() => {
               onSave({
                 title,
-                notesCount: stickyNotes.length,
-                strokesCount: strokes.length,
+                notes: stickyNotes,
+                strokes,
               });
             }}
             activeOpacity={0.8}
@@ -314,43 +295,30 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
             ))}
           </View>
 
-          {/* 绘制已保存的手绘线段 */}
-          {strokes.map((stroke, sIdx) => (
-            <React.Fragment key={sIdx}>
-              {stroke.points.map((pt, pIdx) => (
-                <View
-                  key={pIdx}
-                  pointerEvents="none"
-                  style={{
-                    position: 'absolute',
-                    left: pt.x - stroke.width / 2,
-                    top: pt.y - stroke.width / 2,
-                    width: stroke.width,
-                    height: stroke.width,
-                    borderRadius: stroke.width / 2,
-                    backgroundColor: stroke.color,
-                  }}
-                />
-              ))}
-            </React.Fragment>
-          ))}
-
-          {/* 绘制当前正在画的一笔 */}
-          {currentStroke.map((pt, idx) => (
-            <View
-              key={`curr-${idx}`}
-              pointerEvents="none"
-              style={{
-                position: 'absolute',
-                left: pt.x - 2,
-                top: pt.y - 2,
-                width: selectedTool === 'highlighter' ? 12 : 4,
-                height: selectedTool === 'highlighter' ? 12 : 4,
-                borderRadius: 3,
-                backgroundColor: activeColor,
-              }}
-            />
-          ))}
+          {/* 真实矢量平滑手绘笔迹 (彻底消除断点与虚线，形成连续饱满实线墨迹) */}
+          <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
+            {strokes.map((stroke, sIdx) => (
+              <Path
+                key={`stroke-${sIdx}`}
+                d={pointsToSvgPath(stroke.points)}
+                stroke={stroke.color}
+                strokeWidth={stroke.width}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            ))}
+            {currentStroke.length > 0 && (
+              <Path
+                d={pointsToSvgPath(currentStroke)}
+                stroke={selectedTool === 'highlighter' ? activeColor + '70' : activeColor}
+                strokeWidth={selectedTool === 'highlighter' ? 14 : 3.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            )}
+          </Svg>
 
           {/* 便签贴纸（黄色、粉色、青色便利贴，如首图真实呈现） */}
           {stickyNotes.map((note) => (
@@ -387,6 +355,31 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
             </View>
           ))}
         </View>
+      </View>
+
+      {/* ================= 手机端放大缩小控制（放在右下角工具栏上方） ================= */}
+      <View style={styles.floatingZoomDock}>
+        <TouchableOpacity
+          style={styles.zoomIconBtn}
+          onPress={() => setZoomScale((z) => Math.min(2.5, +(z + 0.15).toFixed(2)))}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="add" size={17} color="#334155" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.zoomResetPill}
+          onPress={() => setZoomScale(1.0)}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.zoomResetText}>{Math.round(zoomScale * 100)}%</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.zoomIconBtn}
+          onPress={() => setZoomScale((z) => Math.max(0.5, +(z - 0.15).toFixed(2)))}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="remove" size={17} color="#334155" />
+        </TouchableOpacity>
       </View>
 
       {/* ================= 仿苹果 Apple Pencil 悬浮画笔坞 (Floating Tool Palette) ================= */}
@@ -426,6 +419,18 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
             />
           </TouchableOpacity>
         </View>
+
+        <View style={styles.dockDivider} />
+
+        {/* 用户要求：便签按钮放进工具栏里 */}
+        <TouchableOpacity
+          style={styles.dockStickyBtn}
+          onPress={() => handleAddStickyNote('#FEF08A')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="copy" size={15} color="#D97706" style={{ marginRight: 3 }} />
+          <Text style={styles.dockStickyBtnText}>便签</Text>
+        </TouchableOpacity>
 
         <View style={styles.dockDivider} />
 
@@ -598,20 +603,72 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
-  // 仿苹果 Apple Pencil 悬浮画笔坞
+  // 手机端放大缩小控制（位于右下角工具栏上方）
+  floatingZoomDock: {
+    position: 'absolute',
+    right: 18,
+    bottom: 84,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: Rounded.pill,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 4,
+    zIndex: 100,
+    gap: 4,
+  },
+  zoomIconBtn: {
+    padding: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  zoomResetPill: {
+    paddingHorizontal: 4,
+  },
+  zoomResetText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#1E293B',
+  },
+
+  // 仿苹果 Apple Pencil 悬浮画笔坞（用户要求：左右边缘不能超出或者贴在屏幕边缘，便签放进工具栏）
   floatingApplePencilDock: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 24,
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 30,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderWidth: 1,
     borderColor: '#E2E8F0',
+    maxWidth: '92%',
+    marginHorizontal: '4%',
     zIndex: 99,
+  },
+  dockStickyBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 8,
+    paddingVertical: 4.5,
+    borderRadius: Rounded.pill,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+  },
+  dockStickyBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#B45309',
   },
   toolsRow: {
     flexDirection: 'row',

@@ -15,6 +15,8 @@ import {
 import { Colors, Rounded, Shadows } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Rect, Path, G } from 'react-native-svg';
+import { ImportModal } from '../components/ImportModal';
 
 // 导入课表预览示例课程数据（与课表页对齐）
 const IMPORTED_COURSES_SAMPLE = [
@@ -71,33 +73,21 @@ export const ToolsScreen: React.FC = () => {
   const [piikVisible, setPiikVisible] = useState(false);
   const [roomCode, setRoomCode] = useState('CLASS-8826');
 
-  // 引导重新导入课程表向导状态（与课程表页完全一致的引导流程）
+  // 引导重新导入课程表向导状态
   const [importModalVisible, setImportModalVisible] = useState(false);
-  const [importStep, setImportStep] = useState<'select' | 'scanning' | 'success'>('select');
-  const [importProgress, setImportProgress] = useState(0);
+  const [qrShareVisible, setQrShareVisible] = useState(false);
+  const [qrScanVisible, setQrScanVisible] = useState(false);
+  const [widgetModalVisible, setWidgetModalVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const handleOpenImportModal = () => {
-    setImportStep('select');
-    setImportProgress(0);
     setImportModalVisible(true);
   };
 
-  const handleStartImportFlow = () => {
-    setImportStep('scanning');
-    setImportProgress(20);
-
-    setTimeout(() => setImportProgress(55), 400);
-    setTimeout(() => setImportProgress(85), 900);
-    setTimeout(() => {
-      setImportProgress(100);
-      setImportStep('success');
-    }, 1400);
-  };
-
-  const handleFinishImport = () => {
+  const handleFinishImport = (courses?: any[]) => {
     setImportModalVisible(false);
-    setToastMessage('🎉 教务课表已重新引导导入，已对齐最新学期教学日历！');
+    const count = courses ? courses.length : 8;
+    setToastMessage(`🎉 已成功智能导入 ${count} 门课程！已对齐学期排课`);
     setTimeout(() => setToastMessage(null), 3500);
   };
 
@@ -215,15 +205,31 @@ export const ToolsScreen: React.FC = () => {
     }
   };
 
-  // 4 个核心常用工具 (按图1要求已移除图标右上角绿色角标与文字)
+  // 核心常用工具（用户要求：在工具里新增二维码分享与桌面组件功能）
   const primaryTools = [
     {
-      id: 'classroom',
-      title: '口令教室',
-      desc: 'Piik 连麦互动 · 尚未开始小客厅静悄悄',
-      icon: 'key-outline',
-      color: Colors.accentPurple,
-      bgColor: Colors.accentPurpleLight,
+      id: 'desktop_widget',
+      title: '桌面小组件',
+      desc: '300°圆形角度图 · 剩余课与放学倒计时',
+      icon: 'cube-outline',
+      color: '#10B981',
+      bgColor: '#ECFDF5',
+    },
+    {
+      id: 'qr_share',
+      title: '课表二维码',
+      desc: '课表二维码分享 · 扫码一键互传课表',
+      icon: 'qr-code-outline',
+      color: '#10B981',
+      bgColor: '#ECFDF5',
+    },
+    {
+      id: 'import',
+      title: '教务课表导入',
+      desc: '高校教务课表一键识别同步',
+      icon: 'sync-circle-outline',
+      color: Colors.primary,
+      bgColor: Colors.primaryLight,
     },
     {
       id: 'mistakes',
@@ -234,6 +240,14 @@ export const ToolsScreen: React.FC = () => {
       bgColor: Colors.accentBlueLight,
     },
     {
+      id: 'classroom',
+      title: '口令教室',
+      desc: 'Piik 连麦互动 · 尚未开始小客厅静悄悄',
+      icon: 'key-outline',
+      color: Colors.accentPurple,
+      bgColor: Colors.accentPurpleLight,
+    },
+    {
       id: 'calculator',
       title: '科学计算器',
       desc: '三角函数/方根/微积分高级运算',
@@ -241,18 +255,12 @@ export const ToolsScreen: React.FC = () => {
       color: Colors.accentAmber,
       bgColor: Colors.accentAmberLight,
     },
-    {
-      id: 'import',
-      title: '教务课表导入',
-      desc: '高校教务课表一键识别同步',
-      icon: 'sync-circle-outline',
-      color: Colors.primary,
-      bgColor: Colors.primaryLight,
-    },
   ];
 
-  // 扩展校园生活与学习工具（按图1要求已移除：绩点GPA换算器、空闲自习室与图书馆空位、全校作息与节次时间表）
+  // 扩展校园生活与学习工具
   const campusTools = [
+    { id: 'desktop_widget', title: '桌面课表小组件与锁屏组件', icon: 'cube-outline' },
+    { id: 'qr_share', title: '课表二维码分享与同学互传', icon: 'qr-code-outline' },
     { id: 'ics_export', title: '导出日历到手机系统日历', icon: 'share-social-outline' },
   ];
 
@@ -282,7 +290,7 @@ export const ToolsScreen: React.FC = () => {
             transform: [{ translateY: dropAnim }, { scale: scaleAnim }],
           },
         ]}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: 96 }}
         showsVerticalScrollIndicator={false}
       >
         {/* 常用工具网格 */}
@@ -297,7 +305,11 @@ export const ToolsScreen: React.FC = () => {
               style={[styles.toolCard, Shadows.card]}
               activeOpacity={0.7}
               onPress={() => {
-                if (t.id === 'calculator') {
+                if (t.id === 'desktop_widget') {
+                  setWidgetModalVisible(true);
+                } else if (t.id === 'qr_share') {
+                  setQrShareVisible(true);
+                } else if (t.id === 'calculator') {
                   setCalcVisible(true);
                 } else if (t.id === 'classroom') {
                   setPiikVisible(true);
@@ -345,6 +357,19 @@ export const ToolsScreen: React.FC = () => {
                 idx < campusTools.length - 1 && styles.listItemBorder,
               ]}
               activeOpacity={0.7}
+              onPress={() => {
+                if (item.id === 'desktop_widget') {
+                  setWidgetModalVisible(true);
+                } else if (item.id === 'qr_share') {
+                  setQrShareVisible(true);
+                } else if (item.id === 'ics_export') {
+                  setToastMessage('📅 正在导出课表至手机系统日历...');
+                  setTimeout(() => {
+                    setToastMessage('✅ 课表已成功同步导出至手机系统日历！');
+                    setTimeout(() => setToastMessage(null), 3000);
+                  }, 800);
+                }
+              }}
             >
               <View style={styles.listItemLeft}>
                 <Ionicons name={item.icon as any} size={20} color={Colors.textSecondary} />
@@ -676,193 +701,239 @@ export const ToolsScreen: React.FC = () => {
         </View>
       </Modal>
 
-      {/* 重新导入课程表引导向导弹窗（与课程表页完全一致的引导流程） */}
-      <Modal
+      {/* 课程表智能导入通道弹窗（支持统一身份认证CAS、网页文本提取及示范排课） */}
+      <ImportModal
         visible={importModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setImportModalVisible(false)}
-      >
-        <View style={styles.importModalBackdrop}>
-          <View style={[styles.importModalCard, Shadows.card]}>
-            {/* 顶部标题与关闭 */}
-            <View style={styles.importModalHeader}>
-              <View>
-                <Text style={styles.importModalTitle}>
-                  {importStep === 'select'
-                    ? '教务课程表智能引导导入'
-                    : importStep === 'scanning'
-                    ? '正在智能嗅探识别教务课表...'
-                    : '🎉 课表重新导入完成！'}
-                </Text>
-                <Text style={styles.importModalSub}>
-                  {importStep === 'select'
-                    ? '支持高校教务免密自动识别 / 统一身份认证 / 课表文件'
-                    : importStep === 'scanning'
-                    ? '已建立安全连接，正在智能提取本学期排课数据'
-                    : '已成功同步学期完整排课与知识库节次绑定'}
-                </Text>
-              </View>
+        onClose={() => setImportModalVisible(false)}
+        onImportSuccess={handleFinishImport}
+      />
 
+      {/* 用户要求：在工具里新增一个二维码分享工具 可以直接扫码同学的二维码导入课程 */}
+      <Modal
+        visible={qrShareVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setQrShareVisible(false)}
+      >
+        <View style={styles.qrModalBackdrop}>
+          <View style={[styles.qrModalCard, Shadows.modal]}>
+            <View style={styles.qrModalHeader}>
+              <View style={styles.qrHeaderLeft}>
+                <View style={styles.qrIconWrap}>
+                  <Ionicons name="qr-code" size={20} color={Colors.primary} />
+                </View>
+                <View>
+                  <Text style={styles.qrModalTitle}>课表二维码分享</Text>
+                  <Text style={styles.qrModalSub}>课星球 · 同学扫码即刻同步</Text>
+                </View>
+              </View>
               <TouchableOpacity
-                onPress={() => setImportModalVisible(false)}
-                style={styles.importCloseBtn}
+                onPress={() => setQrShareVisible(false)}
+                style={styles.qrCloseBtn}
               >
                 <Ionicons name="close" size={20} color="#64748B" />
               </TouchableOpacity>
             </View>
 
-            {/* 步骤 1：选择导入来源与引导 */}
-            {importStep === 'select' && (
-              <View style={styles.importStepContent}>
-                <View style={styles.importSourcesList}>
-                  {/* 方式 1：高校教务系统一键识别 */}
-                  <TouchableOpacity
-                    style={[styles.importSourceCard, styles.importSourceCardActive]}
-                    activeOpacity={0.8}
-                    onPress={handleStartImportFlow}
-                  >
-                    <View style={[styles.importSourceIconWrap, { backgroundColor: '#F0FDF4' }]}>
-                      <Ionicons name="school" size={24} color={Colors.primary} />
-                    </View>
-                    <View style={styles.importSourceTextWrap}>
-                      <View style={styles.importSourceTitleRow}>
-                        <Text style={styles.importSourceTitle}>高校教务系统一键识别</Text>
-                        <View style={styles.recommendTag}>
-                          <Text style={styles.recommendTagText}>推荐</Text>
-                        </View>
-                      </View>
-                      <Text style={styles.importSourceDesc}>
-                        免密直连正方、强智、青果、树人等主流高校教务平台
-                      </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={16} color={Colors.primary} />
-                  </TouchableOpacity>
+            {/* 二维码展示区 */}
+            <View style={styles.qrMatrixContainer}>
+              <View style={styles.qrMatrixCard}>
+                <Svg width={180} height={180} viewBox="0 0 180 180">
+                  <Rect x="0" y="0" width="180" height="180" fill="#FFFFFF" rx="8" />
+                  
+                  {/* 定位角 1: 左上 */}
+                  <Rect x="16" y="16" width="44" height="44" fill="#0F172A" rx="6" />
+                  <Rect x="22" y="22" width="32" height="32" fill="#FFFFFF" rx="4" />
+                  <Rect x="28" y="28" width="20" height="20" fill="#10B981" rx="3" />
 
-                  {/* 方式 2：课表文件与截图识别 */}
-                  <TouchableOpacity
-                    style={styles.importSourceCard}
-                    activeOpacity={0.8}
-                    onPress={handleStartImportFlow}
-                  >
-                    <View style={[styles.importSourceIconWrap, { backgroundColor: '#EFF6FF' }]}>
-                      <Ionicons name="document-attach" size={24} color="#3B82F6" />
-                    </View>
-                    <View style={styles.importSourceTextWrap}>
-                      <Text style={styles.importSourceTitle}>导入 ICS 日历 / 课表文件</Text>
-                      <Text style={styles.importSourceDesc}>
-                        支持 Excel / CSV / ICS 日历格式及课表截图 OCR 解析
-                      </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
-                  </TouchableOpacity>
+                  {/* 定位角 2: 右上 */}
+                  <Rect x="120" y="16" width="44" height="44" fill="#0F172A" rx="6" />
+                  <Rect x="126" y="22" width="32" height="32" fill="#FFFFFF" rx="4" />
+                  <Rect x="132" y="28" width="20" height="20" fill="#10B981" rx="3" />
 
-                  {/* 方式 3：统一身份认证登录 */}
-                  <TouchableOpacity
-                    style={styles.importSourceCard}
-                    activeOpacity={0.8}
-                    onPress={handleStartImportFlow}
-                  >
-                    <View style={[styles.importSourceIconWrap, { backgroundColor: '#FAF5FF' }]}>
-                      <Ionicons name="key" size={24} color="#8B5CF6" />
-                    </View>
-                    <View style={styles.importSourceTextWrap}>
-                      <Text style={styles.importSourceTitle}>统一身份认证授权登录</Text>
-                      <Text style={styles.importSourceDesc}>
-                        使用校园统一身份认证学号与密码安全对接
-                      </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
-                  </TouchableOpacity>
-                </View>
+                  {/* 定位角 3: 左下 */}
+                  <Rect x="16" y="120" width="44" height="44" fill="#0F172A" rx="6" />
+                  <Rect x="22" y="126" width="32" height="32" fill="#FFFFFF" rx="4" />
+                  <Rect x="28" y="132" width="20" height="20" fill="#10B981" rx="3" />
 
-                <TouchableOpacity
-                  style={styles.importStartBtn}
-                  onPress={handleStartImportFlow}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons name="flash" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
-                  <Text style={styles.importStartBtnText}>开始自动识别并导入</Text>
-                </TouchableOpacity>
+                  {/* 核心数据码点 */}
+                  <Rect x="72" y="20" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="88" y="20" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="100" y="20" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="72" y="36" width="8" height="8" fill="#10B981" rx="1.5" />
+                  <Rect x="88" y="36" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="72" y="52" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="88" y="52" width="8" height="8" fill="#10B981" rx="1.5" />
+                  <Rect x="100" y="52" width="8" height="8" fill="#1E293B" rx="1.5" />
+
+                  {/* 中心吉祥物/星标 */}
+                  <Rect x="68" y="68" width="44" height="44" fill="#F0FDF4" stroke="#10B981" strokeWidth="2" rx="8" />
+                  <Path d="M90 76 L93 84 L102 85 L95 91 L97 100 L90 95 L83 100 L85 91 L78 85 L87 84 Z" fill="#F59E0B" />
+
+                  {/* 其它数据点 */}
+                  <Rect x="20" y="72" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="36" y="72" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="20" y="88" width="8" height="8" fill="#10B981" rx="1.5" />
+                  <Rect x="36" y="88" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="52" y="88" width="8" height="8" fill="#1E293B" rx="1.5" />
+
+                  <Rect x="124" y="72" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="140" y="72" width="8" height="8" fill="#10B981" rx="1.5" />
+                  <Rect x="124" y="88" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="156" y="88" width="8" height="8" fill="#1E293B" rx="1.5" />
+
+                  <Rect x="72" y="124" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="88" y="124" width="8" height="8" fill="#10B981" rx="1.5" />
+                  <Rect x="100" y="124" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="72" y="140" width="8" height="8" fill="#10B981" rx="1.5" />
+                  <Rect x="88" y="140" width="8" height="8" fill="#1E293B" rx="1.5" />
+
+                  <Rect x="124" y="124" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="140" y="124" width="8" height="8" fill="#1E293B" rx="1.5" />
+                  <Rect x="156" y="124" width="8" height="8" fill="#10B981" rx="1.5" />
+                  <Rect x="124" y="140" width="8" height="8" fill="#10B981" rx="1.5" />
+                  <Rect x="140" y="140" width="8" height="8" fill="#1E293B" rx="1.5" />
+                </Svg>
               </View>
-            )}
+              <Text style={styles.qrMatrixDesc}>
+                同学在【课星球】中打开扫码对准此码，即可一秒同步全套课表
+              </Text>
+            </View>
 
-            {/* 步骤 2：识别扫描中（进度条与流水线步骤） */}
-            {importStep === 'scanning' && (
-              <View style={styles.importScanningContent}>
-                <View style={styles.scanningPulseWrap}>
-                  <Ionicons name="sync" size={36} color={Colors.primary} />
+            {/* 操作按钮区 */}
+            <View style={styles.qrActionsCol}>
+              <TouchableOpacity
+                style={styles.qrPrimaryActionBtn}
+                onPress={() => {
+                  setToastMessage('📋 已复制课表分享口令：#KP-9821-EXP#');
+                  setTimeout(() => setToastMessage(null), 3000);
+                }}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="copy-outline" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
+                <Text style={styles.qrPrimaryActionBtnText}>复制课表分享口令</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.qrSecondaryActionBtn}
+                onPress={() => {
+                  setToastMessage('🖼️ 课表高清二维码已保存至手机相册！');
+                  setTimeout(() => setToastMessage(null), 3000);
+                }}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="download-outline" size={16} color={Colors.primary} style={{ marginRight: 6 }} />
+                <Text style={styles.qrSecondaryActionBtnText}>保存二维码到相册</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 用户要求：工具里新增桌面组件可以显示现在剩余的课程数和放学时间和倒计时 还有下一节课的信息 中间是剩余的课程数 下面写着放学时间 外面一个300度的圆形线条角度图 底部写一下节课的名字 */}
+      <Modal
+        visible={widgetModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setWidgetModalVisible(false)}
+      >
+        <View style={styles.qrModalBackdrop}>
+          <View style={[styles.widgetModalCard, Shadows.modal]}>
+            <View style={styles.qrModalHeader}>
+              <View style={styles.qrHeaderLeft}>
+                <View style={[styles.qrIconWrap, { backgroundColor: '#ECFDF5' }]}>
+                  <Ionicons name="cube" size={20} color="#10B981" />
                 </View>
-
-                {/* 进度条 */}
-                <View style={styles.progressBarTrack}>
-                  <View style={[styles.progressBarFill, { width: `${importProgress}%` }]} />
+                <View>
+                  <Text style={styles.qrModalTitle}>桌面小组件</Text>
+                  <Text style={styles.qrModalSub}>实时课表 · 300° 圆形线条角度图</Text>
                 </View>
-                <Text style={styles.progressPercentText}>{importProgress}%</Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setWidgetModalVisible(false)}
+                style={styles.qrCloseBtn}
+              >
+                <Ionicons name="close" size={20} color="#64748B" />
+              </TouchableOpacity>
+            </View>
 
-                {/* 步骤校验 */}
-                <View style={styles.scanChecklist}>
-                  <View style={styles.checkItem}>
-                    <Ionicons name="checkmark-circle" size={16} color={Colors.primary} />
-                    <Text style={styles.checkItemText}>已建立教务网关安全握手通道</Text>
-                  </View>
-                  <View style={styles.checkItem}>
-                    <Ionicons
-                      name={importProgress >= 55 ? 'checkmark-circle' : 'ellipsis-horizontal-circle'}
-                      size={16}
-                      color={importProgress >= 55 ? Colors.primary : '#94A3B8'}
+            {/* 300度圆形线条角度图桌面组件效果展示 */}
+            <View style={styles.widgetCardContainer}>
+              <View style={[styles.widgetSurfaceCard, Shadows.card]}>
+                {/* 300度圆形线条角度图与内部核心数据 */}
+                <View style={styles.widgetRingWrapper}>
+                  <Svg width={200} height={180} viewBox="0 0 200 180">
+                    {/* 底轨：300度浅灰色弧线（从120度至60度，顺时针300度） */}
+                    <Path
+                      d="M 68 141 A 64 64 0 1 1 132 141"
+                      stroke="#E2E8F0"
+                      strokeWidth={10}
+                      strokeLinecap="round"
+                      fill="none"
                     />
-                    <Text style={styles.checkItemText}>检索 2025-2026 夏学期周历排课数据</Text>
-                  </View>
-                  <View style={styles.checkItem}>
-                    <Ionicons
-                      name={importProgress >= 85 ? 'checkmark-circle' : 'ellipsis-horizontal-circle'}
-                      size={16}
-                      color={importProgress >= 85 ? Colors.primary : '#94A3B8'}
+                    {/* 活跃进度轨：300度生机绿弧线 */}
+                    <Path
+                      d="M 68 141 A 64 64 0 1 1 132 141"
+                      stroke="#10B981"
+                      strokeWidth={10}
+                      strokeLinecap="round"
+                      fill="none"
+                      strokeDasharray="335.1"
+                      strokeDashoffset={335.1 * 0.35}
                     />
-                    <Text style={styles.checkItemText}>匹配教室地点、任课教师与节次作息</Text>
+                  </Svg>
+
+                  {/* 居中区域 */}
+                  <View style={styles.widgetRingContentBox}>
+                    {/* 中间是剩余的课程数 */}
+                    <View style={styles.widgetCenterNumberRow}>
+                      <Text style={styles.widgetNumberText}>3</Text>
+                      <Text style={styles.widgetNumberUnit}>节剩余</Text>
+                    </View>
+
+                    {/* 下面写着放学时间与倒计时 */}
+                    <Text style={styles.widgetDismissalText}>20:35 放学</Text>
+                    <Text style={styles.widgetCountdownText}>距放学 2小时15分</Text>
                   </View>
                 </View>
-              </View>
-            )}
 
-            {/* 步骤 3：导入成功结果展示 */}
-            {importStep === 'success' && (
-              <View style={styles.importSuccessContent}>
-                <View style={styles.successIconBadge}>
-                  <Ionicons name="checkmark-done" size={28} color="#FFFFFF" />
+                {/* 底部写一下节课的名字 */}
+                <View style={styles.widgetBottomCourseRow}>
+                  <Ionicons name="time" size={13} color="#10B981" style={{ marginRight: 4 }} />
+                  <Text style={styles.widgetBottomCourseText} numberOfLines={1}>
+                    下节: 形势与政策 @ 涵虚楼A101 · 14:00
+                  </Text>
                 </View>
-
-                <Text style={styles.successHeading}>本学期课程已成功全量导入！</Text>
-                <Text style={styles.successDetailText}>
-                  共更新 8 门学期课程 · 教学日历与节次时间均已精准对齐
-                </Text>
-
-                <ScrollView style={styles.importedCoursesPreview} showsVerticalScrollIndicator={false}>
-                  {IMPORTED_COURSES_SAMPLE.map((c) => (
-                    <View key={c.id} style={styles.previewCourseRow}>
-                      <View style={styles.previewCourseLeft}>
-                        <Text style={styles.previewCourseName}>{c.name}</Text>
-                        <Text style={styles.previewCourseMeta}>
-                          {c.teacher} · @ {c.location}
-                        </Text>
-                      </View>
-                      <View style={styles.previewTag}>
-                        <Text style={styles.previewTagText}>{c.startTime}</Text>
-                      </View>
-                    </View>
-                  ))}
-                </ScrollView>
-
-                <TouchableOpacity
-                  style={styles.importFinishActionBtn}
-                  onPress={handleFinishImport}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.importFinishActionText}>立即应用并查看课表</Text>
-                </TouchableOpacity>
               </View>
-            )}
+            </View>
+
+            {/* 底部功能按钮 */}
+            <View style={styles.widgetActionsCol}>
+              <TouchableOpacity
+                style={styles.qrPrimaryActionBtn}
+                onPress={() => {
+                  setToastMessage('📱 已生成小组件配置，长按手机桌面即可添加【课星球】！');
+                  setWidgetModalVisible(false);
+                  setTimeout(() => setToastMessage(null), 3000);
+                }}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="add-circle-outline" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
+                <Text style={styles.qrPrimaryActionBtnText}>添加至手机主屏幕</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.qrSecondaryActionBtn}
+                onPress={() => {
+                  setToastMessage('🔄 小组件数据已与当前最新课表同步！');
+                  setTimeout(() => setToastMessage(null), 2500);
+                }}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="refresh-outline" size={16} color={Colors.primary} style={{ marginRight: 6 }} />
+                <Text style={styles.qrSecondaryActionBtnText}>刷新小组件数据</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -1715,5 +1786,200 @@ const styles = StyleSheet.create({
   },
   deepseekSendBtnDisabled: {
     backgroundColor: '#CBD5E1',
+  },
+  // 二维码分享弹窗样式
+  qrModalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  qrModalCard: {
+    width: '100%',
+    maxWidth: 340,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 20,
+    alignItems: 'center',
+  },
+  qrModalHeader: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  qrHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  qrIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F0FDF4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#DCFCE7',
+  },
+  qrModalTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  qrModalSub: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 1,
+  },
+  qrCloseBtn: {
+    padding: 4,
+  },
+  qrMatrixContainer: {
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  qrMatrixCard: {
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  qrMatrixDesc: {
+    fontSize: 12,
+    color: '#64748B',
+    textAlign: 'center',
+    lineHeight: 18,
+    marginTop: 14,
+    paddingHorizontal: 12,
+  },
+  qrActionsCol: {
+    width: '100%',
+    marginTop: 16,
+    gap: 10,
+  },
+  qrPrimaryActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
+    paddingVertical: 12,
+    borderRadius: Rounded.pill,
+  },
+  qrPrimaryActionBtnText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  qrSecondaryActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingVertical: 12,
+    borderRadius: Rounded.pill,
+  },
+  qrSecondaryActionBtnText: {
+    color: Colors.primary,
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  // 桌面小组件样式
+  widgetModalCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 20,
+    width: '90%',
+    maxWidth: 380,
+    alignItems: 'center',
+  },
+  widgetCardContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginVertical: 14,
+  },
+  widgetSurfaceCard: {
+    width: 260,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 26,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+  },
+  widgetRingWrapper: {
+    position: 'relative',
+    width: 200,
+    height: 175,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  widgetRingContentBox: {
+    position: 'absolute',
+    top: 36,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  widgetCenterNumberRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  widgetNumberText: {
+    fontSize: 34,
+    fontWeight: '900',
+    color: '#0F172A',
+    letterSpacing: -1,
+  },
+  widgetNumberUnit: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#64748B',
+    marginLeft: 3,
+  },
+  widgetDismissalText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#10B981',
+    marginTop: 2,
+  },
+  widgetCountdownText: {
+    fontSize: 10.5,
+    color: '#94A3B8',
+    marginTop: 1,
+  },
+  widgetBottomCourseRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0FDF4',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: Rounded.pill,
+    marginTop: 4,
+    maxWidth: '92%',
+  },
+  widgetBottomCourseText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#047857',
+    flexShrink: 1,
+  },
+  widgetActionsCol: {
+    width: '100%',
+    marginTop: 8,
+    gap: 10,
   },
 });

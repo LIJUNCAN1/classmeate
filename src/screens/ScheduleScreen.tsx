@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
   StatusBar as RNStatusBar,
   Animated,
   Modal,
+  Image,
+  useWindowDimensions,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,9 +20,20 @@ import { WeekCalendarStrip } from '../components/WeekCalendarStrip';
 import { CourseCard } from '../components/CourseCard';
 import { WeekGridView } from '../components/WeekGridView';
 import { AppleNotesEditor } from '../components/AppleNotesEditor';
-import { FreeformCanvas } from '../components/FreeformCanvas';
+import { FreeformCanvas, StickyNote, DrawingStroke } from '../components/FreeformCanvas';
+import { ImportModal } from '../components/ImportModal';
+import { WeekPickerModal } from '../components/WeekPickerModal';
+import { ScheduleSettingsDrawer } from '../components/ScheduleSettingsDrawer';
 import { Course } from '../types/schedule';
 import { AutoScheduleService, AutoDetectStatus } from '../services/autoScheduleDetector';
+import { getCurrentSemesterName, repairCourse, repairCourseList, isCourseInWeek } from '../services/jwParser';
+import {
+  saveScheduleData,
+  loadScheduleData,
+  NonCurrentWeekMode,
+  loadNonCurrentWeekMode,
+  saveNonCurrentWeekMode,
+} from '../services/scheduleStorage';
 
 interface ScheduleScreenProps {
   onNavigateToNotesTab?: (courseName: string) => void;
@@ -172,6 +185,11 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
   const [appleNotesEditorVisible, setAppleNotesEditorVisible] = useState(false);
   const [freeformVisible, setFreeformVisible] = useState(false);
 
+  // 课程对应的无边记持久化白板数据 (便签与墨水笔迹，绝不自动还原预设)
+  const [courseFreeformData, setCourseFreeformData] = useState<
+    Record<string, { title: string; notes: StickyNote[]; strokes: DrawingStroke[] }>
+  >({});
+
   // 课程已有随堂笔记知识库映射（去查看直接打开已有笔记）
   const COURSE_NOTE_LIBRARY: Record<string, { title: string; content: string }> = {
     '高等数学': {
@@ -226,31 +244,46 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     setSelectedCourseForNote(null);
   };
 
-  // 页面向下平滑出现的淡入向下动画 (Downward Entrance Animation)
-  const dropAnim = useRef(new Animated.Value(-18)).current;
+  // 页面向上平滑浮现的淡入向上动画 (Upward Floating Entrance Animation，切换周课表与日期时触发)
+  const floatUpAnim = useRef(new Animated.Value(24)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const triggerEntranceAnimation = () => {
-    dropAnim.setValue(-18);
+    floatUpAnim.setValue(24);
     fadeAnim.setValue(0);
     Animated.parallel([
-      Animated.spring(dropAnim, {
+      Animated.spring(floatUpAnim, {
         toValue: 0,
-        friction: 6,
-        tension: 80,
+        friction: 7,
+        tension: 85,
         useNativeDriver: true,
       }),
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 250,
+        duration: 240,
         useNativeDriver: true,
       }),
     ]).start();
   };
 
-  // 页面初次加载时触发向下出现动画（去除 scheduleViewMode 依赖，防止周课表切换闪烁）
+  // 页面初次加载时触发向下出现动画，并自动从本地持久化存储加载课程表
   useEffect(() => {
     triggerEntranceAnimation();
+
+    let isMounted = true;
+    loadScheduleData().then((stored) => {
+      if (isMounted && stored.courses && stored.courses.length > 0) {
+        const repaired = repairCourseList(stored.courses);
+        setCoursesList(repaired);
+        if (stored.semester) {
+          setCurrentSemester(stored.semester);
+        }
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // 1. 每天 0:00 自动切换日期的机制
@@ -284,49 +317,334 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     triggerEntranceAnimation();
   };
 
-  // 3. 点击切换回“今日”模式时，自动复位到今天的日期
+  // 模式切换与滑块平移动画（今日 vs 周课表）
+  const toggleSlideAnim = useRef(new Animated.Value(scheduleViewMode === 'day' ? 0 : 1)).current;
+
+  // 3. 点击切换回“今日”模式时，自动复位到今天的日期并触发选中框移动动画
   const handleSwitchToToday = () => {
     setScheduleViewMode('day');
+    Animated.spring(toggleSlideAnim, {
+      toValue: 0,
+      friction: 7,
+      tension: 100,
+      useNativeDriver: true,
+    }).start();
     const today = getTodayInfo();
     setSelectedDate(today.dateStr);
     setSelectedDayOfWeek(today.dayOfWeek);
     triggerEntranceAnimation();
   };
 
-  // 4. 根据当前选中的星期几过滤出对应课程（用于下方课表列表）
-  const dayCourses = FULL_WEEK_COURSES.filter((c) => c.dayOfWeek === selectedDayOfWeek);
+  const handleSwitchToWeek = () => {
+    setScheduleViewMode('week');
+    Animated.spring(toggleSlideAnim, {
+      toValue: 1,
+      friction: 7,
+      tension: 100,
+      useNativeDriver: true,
+    }).start();
+    triggerEntranceAnimation();
+  };
+
+  // 查看周课表 5x5 矩阵弹窗状态
+  const [weekPickerVisible, setWeekPickerVisible] = useState(false);
+  const [currentWeekNumber, setCurrentWeekNumber] = useState(7); // 当前正在查看的周次 (默认为第7周)
+  const [realCurrentWeekNumber, setRealCurrentWeekNumber] = useState(7); // 现实中当前周/本周
+
+  // 监听周次切换触发向上浮现动效
+  useEffect(() => {
+    triggerEntranceAnimation();
+  }, [currentWeekNumber]);
+
+  // 课程总表状态（初始为空，导入后即时全量更新并刷新日视图与周视图）
+  const { width: windowWidth } = useWindowDimensions();
+  const isTablet = windowWidth >= 600;
+  const [coursesList, setCoursesList] = useState<Course[]>([]);
+  const [currentSemester, setCurrentSemester] = useState<string>(() => getCurrentSemesterName());
+
+  // 4. 根据当前选中的星期几与周次过滤出对应课程（用于下方课表列表）
+  const dayCourses = coursesList
+    .map(repairCourse)
+    .filter((c) => c.dayOfWeek === selectedDayOfWeek && isCourseInWeek(c.weekRange, currentWeekNumber));
 
   // 本日真实剩余课程（锁定真实今天的课程，不随日历轴点击切换而改变！）
   const realTodayDayOfWeek = getTodayInfo().dayOfWeek;
-  const realTodayCourses = FULL_WEEK_COURSES.filter((c) => c.dayOfWeek === realTodayDayOfWeek);
+  const realTodayCourses = coursesList
+    .map(repairCourse)
+    .filter((c) => c.dayOfWeek === realTodayDayOfWeek && isCourseInWeek(c.weekRange, realCurrentWeekNumber));
 
-  // 引导重新导入课程表向导状态（与首次未导入时完全一致的引导流程）
+  // 最后一节课的下课时间与放学时间
+  const todayEndTime = useMemo(() => {
+    if (realTodayCourses.length === 0) return null;
+    let maxTime = '00:00';
+    for (const c of realTodayCourses) {
+      if (c.endTime && c.endTime > maxTime) {
+        maxTime = c.endTime;
+      }
+    }
+    return maxTime !== '00:00' ? maxTime : '17:40';
+  }, [realTodayCourses]);
+
+  // 下一节课与倒计时
+  const nextCourseInfo = useMemo(() => {
+    const now = new Date();
+    const curH = now.getHours();
+    const curM = now.getMinutes();
+    const curMinutes = curH * 60 + curM;
+
+    let inProgress: Course | null = null;
+    let nextUpcoming: Course | null = null;
+    let minDiffMinutes = Infinity;
+
+    for (const c of realTodayCourses) {
+      const s = c.startTime || '08:00';
+      const e = c.endTime || '09:40';
+      const [sh, sm] = s.split(':').map(Number);
+      const [eh, em] = e.split(':').map(Number);
+      const startMin = sh * 60 + sm;
+      const endMin = eh * 60 + em;
+
+      if (curMinutes >= startMin && curMinutes <= endMin) {
+        inProgress = c;
+        break;
+      }
+      if (startMin > curMinutes) {
+        const diff = startMin - curMinutes;
+        if (diff < minDiffMinutes) {
+          minDiffMinutes = diff;
+          nextUpcoming = c;
+        }
+      }
+    }
+
+    if (inProgress) {
+      return {
+        status: 'in_progress',
+        statusText: '正在上课',
+        courseName: inProgress.name,
+        location: inProgress.location,
+        subText: `下课时间 ${inProgress.endTime}`,
+      };
+    }
+
+    if (nextUpcoming) {
+      const cd = minDiffMinutes >= 60 
+        ? `${Math.floor(minDiffMinutes / 60)}小时${minDiffMinutes % 60}分`
+        : `${minDiffMinutes}分钟`;
+      return {
+        status: 'upcoming',
+        statusText: `距下节课还有 ${cd}`,
+        courseName: nextUpcoming.name,
+        location: nextUpcoming.location,
+        subText: `${nextUpcoming.startTime} 上课`,
+      };
+    }
+
+    if (realTodayCourses.length > 0) {
+      return {
+        status: 'finished',
+        statusText: '今日课程已全部结束',
+        courseName: '今日放学啦',
+        location: '校外/寝室',
+        subText: `已于 ${todayEndTime} 放学`,
+      };
+    }
+
+    return {
+      status: 'none',
+      statusText: '今日无排课安排',
+      courseName: '自由安排时间',
+      location: '图书馆/自习室',
+      subText: '享受充实一天',
+    };
+  }, [realTodayCourses, todayEndTime]);
+
+  // 计算本日剩余课与放学时间/下节课倒计时（用户要求：之后还有课显示下节课还有多久，最后一节课显示还有几分钟放学）
+  const todayRemainingSummary = useMemo(() => {
+    const now = new Date();
+    const curMinutes = now.getHours() * 60 + now.getMinutes();
+
+    // 筛选今日尚未下课的课程
+    const remainingCourses = realTodayCourses.filter((c) => {
+      const e = c.endTime || '17:40';
+      const [eh, em] = e.split(':').map(Number);
+      const endMin = (eh || 0) * 60 + (em || 0);
+      return endMin > curMinutes;
+    });
+
+    const remainingCount = remainingCourses.length;
+
+    if (realTodayCourses.length === 0) {
+      return {
+        remainingCount: 0,
+        subTitleText: '今日无排课 · 享受充实一天',
+      };
+    }
+
+    if (remainingCount === 0) {
+      return {
+        remainingCount: 0,
+        subTitleText: '今日课程已全部结束 · 已放学',
+      };
+    }
+
+    // 最后一节课：计算还有几分钟放学
+    if (remainingCount === 1) {
+      const lastC = remainingCourses[0];
+      const e = lastC.endTime || '20:35';
+      const [eh, em] = e.split(':').map(Number);
+      const endMin = (eh || 0) * 60 + (em || 0);
+      const diffEnd = Math.max(0, endMin - curMinutes);
+      const h = Math.floor(diffEnd / 60);
+      const m = diffEnd % 60;
+      const timeStr = h > 0 ? `${h}小时${m}分` : `${m}分钟`;
+      return {
+        remainingCount: 1,
+        subTitleText: `最后一节课 · 距放学还有 ${timeStr}`,
+      };
+    }
+
+    // 之后还有多节课：计算下一节课还有多久
+    let nextStartMin: number | null = null;
+    for (const c of remainingCourses) {
+      const s = c.startTime || '08:00';
+      const [sh, sm] = s.split(':').map(Number);
+      const sMin = (sh || 0) * 60 + (sm || 0);
+      if (sMin > curMinutes) {
+        if (nextStartMin === null || sMin < nextStartMin) {
+          nextStartMin = sMin;
+        }
+      }
+    }
+
+    if (nextStartMin !== null) {
+      const diffStart = nextStartMin - curMinutes;
+      const h = Math.floor(diffStart / 60);
+      const m = diffStart % 60;
+      const timeStr = h > 0 ? `${h}小时${m}分` : `${m}分钟`;
+      return {
+        remainingCount,
+        subTitleText: `距下节课还有 ${timeStr}`,
+      };
+    } else {
+      return {
+        remainingCount,
+        subTitleText: `上课中 · 本日剩余 ${remainingCount} 节课`,
+      };
+    }
+  }, [realTodayCourses]);
+
+  // 引导重新导入课程表向导状态
   const [reimportModalVisible, setReimportModalVisible] = useState(false);
-  const [importStep, setImportStep] = useState<'select' | 'scanning' | 'success'>('select');
-  const [importProgress, setImportProgress] = useState(0);
+
+  // 非本周课程显示模式（'hide' | 'stacked' | 'transparent'，默认非本周课不显示，只保留当前周真实排课）
+  const [nonCurrentWeekMode, setNonCurrentWeekMode] = useState<NonCurrentWeekMode>('hide');
+  const [settingsDrawerVisible, setSettingsDrawerVisible] = useState(false);
+  const [qrScannerVisible, setQrScannerVisible] = useState(false);
+  const laserAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (qrScannerVisible) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(laserAnim, {
+            toValue: 200,
+            duration: 1800,
+            useNativeDriver: true,
+          }),
+          Animated.timing(laserAnim, {
+            toValue: 0,
+            duration: 1800,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    } else {
+      laserAnim.setValue(0);
+    }
+  }, [qrScannerVisible]);
+
+  // 模拟扫码同学二维码导入
+  const handleScanSimulateSuccess = () => {
+    const classmateCourses: Course[] = coursesList.length > 0 ? coursesList : [
+      {
+        id: `dom-sup-fri-34`,
+        name: '【调】给水排水管道工程',
+        teacher: '陈老师',
+        location: '长智楼A208',
+        weekRange: '7-16周',
+        dayOfWeek: 5,
+        startTime: '10:05',
+        endTime: '11:40',
+        stageTag: '必修课 · 周五3-4节',
+        status: 'pending',
+        notesCount: 0,
+      },
+      {
+        id: `dom-sup-mon-w7`,
+        name: '仪器分析实验',
+        teacher: '罗金花',
+        location: '力行楼S515',
+        weekRange: '7周',
+        dayOfWeek: 1,
+        startTime: '14:00',
+        endTime: '17:40',
+        stageTag: '必修课 · 周一5-8节',
+        status: 'pending',
+        notesCount: 0,
+      },
+      {
+        id: `dom-sup-sat-w7`,
+        name: '环境工程原理实验',
+        teacher: '宋勇',
+        location: '力行楼S107',
+        weekRange: '7周',
+        dayOfWeek: 6,
+        startTime: '14:00',
+        endTime: '17:40',
+        stageTag: '必修课 · 周六5-8节',
+        status: 'pending',
+        notesCount: 0,
+      },
+    ];
+
+    const repaired = repairCourseList(classmateCourses);
+    setCoursesList(repaired);
+    saveScheduleData(repaired, currentSemester);
+    setQrScannerVisible(false);
+    setToastMessage(`🎉 扫码成功！已导入同学的 ${repaired.length} 门完整学期排课！`);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  useEffect(() => {
+    loadNonCurrentWeekMode().then((mode) => {
+      setNonCurrentWeekMode(mode);
+    });
+  }, []);
+
+  const handleModeChange = (mode: NonCurrentWeekMode) => {
+    setNonCurrentWeekMode(mode);
+    saveNonCurrentWeekMode(mode);
+    const modeName = mode === 'hide' ? '非本周课不显示' : mode === 'stacked' ? '叠放与标签显示' : '半透明50%';
+    setToastMessage(`已将非本周课切换为：${modeName}`);
+    setTimeout(() => setToastMessage(null), 2500);
+  };
 
   const handleOpenReimportModal = () => {
-    setImportStep('select');
-    setImportProgress(0);
     setReimportModalVisible(true);
   };
 
-  const handleStartImportFlow = () => {
-    setImportStep('scanning');
-    setImportProgress(20);
-
-    setTimeout(() => setImportProgress(55), 400);
-    setTimeout(() => setImportProgress(85), 900);
-    setTimeout(() => {
-      setImportProgress(100);
-      setImportStep('success');
-    }, 1400);
-  };
-
-  const handleFinishImport = () => {
-    setReimportModalVisible(false);
+  const handleImportSuccess = (importedCourses: Course[], semesterName?: string) => {
+    const repaired = importedCourses.map(repairCourse);
+    setCoursesList(repaired);
+    const activeSem = semesterName || currentSemester;
+    if (semesterName) {
+      setCurrentSemester(semesterName);
+    }
+    // 持久化存储到本地 AsyncStorage，关闭或退出 App 绝不丢失！
+    saveScheduleData(repaired, activeSem);
     triggerEntranceAnimation();
-    setToastMessage('🎉 教务课表已重新引导导入，已对齐最新学期教学日历！');
+    setToastMessage(`🎉 已成功智能导入 ${repaired.length} 门课程！已放入【${activeSem}】`);
     setTimeout(() => setToastMessage(null), 3500);
   };
 
@@ -345,91 +663,110 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
 
       {/* 顶部生机草木绿流体区域（标准统一头部高度与坐标） */}
       <View style={[styles.heroHeader, { paddingTop: topPadding + 8 }]}>
-        {/* 用户信息与 【今日 | 周课表】 切换 */}
-        <View style={styles.userInfoRow}>
-          <Text style={styles.screenMainTitle}>课程表</Text>
-
-          {/* 模式切换：今日 vs 周课表 (已将“日视图”按要求改为“今日”) */}
-          <View style={styles.viewModeToggle}>
-            <TouchableOpacity
-              style={[
-                styles.modeBtn,
-                scheduleViewMode === 'day' && styles.modeBtnActive,
-              ]}
-              onPress={handleSwitchToToday}
-              activeOpacity={0.8}
-            >
-              <Text
-                style={[
-                  styles.modeBtnText,
-                  scheduleViewMode === 'day' ? styles.modeBtnTextActive : styles.modeBtnTextInactive,
-                ]}
+        <View style={[styles.heroHeaderInner, isTablet && styles.heroHeaderInnerTablet]}>
+          {/* 用户信息与 【今日 | 周课表】 切换 */}
+          <View style={styles.userInfoRow}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {/* 按用户要求：在左上角标题左边加一个抽屉设置按钮 */}
+              <TouchableOpacity
+                style={styles.drawerTriggerBtn}
+                onPress={() => setSettingsDrawerVisible(true)}
+                activeOpacity={0.7}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                今日
-              </Text>
-            </TouchableOpacity>
+                <Ionicons name="menu" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[
-                styles.modeBtn,
-                scheduleViewMode === 'week' && styles.modeBtnActive,
-              ]}
-              onPress={() => setScheduleViewMode('week')}
-              activeOpacity={0.8}
-            >
-              <Text
-                style={[
-                  styles.modeBtnText,
-                  scheduleViewMode === 'week' ? styles.modeBtnTextActive : styles.modeBtnTextInactive,
-                ]}
+              {/* 用户要求：课程表标题改成当前周和切换但是只保留展开选择 不要左右箭头可以切换 */}
+              <TouchableOpacity
+                style={styles.headerWeekTitleBtn}
+                onPress={() => setWeekPickerVisible(true)}
+                activeOpacity={0.75}
               >
-                周课表
-              </Text>
-            </TouchableOpacity>
+                <Text style={styles.screenMainTitle}>第 {currentWeekNumber} 周</Text>
+                <Ionicons name="chevron-down" size={15} color="#FFFFFF" style={{ marginLeft: 4 }} />
+              </TouchableOpacity>
+            </View>
+
+            {/* 模式切换：今日 vs 周课表 (带选中框平移动画) */}
+            <View style={styles.viewModeToggle}>
+              <Animated.View
+                style={[
+                  styles.toggleAnimatedSlider,
+                  {
+                    transform: [
+                      {
+                        translateX: toggleSlideAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [2, 58],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              />
+
+              <TouchableOpacity
+                style={styles.modeBtn}
+                onPress={handleSwitchToToday}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    styles.modeBtnText,
+                    scheduleViewMode === 'day' ? styles.modeBtnTextActive : styles.modeBtnTextInactive,
+                  ]}
+                >
+                  今日
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.modeBtn}
+                onPress={handleSwitchToWeek}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    styles.modeBtnText,
+                    scheduleViewMode === 'week' ? styles.modeBtnTextActive : styles.modeBtnTextInactive,
+                  ]}
+                >
+                  周课表
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
+
+          {/* 7 天横滑日历轴 (支持休假标识，自动定位高亮真实今日) */}
+          {scheduleViewMode === 'day' && (
+            <WeekCalendarStrip
+              selectedDate={selectedDate}
+              onSelectDate={handleSelectDate}
+              onOpenWeekPicker={() => setWeekPickerVisible(true)}
+              realWeekNumber={realCurrentWeekNumber}
+              currentWeekNumberOverride={currentWeekNumber}
+              courses={coursesList}
+            />
+          )}
         </View>
-
-        {/* 仅保留：本日剩余课（无论日历轴切换到哪天，固定只显示今日实际剩余课） */}
-        {scheduleViewMode === 'day' && (
-          <View style={styles.todayRemainingCard}>
-            <View style={styles.todayRemainingLeft}>
-              <View style={styles.remainingIconCircle}>
-                <Ionicons name="time" size={16} color={Colors.primary} />
-              </View>
-              <Text style={styles.todayRemainingLabel}>本日剩余课</Text>
-            </View>
-
-            <View style={styles.todayRemainingRight}>
-              <Text style={styles.todayRemainingNumber}>{realTodayCourses.length}</Text>
-              <Text style={styles.todayRemainingUnit}>节</Text>
-            </View>
-          </View>
-        )}
-
-        {/* 7 天横滑日历轴 (支持休假标识，自动定位高亮真实今日) */}
-        {scheduleViewMode === 'day' && (
-          <WeekCalendarStrip
-            selectedDate={selectedDate}
-            onSelectDate={handleSelectDate}
-          />
-        )}
       </View>
 
       {/* 提醒事项 Toast 浮条 */}
       {toastMessage && (
-        <View style={styles.toastFloatBar}>
+        <View style={[styles.toastFloatBar, isTablet && styles.toastFloatBarTablet]}>
           <Ionicons name="information-circle" size={16} color="#FFFFFF" />
           <Text style={styles.toastText}>{toastMessage}</Text>
         </View>
       )}
 
-      {/* 核心内容区（带向下出现的平滑动画） */}
+      {/* 核心内容区（带向上浮现的平滑动画） */}
       <Animated.View
         style={[
           styles.animatedContentWrapper,
           {
             opacity: fadeAnim,
-            transform: [{ translateY: dropAnim }],
+            transform: [{ translateY: floatUpAnim }],
           },
         ]}
       >
@@ -439,35 +776,63 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
             showsVerticalScrollIndicator={false}
             bounces={true}
           >
-            <View style={styles.scheduleSection}>
-              <View style={styles.scheduleHeaderRow}>
-                <View style={styles.scheduleTitleGroup}>
-                  <Text style={styles.scheduleSectionTitle}>
-                    {selectedDayOfWeek === getTodayInfo().dayOfWeek ? '今日课表安排' : '当日课表安排'}
-                  </Text>
-                  <View style={styles.courseCountBadge}>
-                    <Text style={styles.courseCountText}>{dayCourses.length} 门课</Text>
+            <View style={[styles.scheduleSection, isTablet && styles.contentContainerTablet]}>
+              {/* 今日剩余课卡片（用户要求：左边icon不要背景，右边换成剩余课程数量，去掉下节课整行，副标题按逻辑显示倒计时/放学时间） */}
+              <View style={styles.todayRemainingWidgetCard}>
+                <View style={styles.widgetTopRow}>
+                  <View style={styles.widgetTitleGroup}>
+                    {/* 用户要求：本日剩余课左边的icon不要背景 */}
+                    <Ionicons name="time-outline" size={22} color={Colors.primary} style={{ marginRight: 8 }} />
+                    <View>
+                      <Text style={styles.widgetMainTitle}>本日剩余课</Text>
+                      <Text style={styles.widgetEndTimeSub}>
+                        {todayRemainingSummary.subTitleText}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* 用户要求：图3部分把重新导入去掉换成剩余的课程数量 */}
+                  <View style={styles.widgetRemainingCountBadge}>
+                    <Text style={styles.widgetRemainingCountNum}>{todayRemainingSummary.remainingCount}</Text>
+                    <Text style={styles.widgetRemainingCountUnit}>节</Text>
                   </View>
                 </View>
-
-                {/* 图1要求：改成“重新导入”按钮（点击进入引导导入向导） */}
-                <TouchableOpacity
-                  style={styles.reimportBtn}
-                  onPress={handleOpenReimportModal}
-                  activeOpacity={0.7}
-                >
-                  <Ionicons name="sync-outline" size={13} color={Colors.primary} />
-                  <Text style={styles.reimportBtnText}>重新导入</Text>
-                </TouchableOpacity>
               </View>
 
               {/* 当天课程列表：随选中日期动态切换 */}
-              {dayCourses.length === 0 ? (
-                <View style={[styles.weekendRestCard, Shadows.card]}>
-                  <Text style={{ fontSize: 36, marginBottom: 8 }}>🏖️</Text>
+              {coursesList.length === 0 ? (
+                <View style={styles.emptyScheduleCard}>
+                  <Image
+                    source={require('../../assets/empty-schedule-404.png')}
+                    style={[styles.emptyScheduleImage, isTablet && styles.emptyScheduleImageTablet]}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.emptyScheduleTitle}>课程表暂无数据</Text>
+                  <Text style={styles.emptyScheduleSub}>
+                    尚未导入任何课程。可点击下方按钮一键导入高校教务课表
+                  </Text>
+                  <TouchableOpacity
+                    style={[styles.emptyScheduleBtn, isTablet && styles.emptyScheduleBtnTablet]}
+                    onPress={handleOpenReimportModal}
+                    activeOpacity={0.8}
+                  >
+                    <Ionicons name="cloud-download-outline" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+                    <Text style={styles.emptyScheduleBtnText}>教务系统导入课程表</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : dayCourses.length === 0 ? (
+                /* 图3无课程显示的icon已按要求改成图4(404小绿怪插画)，并且完全去掉了外框与阴影卡片 */
+                <View style={styles.noCoursesContainer}>
+                  <Image
+                    source={require('../../assets/empty-schedule-404.png')}
+                    style={[styles.emptyScheduleImage, isTablet && styles.emptyScheduleImageTablet]}
+                    resizeMode="contain"
+                  />
                   <Text style={styles.restTitle}>本日无课程安排</Text>
                   <Text style={styles.restSub}>
-                    尽情享受休假时光，或者去知识库回顾本周随堂笔记
+                    {coursesList.length > 0
+                      ? `本日暂无排课，享受充实的一天吧！本学期在【${Array.from(new Set(coursesList.map((c) => ['周一', '周二', '周三', '周四', '周五', '周六', '周日'][(c.dayOfWeek || 1) - 1]))).join('、')}】有课，可切换上方日历或点击右上角【周课表】查看`
+                      : '尽情享受休假时光，或者去知识库回顾本周随堂笔记'}
                   </Text>
                 </View>
               ) : (
@@ -491,9 +856,17 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
           /* 周课表全景网格视图 */
           <View style={styles.weekGridWrapper}>
             <WeekGridView
+              courses={coursesList}
+              currentWeekIndex={currentWeekNumber}
+              realCurrentWeekNumber={realCurrentWeekNumber}
+              nonCurrentWeekMode={nonCurrentWeekMode}
+              onSelectWeek={(w) => setCurrentWeekNumber(w)}
+              onOpenWeekPicker={() => setWeekPickerVisible(true)}
+              onOpenImportModal={handleOpenReimportModal}
+              onOpenSettingsDrawer={() => setSettingsDrawerVisible(true)}
               onOpenNote={(courseName) => {
-                const found = FULL_WEEK_COURSES.find((c) => c.name.includes(courseName.slice(0, 4)));
-                handleStartNoteForCourse(found || FULL_WEEK_COURSES[0]);
+                const found = coursesList.find((c) => c.name.includes(courseName.slice(0, 4)));
+                if (found) handleStartNoteForCourse(found);
               }}
             />
           </View>
@@ -610,199 +983,111 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
         >
           <FreeformCanvas
             courseName={selectedCourseForNote?.name || '随堂'}
+            initialTitle={courseFreeformData[selectedCourseForNote?.name || '随堂']?.title}
+            initialNotes={courseFreeformData[selectedCourseForNote?.name || '随堂']?.notes || []}
+            initialStrokes={courseFreeformData[selectedCourseForNote?.name || '随堂']?.strokes || []}
             onClose={handleExitNote}
-            onSave={handleExitNote}
+            onSave={(data) => {
+              setCourseFreeformData((prev) => ({
+                ...prev,
+                [selectedCourseForNote?.name || '随堂']: data,
+              }));
+              handleExitNote();
+              setToastMessage(`🎉 已保存【${selectedCourseForNote?.name || '随堂'}】无边记白板`);
+              setTimeout(() => setToastMessage(null), 2500);
+            }}
           />
         </Modal>
       )}
 
-      {/* 重新导入课程表引导向导弹窗（与首次导入完全一致的引导流程） */}
-      <Modal
+      {/* 重新导入课程表智能通道弹窗（支持统一身份认证CAS、网页文本提取及示范排课） */}
+      <ImportModal
         visible={reimportModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setReimportModalVisible(false)}
+        onClose={() => setReimportModalVisible(false)}
+        onImportSuccess={handleImportSuccess}
+        semesterName={currentSemester}
+      />
+
+      {/* 查看周课表 5x5 矩阵选择弹窗 (图 2) */}
+      <WeekPickerModal
+        visible={weekPickerVisible}
+        onClose={() => setWeekPickerVisible(false)}
+        currentWeek={currentWeekNumber}
+        realCurrentWeek={realCurrentWeekNumber}
+        onSelectWeek={(w) => {
+          setCurrentWeekNumber(w);
+          setToastMessage(`已切换至第 ${w} 周课表`);
+          setTimeout(() => setToastMessage(null), 2500);
+        }}
+        onUpdateRealCurrentWeek={(w) => {
+          setRealCurrentWeekNumber(w);
+          setToastMessage(`🎉 已将第 ${w} 周设为当前学期的【本周】`);
+          setTimeout(() => setToastMessage(null), 3000);
+        }}
+      />
+
+      {/* 抽屉设置弹窗（设置非本周课显示方式 & 扫码入口 & 重新导入） */}
+      <ScheduleSettingsDrawer
+        visible={settingsDrawerVisible}
+        onClose={() => setSettingsDrawerVisible(false)}
+        currentMode={nonCurrentWeekMode}
+        onModeChange={handleModeChange}
+        semesterName={currentSemester}
+        onOpenScanQr={() => setQrScannerVisible(true)}
+        onReimport={handleOpenReimportModal}
+      />
+
+      {/* 用户要求：在设置里新增一个扫码，可以直接扫码同学的二维码导入课程 */}
+      <Modal
+        visible={qrScannerVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setQrScannerVisible(false)}
       >
-        <View style={styles.importModalBackdrop}>
-          <View style={[styles.importModalCard, Shadows.card]}>
-            {/* 顶部标题与关闭 */}
-            <View style={styles.importModalHeader}>
-              <View>
-                <Text style={styles.importModalTitle}>
-                  {importStep === 'select'
-                    ? '教务课程表智能引导导入'
-                    : importStep === 'scanning'
-                    ? '正在智能嗅探识别教务课表...'
-                    : '🎉 课表重新导入完成！'}
-                </Text>
-                <Text style={styles.importModalSub}>
-                  {importStep === 'select'
-                    ? '支持高校教务免密自动识别 / 统一身份认证 / 课表文件'
-                    : importStep === 'scanning'
-                    ? '已建立安全连接，正在智能提取本学期排课数据'
-                    : '已成功同步学期完整排课与知识库节次绑定'}
-                </Text>
-              </View>
+        <View style={styles.scannerOverlay}>
+          <View style={styles.scannerTopBar}>
+            <TouchableOpacity
+              onPress={() => setQrScannerVisible(false)}
+              style={styles.scannerCloseBtn}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="close" size={24} color="#FFFFFF" />
+            </TouchableOpacity>
+            <Text style={styles.scannerTitle}>扫描同学课表二维码</Text>
+            <View style={{ width: 36 }} />
+          </View>
 
-              <TouchableOpacity
-                onPress={() => setReimportModalVisible(false)}
-                style={styles.importCloseBtn}
-              >
-                <Ionicons name="close" size={20} color="#64748B" />
-              </TouchableOpacity>
+          <View style={styles.viewfinderContainer}>
+            <View style={styles.viewfinderBox}>
+              <View style={[styles.cornerBorder, styles.cornerTL]} />
+              <View style={[styles.cornerBorder, styles.cornerTR]} />
+              <View style={[styles.cornerBorder, styles.cornerBL]} />
+              <View style={[styles.cornerBorder, styles.cornerBR]} />
+
+              {/* 扫描动态激光线 */}
+              <Animated.View
+                style={[
+                  styles.scannerLaserLine,
+                  {
+                    transform: [{ translateY: laserAnim }],
+                  },
+                ]}
+              />
             </View>
+            <Text style={styles.viewfinderHint}>
+              对准同学手机上展示的课星球二维码，自动识别导入
+            </Text>
+          </View>
 
-            {/* 步骤 1：选择导入来源与引导 */}
-            {importStep === 'select' && (
-              <View style={styles.importStepContent}>
-                <View style={styles.importSourcesList}>
-                  {/* 方式 1：高校教务系统一键识别 */}
-                  <TouchableOpacity
-                    style={[styles.importSourceCard, styles.importSourceCardActive]}
-                    activeOpacity={0.8}
-                    onPress={handleStartImportFlow}
-                  >
-                    <View style={[styles.importSourceIconWrap, { backgroundColor: '#F0FDF4' }]}>
-                      <Ionicons name="school" size={24} color={Colors.primary} />
-                    </View>
-                    <View style={styles.importSourceTextWrap}>
-                      <View style={styles.importSourceTitleRow}>
-                        <Text style={styles.importSourceTitle}>高校教务系统一键识别</Text>
-                        <View style={styles.recommendTag}>
-                          <Text style={styles.recommendTagText}>推荐</Text>
-                        </View>
-                      </View>
-                      <Text style={styles.importSourceDesc}>
-                        免密直连正方、强智、青果、树人等主流高校教务平台
-                      </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={16} color={Colors.primary} />
-                  </TouchableOpacity>
-
-                  {/* 方式 2：课表文件与截图识别 */}
-                  <TouchableOpacity
-                    style={styles.importSourceCard}
-                    activeOpacity={0.8}
-                    onPress={handleStartImportFlow}
-                  >
-                    <View style={[styles.importSourceIconWrap, { backgroundColor: '#EFF6FF' }]}>
-                      <Ionicons name="document-attach" size={24} color="#3B82F6" />
-                    </View>
-                    <View style={styles.importSourceTextWrap}>
-                      <Text style={styles.importSourceTitle}>导入 ICS 日历 / 课表文件</Text>
-                      <Text style={styles.importSourceDesc}>
-                        支持 Excel / CSV / ICS 日历格式及课表截图 OCR 解析
-                      </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
-                  </TouchableOpacity>
-
-                  {/* 方式 3：统一身份认证登录 */}
-                  <TouchableOpacity
-                    style={styles.importSourceCard}
-                    activeOpacity={0.8}
-                    onPress={handleStartImportFlow}
-                  >
-                    <View style={[styles.importSourceIconWrap, { backgroundColor: '#FAF5FF' }]}>
-                      <Ionicons name="key" size={24} color="#8B5CF6" />
-                    </View>
-                    <View style={styles.importSourceTextWrap}>
-                      <Text style={styles.importSourceTitle}>统一身份认证授权登录</Text>
-                      <Text style={styles.importSourceDesc}>
-                        使用校园统一身份认证学号与密码安全对接
-                      </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
-                  </TouchableOpacity>
-                </View>
-
-                <TouchableOpacity
-                  style={styles.importStartBtn}
-                  onPress={handleStartImportFlow}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons name="flash" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
-                  <Text style={styles.importStartBtnText}>开始自动识别并导入</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-
-            {/* 步骤 2：识别扫描中（进度条与流水线步骤） */}
-            {importStep === 'scanning' && (
-              <View style={styles.importScanningContent}>
-                <View style={styles.scanningPulseWrap}>
-                  <Ionicons name="sync" size={36} color={Colors.primary} />
-                </View>
-
-                {/* 进度条 */}
-                <View style={styles.progressBarTrack}>
-                  <View style={[styles.progressBarFill, { width: `${importProgress}%` }]} />
-                </View>
-                <Text style={styles.progressPercentText}>{importProgress}%</Text>
-
-                {/* 步骤校验 */}
-                <View style={styles.scanChecklist}>
-                  <View style={styles.checkItem}>
-                    <Ionicons name="checkmark-circle" size={16} color={Colors.primary} />
-                    <Text style={styles.checkItemText}>已建立教务网关安全握手通道</Text>
-                  </View>
-                  <View style={styles.checkItem}>
-                    <Ionicons
-                      name={importProgress >= 55 ? 'checkmark-circle' : 'ellipsis-horizontal-circle'}
-                      size={16}
-                      color={importProgress >= 55 ? Colors.primary : '#94A3B8'}
-                    />
-                    <Text style={styles.checkItemText}>检索 2025-2026 夏学期周历排课数据</Text>
-                  </View>
-                  <View style={styles.checkItem}>
-                    <Ionicons
-                      name={importProgress >= 85 ? 'checkmark-circle' : 'ellipsis-horizontal-circle'}
-                      size={16}
-                      color={importProgress >= 85 ? Colors.primary : '#94A3B8'}
-                    />
-                    <Text style={styles.checkItemText}>匹配教室地点、任课教师与节次作息</Text>
-                  </View>
-                </View>
-              </View>
-            )}
-
-            {/* 步骤 3：导入成功结果展示 */}
-            {importStep === 'success' && (
-              <View style={styles.importSuccessContent}>
-                <View style={styles.successIconBadge}>
-                  <Ionicons name="checkmark-done" size={28} color="#FFFFFF" />
-                </View>
-
-                <Text style={styles.successHeading}>本学期课程已成功全量导入！</Text>
-                <Text style={styles.successDetailText}>
-                  共更新 8 门学期课程 · 教学日历与节次时间均已精准对齐
-                </Text>
-
-                <ScrollView style={styles.importedCoursesPreview} showsVerticalScrollIndicator={false}>
-                  {FULL_WEEK_COURSES.slice(0, 4).map((c) => (
-                    <View key={c.id} style={styles.previewCourseRow}>
-                      <View style={styles.previewCourseLeft}>
-                        <Text style={styles.previewCourseName}>{c.name}</Text>
-                        <Text style={styles.previewCourseMeta}>
-                          {c.teacher} · @ {c.location}
-                        </Text>
-                      </View>
-                      <View style={styles.previewTag}>
-                        <Text style={styles.previewTagText}>{c.startTime}</Text>
-                      </View>
-                    </View>
-                  ))}
-                </ScrollView>
-
-                <TouchableOpacity
-                  style={styles.importFinishActionBtn}
-                  onPress={handleFinishImport}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.importFinishActionText}>立即应用并查看课表</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+          <View style={styles.scannerActionsContainer}>
+            <TouchableOpacity
+              style={styles.simulateScanBtn}
+              onPress={handleScanSimulateSuccess}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="scan-circle" size={22} color="#FFFFFF" style={{ marginRight: 6 }} />
+              <Text style={styles.simulateScanBtnText}>一键识别同学课表二维码</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -824,6 +1109,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 4,
+    width: '100%',
+  },
+  heroHeaderInner: {
+    width: '100%',
+  },
+  heroHeaderInnerTablet: {
+    maxWidth: 960,
+    alignSelf: 'center',
+    paddingHorizontal: 24,
+  },
+  contentContainerTablet: {
+    maxWidth: 960,
+    alignSelf: 'center',
+    width: '100%',
+    paddingHorizontal: 24,
+  },
+  toastFloatBarTablet: {
+    maxWidth: 912,
+    alignSelf: 'center',
+    width: '100%',
   },
   userInfoRow: {
     flexDirection: 'row',
@@ -833,6 +1138,26 @@ const styles = StyleSheet.create({
     height: 38,
     minHeight: 38,
     marginBottom: 12,
+  },
+  drawerTriggerBtn: {
+    marginRight: 8,
+    padding: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  weekPickerTriggerPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 14,
+    marginLeft: 10,
+  },
+  weekPickerTriggerText: {
+    fontSize: 13,
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
   userProfile: {
     flexDirection: 'row',
@@ -868,19 +1193,32 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.22)',
     borderRadius: Rounded.pill,
     padding: 3,
+    position: 'relative',
+    width: 124,
+    height: 34,
+    alignItems: 'center',
   },
-  modeBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-    borderRadius: Rounded.pill,
-  },
-  modeBtnActive: {
+  toggleAnimatedSlider: {
+    position: 'absolute',
+    top: 3,
+    left: 2,
+    width: 58,
+    height: 28,
     backgroundColor: '#FFFFFF',
+    borderRadius: Rounded.pill,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.12,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 3,
+  },
+  modeBtn: {
+    width: 58,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: Rounded.pill,
+    zIndex: 1,
   },
   modeBtnText: {
     fontSize: 12,
@@ -893,52 +1231,132 @@ const styles = StyleSheet.create({
   modeBtnTextInactive: {
     color: '#FFFFFF',
   },
-  todayRemainingCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.22)',
+  // 本日剩余课卡片（移至内容区，集成放学时间、倒计时与下节课组件）
+  todayRemainingWidgetCard: {
+    backgroundColor: '#FFFFFF',
     marginHorizontal: 16,
-    borderRadius: Rounded.lg,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginBottom: 8,
+    marginBottom: 16,
+    borderRadius: 16,
+    padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.25)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  todayRemainingLeft: {
+  widgetTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  widgetTitleGroup: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+    flex: 1,
   },
-  remainingIconCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+  widgetIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F0FDF4',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#DCFCE7',
   },
-  todayRemainingLabel: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#FFFFFF',
+  widgetMainTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginRight: 6,
   },
-  todayRemainingRight: {
+  widgetEndTimeSub: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 2,
+    fontWeight: '500',
+  },
+  widgetCountBadge: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    gap: 2,
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: Rounded.pill,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
   },
-  todayRemainingNumber: {
-    fontSize: 24,
+  widgetCountNum: {
+    fontSize: 13,
     fontWeight: '800',
-    color: '#FFFFFF',
-    fontVariant: ['tabular-nums'],
+    color: Colors.primary,
   },
-  todayRemainingUnit: {
-    fontSize: 12,
+  widgetCountUnit: {
+    fontSize: 10,
     fontWeight: '600',
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: Colors.primary,
+    marginLeft: 2,
+  },
+  widgetReimportBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8FAFC',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: Rounded.pill,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  widgetReimportBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.primary,
+  },
+  widgetNextCourseRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    gap: 8,
+  },
+  nextCoursePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  nextCourseDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  nextDotLive: {
+    backgroundColor: '#16A34A',
+  },
+  nextDotUpcoming: {
+    backgroundColor: '#F59E0B',
+  },
+  nextCourseStatusText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#334155',
+  },
+  nextCourseInfoText: {
+    fontSize: 12,
+    color: '#475569',
+    fontWeight: '500',
+    flex: 1,
   },
   toastFloatBar: {
     flexDirection: 'row',
@@ -964,9 +1382,17 @@ const styles = StyleSheet.create({
   },
   animatedContentWrapper: {
     flex: 1,
+    width: '100%',
   },
   dayScrollArea: {
     flex: 1,
+  },
+  headerWeekTitleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 2,
+    paddingVertical: 2,
+    paddingHorizontal: 4,
   },
   screenMainTitle: {
     fontSize: 22,
@@ -975,8 +1401,30 @@ const styles = StyleSheet.create({
     letterSpacing: -0.3,
     lineHeight: 28,
   },
+  widgetRemainingCountBadge: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    backgroundColor: '#EDFAEF',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: Rounded.pill,
+    borderWidth: 1,
+    borderColor: '#A6F4C5',
+  },
+  widgetRemainingCountNum: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: Colors.primary,
+  },
+  widgetRemainingCountUnit: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.primary,
+    marginLeft: 2,
+  },
   scheduleSection: {
     paddingTop: 16,
+    paddingBottom: 96,
   },
   scheduleHeaderRow: {
     flexDirection: 'row',
@@ -1035,10 +1483,70 @@ const styles = StyleSheet.create({
   timelineList: {
     paddingLeft: 4,
   },
+  emptyScheduleCard: {
+    backgroundColor: 'transparent',
+    paddingVertical: 32,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    width: '100%',
+    maxWidth: 520,
+  },
+  noCoursesContainer: {
+    backgroundColor: 'transparent',
+    paddingVertical: 36,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    width: '100%',
+    maxWidth: 520,
+  },
+  emptyScheduleImage: {
+    width: 190,
+    height: 190,
+    marginBottom: 16,
+  },
+  emptyScheduleImageTablet: {
+    width: 260,
+    height: 260,
+    marginBottom: 20,
+  },
+  emptyScheduleTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: Colors.textPrimary,
+    marginBottom: 8,
+  },
+  emptyScheduleSub: {
+    fontSize: 13,
+    color: Colors.textMuted,
+    textAlign: 'center',
+    lineHeight: 18,
+    marginBottom: 22,
+    maxWidth: 320,
+  },
+  emptyScheduleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 22,
+    paddingVertical: 12,
+    borderRadius: Rounded.pill,
+  },
+  emptyScheduleBtnTablet: {
+    paddingHorizontal: 28,
+    paddingVertical: 14,
+  },
+  emptyScheduleBtnText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
+  },
   weekendRestCard: {
-    backgroundColor: '#FFFFFF',
-    marginHorizontal: 16,
-    borderRadius: Rounded.xl,
+    backgroundColor: 'transparent',
     paddingVertical: 36,
     paddingHorizontal: 20,
     alignItems: 'center',
@@ -1392,5 +1900,113 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: '#FFFFFF',
+  },
+  // 扫码弹窗样式
+  scannerOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.95)',
+    justifyContent: 'space-between',
+    paddingVertical: 48,
+    paddingHorizontal: 24,
+  },
+  scannerTopBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  scannerCloseBtn: {
+    padding: 6,
+  },
+  scannerTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  viewfinderContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  viewfinderBox: {
+    width: 240,
+    height: 240,
+    position: 'relative',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  cornerBorder: {
+    position: 'absolute',
+    width: 24,
+    height: 24,
+    borderColor: '#10B981',
+  },
+  cornerTL: {
+    top: 0,
+    left: 0,
+    borderTopWidth: 4,
+    borderLeftWidth: 4,
+    borderTopLeftRadius: 14,
+  },
+  cornerTR: {
+    top: 0,
+    right: 0,
+    borderTopWidth: 4,
+    borderRightWidth: 4,
+    borderTopRightRadius: 14,
+  },
+  cornerBL: {
+    bottom: 0,
+    left: 0,
+    borderBottomWidth: 4,
+    borderLeftWidth: 4,
+    borderBottomLeftRadius: 14,
+  },
+  cornerBR: {
+    bottom: 0,
+    right: 0,
+    borderBottomWidth: 4,
+    borderRightWidth: 4,
+    borderBottomRightRadius: 14,
+  },
+  scannerLaserLine: {
+    position: 'absolute',
+    left: 10,
+    right: 10,
+    height: 2,
+    backgroundColor: '#10B981',
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.9,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  viewfinderHint: {
+    color: 'rgba(255, 255, 255, 0.75)',
+    fontSize: 13,
+    marginTop: 24,
+    textAlign: 'center',
+  },
+  scannerActionsContainer: {
+    alignItems: 'center',
+  },
+  simulateScanBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#10B981',
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: Rounded.pill,
+    width: '100%',
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  simulateScanBtnText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
   },
 });

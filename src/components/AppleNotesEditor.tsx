@@ -15,6 +15,13 @@ import { Colors, Rounded, Shadows, getCourseColorScheme } from '../constants/the
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+let ExpoSpeechRecognition: any = null;
+try {
+  ExpoSpeechRecognition = require('expo-speech-recognition').ExpoSpeechRecognitionModule;
+} catch (e) {
+  ExpoSpeechRecognition = null;
+}
+
 export interface AppleNotesEditorProps {
   visible: boolean;
   initialCourseName?: string;
@@ -104,6 +111,8 @@ export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
   const analyserRef = useRef<any>(null);
   const micStreamRef = useRef<any>(null);
   const animFrameRef = useRef<any>(null);
+  const nativeListenersRef = useRef<any[]>([]);
+  const isNativeSpeechActiveRef = useRef(false);
 
   activeTranscriptRef.current = realtimeTranscript;
 
@@ -115,7 +124,66 @@ export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
       setVoiceSeconds((s) => s + 1);
     }, 1000);
 
-    // 接入真实麦克风声波检测 (Web Audio API Analyser)
+    // 1. Android 原生环境优先调用系统级 SpeechRecognizer (expo-speech-recognition)
+    if (ExpoSpeechRecognition) {
+      ExpoSpeechRecognition.requestPermissionsAsync()
+        .then((res: any) => {
+          if (res?.granted) {
+            if (nativeListenersRef.current.length > 0) {
+              nativeListenersRef.current.forEach((sub: any) => sub?.remove?.());
+              nativeListenersRef.current = [];
+            }
+
+            const resultSub = ExpoSpeechRecognition.addSpeechRecognitionListener(
+              'result',
+              (event: any) => {
+                const text = event.results?.[0]?.transcript;
+                if (text) {
+                  setRealtimeTranscript(text);
+                }
+              }
+            );
+
+            const volSub = ExpoSpeechRecognition.addSpeechRecognitionListener(
+              'volumechange',
+              (event: any) => {
+                const vol = typeof event.value === 'number' ? Math.max(0, event.value) : 10;
+                const dynamicWaves = [
+                  Math.max(6, Math.min(36, 8 + vol * 2.2)),
+                  Math.max(8, Math.min(36, 10 + vol * 2.8)),
+                  Math.max(10, Math.min(36, 12 + vol * 3.5)),
+                  Math.max(12, Math.min(38, 14 + vol * 4.0)),
+                  Math.max(8, Math.min(32, 10 + vol * 2.6)),
+                  Math.max(6, Math.min(28, 8 + vol * 2.0)),
+                  Math.max(10, Math.min(36, 12 + vol * 3.2)),
+                  Math.max(12, Math.min(38, 14 + vol * 3.8)),
+                  Math.max(8, Math.min(30, 10 + vol * 2.4)),
+                  Math.max(6, Math.min(24, 8 + vol * 1.8)),
+                ];
+                setAudioWaves(dynamicWaves);
+              }
+            );
+
+            nativeListenersRef.current = [resultSub, volSub];
+
+            ExpoSpeechRecognition.start({
+              lang: 'zh-CN',
+              interimResults: true,
+              continuous: true,
+              requiresOnDeviceRecognition: false,
+              addsPunctuation: true,
+            }).catch((e: any) => {
+              console.log('ExpoSpeechRecognition start error:', e);
+            });
+
+            isNativeSpeechActiveRef.current = true;
+          }
+        })
+        .catch(() => {});
+      return;
+    }
+
+    // 2. Web 浏览器端接入 Web Audio 与 Web Speech API
     if (
       typeof navigator !== 'undefined' &&
       navigator.mediaDevices &&
@@ -184,41 +252,32 @@ export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
         return;
       } catch (e) {}
     }
-
-    const phrases = [
-      '老师强调多元函数全微分的充要条件是偏导数连续，',
-      '注意课后习题第4题关于梯度向量与等值面法向量的几何推导。',
-      '期末大作业需在周五前提交至教学平台。',
-    ];
-    let pIdx = 0;
-    const simInterval = setInterval(() => {
-      if (pIdx < phrases.length) {
-        setRealtimeTranscript((prev) => (prev ? prev + ' ' + phrases[pIdx] : phrases[pIdx]));
-        pIdx++;
-      } else {
-        clearInterval(simInterval);
-      }
-    }, 1100);
-    (recognitionRef as any).current = { simInterval };
   };
 
   const finishRecordingAndInsert = (insert: boolean = true) => {
     clearInterval(timerRef.current);
+
+    if (ExpoSpeechRecognition && isNativeSpeechActiveRef.current) {
+      try {
+        ExpoSpeechRecognition.stop();
+      } catch (e) {}
+      if (nativeListenersRef.current.length > 0) {
+        nativeListenersRef.current.forEach((sub: any) => sub?.remove?.());
+        nativeListenersRef.current = [];
+      }
+      isNativeSpeechActiveRef.current = false;
+    }
 
     if (recognitionRef.current) {
       try {
         if (recognitionRef.current.stop) {
           recognitionRef.current.stop();
         }
-        if (recognitionRef.current.simInterval) {
-          clearInterval(recognitionRef.current.simInterval);
-        }
       } catch (e) {}
       recognitionRef.current = null;
     }
 
-    const rawText = activeTranscriptRef.current.trim();
-    const textToInsert = rawText || '老师强调了本节课核心推导公式与模型架构。';
+    const textToInsert = activeTranscriptRef.current.trim();
 
     if (insert && textToInsert) {
       const start = Math.min(cursorSelection.start, inputContent.length);

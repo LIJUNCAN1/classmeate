@@ -15,11 +15,19 @@ export interface DynamicWeekDay {
 interface WeekCalendarStripProps {
   selectedDate: string;
   onSelectDate: (dateStr: string, dayOfWeek: number) => void;
+  onOpenWeekPicker?: () => void;
+  realWeekNumber?: number;
+  currentWeekNumberOverride?: number;
+  courses?: Array<{ dayOfWeek: number }>;
 }
 
 export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
   selectedDate,
   onSelectDate,
+  onOpenWeekPicker,
+  realWeekNumber = 7,
+  currentWeekNumberOverride,
+  courses = [],
 }) => {
   // 当前基准日期（支持按周偏移，每周周一自动对齐当周）
   const [weekOffset, setWeekOffset] = useState<number>(0);
@@ -33,7 +41,8 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
     // 每周一自动成为该周的起始第一天
     const mondayDiff = currentDay === 0 ? -6 : 1 - currentDay;
     const baseMonday = new Date(now);
-    baseMonday.setDate(now.getDate() + mondayDiff + weekOffset * 7);
+    const offset = currentWeekNumberOverride !== undefined ? (currentWeekNumberOverride - realWeekNumber) : weekOffset;
+    baseMonday.setDate(now.getDate() + mondayDiff + offset * 7);
 
     const dayNames = ['一', '二', '三', '四', '五', '六', '日'];
     const generatedDays: DynamicWeekDay[] = [];
@@ -67,16 +76,18 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
     const year = midWeekDay.getFullYear();
     const month = String(midWeekDay.getMonth() + 1).padStart(2, '0');
 
-    // 计算周次（基准第14周，根据偏移量计算）
-    const weekNum = 14 + weekOffset;
+    // 计算周次（根据 realWeekNumber 基准周与偏移量计算）
+    const baseWeek = realWeekNumber;
+    const calculatedWeek = baseWeek + weekOffset;
+    const finalWeek = currentWeekNumberOverride !== undefined ? currentWeekNumberOverride : calculatedWeek;
 
     return {
       days: generatedDays,
       monthLabel: `${year}.${month}`,
-      currentWeekNumber: Math.max(1, weekNum),
+      currentWeekNumber: Math.max(1, finalWeek),
       isCurrentRealWeek: weekOffset === 0,
     };
-  }, [weekOffset]);
+  }, [weekOffset, realWeekNumber, currentWeekNumberOverride]);
 
   // 切换周处理：切换到非本周默认选中周一，切回本周默认选中今天
   const handleWeekChange = (newOffset: number) => {
@@ -125,51 +136,12 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* 顶部月份与周次指示器（点击月份弹出选择抽屉/弹窗） */}
-      <View style={styles.headerRow}>
-        <TouchableOpacity
-          style={styles.monthSelector}
-          activeOpacity={0.7}
-          onPress={() => setMonthPickerVisible(true)}
-        >
-          <Text style={styles.monthText}>{monthLabel}</Text>
-          <Ionicons name="caret-down" size={12} color="#FFFFFF" style={{ marginLeft: 4 }} />
-        </TouchableOpacity>
-
-        {/* 周次切换与每周周一自动流转 */}
-        <View style={styles.weekControlRow}>
-          <TouchableOpacity
-            style={styles.weekArrowBtn}
-            onPress={() => handleWeekChange(weekOffset - 1)}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="chevron-back" size={13} color="rgba(255,255,255,0.85)" />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => handleWeekChange(0)}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.weekIndicator}>
-              第 {currentWeekNumber} 周 · 夏学期
-              {!isCurrentRealWeek && ' (回本周)'}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.weekArrowBtn}
-            onPress={() => handleWeekChange(weekOffset + 1)}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="chevron-forward" size={13} color="rgba(255,255,255,0.85)" />
-          </TouchableOpacity>
-        </View>
-      </View>
-
       {/* 7 天横滑日历轴 (支持休假标识，自动定位高亮真实今日) */}
       <View style={styles.daysRow}>
         {days.map((item) => {
           const isSelected = item.dateStr === selectedDate || (item.isToday && !selectedDate);
+          const hasCourse = courses.some((c) => c.dayOfWeek === item.dayOfWeek);
+
           return (
             <TouchableOpacity
               key={item.dateStr}
@@ -180,41 +152,52 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
               onPress={() => onSelectDate(item.dateStr, item.dayOfWeek)}
               activeOpacity={0.8}
             >
-              {/* 休假标识标签 */}
-              {item.isHoliday && (
-                <View
+              <View style={styles.dayNameContainer}>
+                <Text
                   style={[
-                    styles.holidayBadge,
-                    isSelected ? styles.holidayBadgeSelected : styles.holidayBadgeNormal,
+                    styles.dayNameText,
+                    isSelected && styles.dayNameTextSelected,
                   ]}
                 >
-                  <Text style={styles.holidayBadgeText}>休</Text>
-                </View>
-              )}
+                  {item.dayName}
+                </Text>
+                {item.isHoliday && (
+                  <View
+                    style={[
+                      styles.holidayBadge,
+                      isSelected ? styles.holidayBadgeSelected : styles.holidayBadgeNormal,
+                    ]}
+                  >
+                    <Text style={styles.holidayBadgeText}>休</Text>
+                  </View>
+                )}
+              </View>
 
-              <Text
-                style={[
-                  styles.dayNameText,
-                  isSelected && styles.dayNameTextSelected,
-                ]}
-              >
-                {item.dayName}
-              </Text>
               <View
                 style={[
                   styles.dayBadge,
-                  isSelected && styles.dayBadgeSelected,
+                  isSelected && item.isToday && styles.dayBadgeTodaySelected,
                 ]}
               >
                 <Text
                   style={[
                     styles.dayNumberText,
-                    isSelected && styles.dayNumberTextSelected,
+                    isSelected && (item.isToday ? styles.dayNumberTextTodaySelected : styles.dayNumberTextSelected),
                   ]}
                 >
                   {item.isToday ? '今' : item.dayNumber}
                 </Text>
               </View>
+
+              {/* 课程圆点指示器（有课的日子显示圆点，选中有课显示绿色，未选中显示半透明白色） */}
+              {hasCourse && (
+                <View
+                  style={[
+                    styles.courseDot,
+                    isSelected ? styles.courseDotSelected : styles.courseDotNormal,
+                  ]}
+                />
+              )}
             </TouchableOpacity>
           );
         })}
@@ -296,8 +279,8 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    paddingTop: 4,
-    paddingBottom: 16,
+    paddingTop: 8,
+    paddingBottom: 14,
   },
   headerRow: {
     flexDirection: 'row',
@@ -360,13 +343,19 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
+  dayNameContainer: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
   holidayBadge: {
     position: 'absolute',
-    top: -2,
-    right: 2,
-    width: 15,
-    height: 15,
-    borderRadius: 8,
+    top: -4,
+    right: -13,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
@@ -388,7 +377,6 @@ const styles = StyleSheet.create({
   dayNameText: {
     fontSize: 13,
     color: 'rgba(255, 255, 255, 0.9)',
-    marginBottom: 6,
     fontWeight: '500',
   },
   dayNameTextSelected: {
@@ -402,17 +390,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  dayBadgeSelected: {
+  dayBadgeTodaySelected: {
     backgroundColor: Colors.primary,
+    overflow: 'hidden',
   },
   dayNumberText: {
     fontSize: 15,
     fontWeight: '600',
     color: '#FFFFFF',
   },
-  dayNumberTextSelected: {
+  dayNumberTextTodaySelected: {
     color: '#FFFFFF',
     fontWeight: '700',
+    fontSize: 13,
+  },
+  dayNumberTextSelected: {
+    color: Colors.primary,
+    fontWeight: '800',
+    fontSize: 16,
+  },
+  courseDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    marginTop: 4,
+  },
+  courseDotSelected: {
+    backgroundColor: Colors.primary,
+  },
+  courseDotNormal: {
+    backgroundColor: 'rgba(255, 255, 255, 0.75)',
   },
   modalOverlay: {
     flex: 1,

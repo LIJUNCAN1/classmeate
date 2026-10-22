@@ -85,7 +85,7 @@ export const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({ onFi
       </Animated.View>
 
       <Animated.View style={[styles.titleWrapper, { opacity: textFadeAnim }]}>
-        <Text style={styles.brandTitle}>Classmeate</Text>
+        <Text style={styles.brandTitle}>课星球</Text>
         <Text style={styles.brandSubtitle}>课表驱动知识流 · 随堂全景学习</Text>
       </Animated.View>
     </Animated.View>

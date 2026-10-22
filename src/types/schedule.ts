@@ -13,6 +13,8 @@ export interface Course {
   status: 'pending' | 'in_progress' | 'completed' | 'booked';
   notesCount: number;
   weekRange?: string; // e.g. "1-16周"
+  startPeriod?: number;
+  span?: number;
 }
 
 export interface DaySchedule {

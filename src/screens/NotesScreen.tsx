@@ -12,11 +12,19 @@ import {
   Animated,
   PanResponder,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Rounded, Shadows, getCourseColorScheme } from '../constants/theme';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedCheckmark } from '../components/AnimatedCheckmark';
 import { FreeformCanvas } from '../components/FreeformCanvas';
+
+let ExpoSpeechRecognition: any = null;
+try {
+  ExpoSpeechRecognition = require('expo-speech-recognition').ExpoSpeechRecognitionModule;
+} catch (e) {
+  ExpoSpeechRecognition = null;
+}
 
 export interface NoteItem {
   id: string;
@@ -80,59 +88,27 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     ]).start();
   }, []);
 
-  // 初始笔记库
-  const [notes, setNotes] = useState<NoteItem[]>([
-    {
-      id: 'n1',
-      courseName: '成人商务韩语',
-      title: '第14周 · 破冰洽谈与敬语句型',
-      date: '今天 09:45',
-      content: '商务谈判中的开场礼仪；对客委婉语、谦逊语在合同初审时的严谨表述。需要重点注意双方落座顺序与初次交换名片的固定问候套语。',
-      tags: ['随堂速记', '音频已转录'],
-      type: 'text',
-      hasAudio: true,
-      hasImages: true,
-    },
-    {
-      id: 'n2',
-      courseName: '高等数学 (AI与数据)',
-      title: '第14周 · 多元函数微分学与梯度下降',
-      date: '昨天 10:20',
-      content: '二阶偏导数对称性几何意义；拉格朗日乘数法在约束极值求解中的工程应用。课堂例题第3道：如何通过海森矩阵判断多元函数鞍点。',
-      tags: ['板书拍照', '重点公式'],
-      type: 'text',
-      hasAudio: false,
-      hasImages: true,
-    },
-    {
-      id: 'n3',
-      courseName: 'TOPIK专攻精讲',
-      title: '第13周 · 阅读真题主旨归纳速判法',
-      date: '6月18日',
-      content: '长难句倒装解构；段落首尾呼应词快筛技巧；历年错题第34-37题解析及高频副词总结。',
-      tags: ['复习卡片'],
-      type: 'text',
-      hasAudio: false,
-      hasImages: false,
-    },
-    {
-      id: 'n4',
-      courseName: '计算机系统结构',
-      title: '第12周 · 指令级并行与流水线冲突 (无边记)',
-      date: '6月12日',
-      content: '【无边记手绘草图】经典五级流水线（IF, ID, EX, MEM, WB）时序与旁路转发架构图谱。',
-      tags: ['无边记手写', '核心架构'],
-      type: 'freeform',
-      freeformPaths: ['path1', 'path2'],
-      hasAudio: false,
-      hasImages: true,
-    },
-  ]);
+  // 笔记库（用户要求：去掉所有预设内容、标题、关联课程，从全新纯净状态开始）
+  const [notes, setNotes] = useState<NoteItem[]>([]);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    AsyncStorage.getItem('@kexingqiu_notes').then((val) => {
+      if (val) {
+        try {
+          const parsed = JSON.parse(val);
+          if (Array.isArray(parsed)) {
+            setNotes(parsed);
+          }
+        } catch (e) {}
+      }
+    });
+  }, []);
 
   const [selectedFolder, setSelectedFolder] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 编辑器状态（一体化笔记编辑器，文字输入+手绘+语音整合在一起）
+  // 编辑器状态（无预设内容）
   const [editorVisible, setEditorVisible] = useState(false);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [inputCourseName, setInputCourseName] = useState('未关联课程');
@@ -168,10 +144,10 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
   const [drawStrokes, setDrawStrokes] = useState<{ x: number; y: number }[]>([]);
   const [penColor, setPenColor] = useState('#1F2937');
 
-  // 苹果 Freeform 无边记无限画布状态
+  // 苹果 Freeform 无边记无限画布状态（默认空白）
   const [freeformModalVisible, setFreeformModalVisible] = useState(false);
-  const [freeformTargetCourse, setFreeformTargetCourse] = useState('高等数学 (AI与数据)');
-  const [freeformTargetTitle, setFreeformTargetTitle] = useState('脑力激荡无限画纸');
+  const [freeformTargetCourse, setFreeformTargetCourse] = useState('未关联课程');
+  const [freeformTargetTitle, setFreeformTargetTitle] = useState('');
 
   // ================= 语音识别核心状态与交互 (图5 微信/iOS式全屏交互) =================
   const [isPressingVoice, setIsPressingVoice] = useState(false);
@@ -189,6 +165,8 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
   const analyserRef = useRef<any>(null);
   const micStreamRef = useRef<any>(null);
   const animFrameRef = useRef<any>(null);
+  const nativeListenersRef = useRef<any[]>([]);
+  const isNativeSpeechActiveRef = useRef(false);
 
   // 同步 ref 供闭包访问
   activeTranscriptRef.current = realtimeTranscript;
@@ -214,7 +192,66 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
       setVoiceSeconds((s) => s + 1);
     }, 1000);
 
-    // 接入真实麦克风声波检测 (Web Audio API Analyser)
+    // 1. Android 原生环境优先调用系统级 SpeechRecognizer (expo-speech-recognition)
+    if (ExpoSpeechRecognition) {
+      ExpoSpeechRecognition.requestPermissionsAsync()
+        .then((res: any) => {
+          if (res?.granted) {
+            if (nativeListenersRef.current.length > 0) {
+              nativeListenersRef.current.forEach((sub: any) => sub?.remove?.());
+              nativeListenersRef.current = [];
+            }
+
+            const resultSub = ExpoSpeechRecognition.addSpeechRecognitionListener(
+              'result',
+              (event: any) => {
+                const text = event.results?.[0]?.transcript;
+                if (text) {
+                  setRealtimeTranscript(text);
+                }
+              }
+            );
+
+            const volSub = ExpoSpeechRecognition.addSpeechRecognitionListener(
+              'volumechange',
+              (event: any) => {
+                const vol = typeof event.value === 'number' ? Math.max(0, event.value) : 10;
+                const dynamicWaves = [
+                  Math.max(6, Math.min(36, 8 + vol * 2.2)),
+                  Math.max(8, Math.min(36, 10 + vol * 2.8)),
+                  Math.max(10, Math.min(36, 12 + vol * 3.5)),
+                  Math.max(12, Math.min(38, 14 + vol * 4.0)),
+                  Math.max(8, Math.min(32, 10 + vol * 2.6)),
+                  Math.max(6, Math.min(28, 8 + vol * 2.0)),
+                  Math.max(10, Math.min(36, 12 + vol * 3.2)),
+                  Math.max(12, Math.min(38, 14 + vol * 3.8)),
+                  Math.max(8, Math.min(30, 10 + vol * 2.4)),
+                  Math.max(6, Math.min(24, 8 + vol * 1.8)),
+                ];
+                setAudioWaves(dynamicWaves);
+              }
+            );
+
+            nativeListenersRef.current = [resultSub, volSub];
+
+            ExpoSpeechRecognition.start({
+              lang: 'zh-CN',
+              interimResults: true,
+              continuous: true,
+              requiresOnDeviceRecognition: false,
+              addsPunctuation: true,
+            }).catch((e: any) => {
+              console.log('ExpoSpeechRecognition start error in NotesScreen:', e);
+            });
+
+            isNativeSpeechActiveRef.current = true;
+          }
+        })
+        .catch(() => {});
+      return;
+    }
+
+    // 2. Web 浏览器端接入 Web Audio 与 Web Speech API
     if (
       typeof navigator !== 'undefined' &&
       navigator.mediaDevices &&
@@ -253,7 +290,6 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         .catch(() => {});
     }
 
-    // 尝试接入浏览器 Web Speech API
     if (
       typeof window !== 'undefined' &&
       ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)
@@ -284,43 +320,34 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         return;
       } catch (e) {}
     }
-
-    // 仿真听写流（在无麦克风权限或原生模拟下）
-    const phrases = [
-      '老师强调多元函数全微分的充要条件是偏导数连续，',
-      '注意课后习题第4题关于梯度向量与等值面法向量的几何推导。',
-      '期末大作业需在周五前提交至教学平台。',
-    ];
-    let pIdx = 0;
-    const simInterval = setInterval(() => {
-      if (pIdx < phrases.length) {
-        setRealtimeTranscript((prev) => (prev ? prev + ' ' + phrases[pIdx] : phrases[pIdx]));
-        pIdx++;
-      } else {
-        clearInterval(simInterval);
-      }
-    }, 1100);
-    (recognitionRef as any).current = { simInterval };
   };
 
   // 停止录音并将识别文字精确插入到当前光标位置
   const finishRecordingAndInsert = (insert: boolean = true) => {
     clearInterval(timerRef.current);
 
+    if (ExpoSpeechRecognition && isNativeSpeechActiveRef.current) {
+      try {
+        ExpoSpeechRecognition.stop();
+      } catch (e) {}
+      if (nativeListenersRef.current.length > 0) {
+        nativeListenersRef.current.forEach((sub: any) => sub?.remove?.());
+        nativeListenersRef.current = [];
+      }
+      isNativeSpeechActiveRef.current = false;
+    }
+
     if (recognitionRef.current) {
       try {
         if (recognitionRef.current.stop) {
           recognitionRef.current.stop();
-        }
-        if (recognitionRef.current.simInterval) {
-          clearInterval(recognitionRef.current.simInterval);
         }
       } catch (e) {}
       recognitionRef.current = null;
     }
 
     const rawText = activeTranscriptRef.current.trim();
-    const textToInsert = rawText || '老师强调了本节课核心推导公式与模型架构。';
+    const textToInsert = rawText;
 
     if (insert && textToInsert) {
       // 插入到当前光标位置 cursorSelection
@@ -468,45 +495,57 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     setEditorVisible(true);
   };
 
-  // 保存随堂笔记
+  // 保存随堂笔记（用户要求：确认保存功能正常，标题空时自动提取内容第一行，并持久化到本地）
   const handleSaveNote = () => {
-    if (!inputTitle.trim()) return;
+    const finalTitle =
+      inputTitle.trim() ||
+      inputContent.trim().split('\n')[0].substring(0, 24) ||
+      '新建随堂笔记';
 
+    let updatedNotes: NoteItem[] = [];
     if (editingNoteId) {
-      setNotes((prev) =>
-        prev.map((n) =>
-          n.id === editingNoteId
-            ? {
-                ...n,
-                courseName: inputCourseName,
-                title: inputTitle,
-                content: inputContent,
-                type: showCanvas || drawStrokes.length > 0 ? 'freeform' : 'text',
-              }
-            : n
-        )
+      updatedNotes = notes.map((n) =>
+        n.id === editingNoteId
+          ? {
+              ...n,
+              courseName: inputCourseName,
+              title: finalTitle,
+              content: inputContent,
+              type: (showCanvas || drawStrokes.length > 0 ? 'freeform' : 'text') as 'freeform' | 'text',
+            }
+          : n
       );
     } else {
       const newNote: NoteItem = {
         id: `n-${Date.now()}`,
         courseName: inputCourseName,
-        title: inputTitle,
+        title: finalTitle,
         date: '刚刚',
         content: inputContent,
         tags: ['随堂笔记'],
-        type: showCanvas || drawStrokes.length > 0 ? 'freeform' : 'text',
+        type: (showCanvas || drawStrokes.length > 0 ? 'freeform' : 'text') as 'freeform' | 'text',
       };
-      setNotes((prev) => [newNote, ...prev]);
+      updatedNotes = [newNote, ...notes];
     }
+    setNotes(updatedNotes);
+    AsyncStorage.setItem('@kexingqiu_notes', JSON.stringify(updatedNotes));
     setEditorVisible(false);
+    setToastMessage('✅ 随堂笔记已保存');
+    setTimeout(() => setToastMessage(null), 2500);
   };
 
-  // 文件夹分类列表（按要求全部改为“笔记”）
+  // 文件夹分类列表（基于用户实际笔记动态生成，彻底去除预设课程）
+  const uniqueCourses = Array.from(
+    new Set(notes.map((n) => n.courseName).filter((c) => c && c !== '未关联课程'))
+  );
   const folderList = [
     { id: 'all', name: '所有笔记', icon: 'folder', count: notes.length },
-    { id: '高等数学', name: '高等数学', icon: 'calculator-outline', count: notes.filter((n) => n.courseName.includes('数学')).length },
-    { id: '商务韩语', name: '商务韩语', icon: 'chatbubbles-outline', count: notes.filter((n) => n.courseName.includes('韩语')).length },
-    { id: '系统结构', name: '计算机系统', icon: 'hardware-chip-outline', count: notes.filter((n) => n.courseName.includes('系统')).length },
+    ...uniqueCourses.map((c) => ({
+      id: c,
+      name: c,
+      icon: 'document-text-outline',
+      count: notes.filter((n) => n.courseName === c).length,
+    })),
   ];
 
   const filteredNotes = notes.filter((item) => {
@@ -571,6 +610,14 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         </View>
       </View>
 
+      {/* 提醒事项 Toast 浮条 */}
+      {toastMessage && (
+        <View style={styles.toastFloatBar}>
+          <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" />
+          <Text style={styles.toastText}>{toastMessage}</Text>
+        </View>
+      )}
+
       {/* 文件夹分类横滑胶囊条 */}
       <View style={styles.folderStripArea}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.folderScroll}>
@@ -613,7 +660,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
           },
         ]}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: 96 }}
       >
         {filteredNotes.map((note) => {
           const courseColor = getCourseColorScheme(note.courseName);
@@ -1201,15 +1248,19 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
             onSave={(data) => {
               const newNote: NoteItem = {
                 id: `n-${Date.now()}`,
-                courseName: freeformTargetCourse,
-                title: data.title,
+                courseName: freeformTargetCourse || '未关联课程',
+                title: data.title || '无边记手绘脑图',
                 date: '刚刚',
-                content: `【无边记无限画纸】包含 ${data.notesCount} 张彩色便签，${data.strokesCount} 段手绘架构笔迹。`,
+                content: `【无边记无限画纸】包含 ${data.notes.length} 张彩色便签，${data.strokes.length} 段手绘架构笔迹。`,
                 tags: ['无边记手写', '思维导图'],
                 type: 'freeform',
               };
-              setNotes((prev) => [newNote, ...prev]);
+              const updated = [newNote, ...notes];
+              setNotes(updated);
+              AsyncStorage.setItem('@kexingqiu_notes', JSON.stringify(updated));
               setFreeformModalVisible(false);
+              setToastMessage('✅ 无边记手写脑图已保存');
+              setTimeout(() => setToastMessage(null), 2500);
             }}
           />
         </Modal>
@@ -1222,6 +1273,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8FAFC',
+  },
+  toastFloatBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1E293B',
+    marginHorizontal: 16,
+    marginTop: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: Rounded.pill,
+    gap: 6,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  toastText: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    fontWeight: '600',
+    flex: 1,
   },
   heroHeader: {
     backgroundColor: Colors.primary,

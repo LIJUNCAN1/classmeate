@@ -30,6 +30,12 @@ yarn-error.*
 .DS_Store
 *.pem
 
+# APK
+*.apk
+android/app/build/
+android/.gradle/
+test-*.js
+
 # local env files
 .env*.local
 

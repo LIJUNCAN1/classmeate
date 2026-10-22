@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Classmeate",
+    "name": "课星球",
     "slug": "classmeate",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,6 +21,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-speech-recognition"
+    ]
   }
 }

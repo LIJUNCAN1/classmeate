@@ -4,13 +4,14 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ScheduleScreen } from './src/screens/ScheduleScreen';
 import { NotesScreen } from './src/screens/NotesScreen';
 import { ToolsScreen } from './src/screens/ToolsScreen';
+import { ProfileScreen } from './src/screens/ProfileScreen';
 import { BottomNavBar, MainTabType } from './src/components/BottomNavBar';
 import { Colors } from './src/constants/theme';
 import { AnimatedSplashScreen } from './src/components/AnimatedSplashScreen';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
-  // 底部三个精简页面：课程表、笔记、工具
+  // 底部精简页面：课程表、笔记、工具、个人中心
   const [activeTab, setActiveTab] = useState<MainTabType>('schedule');
   const [pendingNoteCourse, setPendingNoteCourse] = useState<string | undefined>(undefined);
 
@@ -33,12 +34,14 @@ export default function App() {
               initialCourseName={pendingNoteCourse}
               onClearInitialCourse={() => setPendingNoteCourse(undefined)}
             />
-          ) : (
+          ) : activeTab === 'tools' ? (
             <ToolsScreen />
+          ) : (
+            <ProfileScreen onNavigateToTab={setActiveTab} />
           )}
         </View>
 
-        {/* 底部 3 标签导航栏 (课程表 / 笔记 / 工具) */}
+        {/* 底部悬浮胶囊导航栏（参考图悬浮按钮，带滑动切换动画） */}
         <BottomNavBar
           activeTab={activeTab}
           onTabChange={(tabId) => setActiveTab(tabId)}
