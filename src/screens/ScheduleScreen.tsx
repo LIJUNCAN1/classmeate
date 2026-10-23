@@ -552,8 +552,8 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     const finishedCount = Math.max(0, totalCount - remainingCount);
     const progressPercent = totalCount > 0 ? Math.round((finishedCount / totalCount) * 100) : 100;
 
-    // 计算放学时间与倒计时（用户要求：今日无排课改成今日没课）
-    let dismissalText = '今日没课';
+    // 计算放学时间与倒计时（用户要求：最顶部改成休息时间）
+    let dismissalText = '休息时间';
     if (totalCount > 0) {
       const lastCourse = realTodayCourses[realTodayCourses.length - 1];
       const lastEnd = lastCourse.endTime || todayEndTime || '17:40';
@@ -852,7 +852,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                       <Ionicons name="time-outline" size={16} color="#16A34A" style={{ marginRight: 6 }} />
                       <Text style={styles.summaryCollapsedTitle}>
                         {todayRemainingSummary.remainingCount === 0 ? (
-                          '今天没课了'
+                          '没课了'
                         ) : (
                           <>
                             剩余 <Text style={styles.summaryCollapsedHighlight}>{todayRemainingSummary.remainingCount}</Text> 节课
@@ -888,17 +888,17 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                         resizeMode="contain"
                       />
 
-                      {/* 左侧信息列（严格从上到下：1.距离放学时间 2.剩余X节课 3.今日计划 4.进度条） */}
+                      {/* 左侧信息列（严格从上到下：1.距离放学时间 2.剩余X节课 3.今日课程 4.进度条） */}
                       <View style={styles.summaryLeftCol}>
-                        {/* 第1行：距离放学时间 / 今日没课 */}
+                        {/* 第1行：距离放学时间 / 休息时间 */}
                         <View style={styles.summaryDismissalRow}>
                           <Text style={styles.summaryDismissalText}>{todayRemainingSummary.dismissalText}</Text>
                         </View>
 
-                        {/* 第2行：剩余X节课（纯中文大字粗体，用户要求剩余0节课时显示今天没课了） */}
+                        {/* 第2行：剩余X节课（纯中文大字粗体，用户要求剩余0节课时显示没课了） */}
                         <View style={styles.summaryCountRow}>
                           {todayRemainingSummary.remainingCount === 0 ? (
-                            <Text style={styles.summaryClassesBigText}>今天没课了</Text>
+                            <Text style={styles.summaryClassesBigText}>没课了</Text>
                           ) : (
                             <Text style={styles.summaryClassesBigText}>
                               剩余 <Text style={styles.summaryClassesBigNum}>{todayRemainingSummary.remainingCount}</Text> 节课
@@ -906,9 +906,9 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                           )}
                         </View>
 
-                        {/* 第3行：今日计划与完成进度比例 */}
+                        {/* 第3行：今日课程与完成进度比例（用户要求：今日计划改成今日课程） */}
                         <View style={styles.summaryPlanRow}>
-                          <Text style={styles.summaryPlanLabel}>今日计划</Text>
+                          <Text style={styles.summaryPlanLabel}>今日课程</Text>
                           <Text style={styles.summaryPlanRatio}>
                             {todayRemainingSummary.finishedCount}/{Math.max(todayRemainingSummary.totalCount, 1)}
                           </Text>
@@ -939,9 +939,9 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                 )}
               </View>
 
-              {/* 当天课程列表：随选中日期动态切换 */}
+              {/* 当天课程列表：随选中日期动态切换（无数据时绝对定位固定位置，收起或展开卡片绝对不晃动位移） */}
               {coursesList.length === 0 ? (
-                <View style={styles.emptyScheduleCard}>
+                <View style={styles.emptyScheduleCardFixed}>
                   <Image
                     source={require('../../assets/empty-schedule-404.png')}
                     style={[styles.emptyScheduleImage, isTablet && styles.emptyScheduleImageTablet]}
@@ -959,7 +959,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                 </View>
               ) : dayCourses.length === 0 ? (
                 /* 图3无课程显示的icon已按要求改成图4(404小绿怪插画)，并且完全去掉了外框与阴影卡片 */
-                <View style={styles.noCoursesContainer}>
+                <View style={styles.emptyScheduleCardFixed}>
                   <Image
                     source={require('../../assets/empty-schedule-404.png')}
                     style={[styles.emptyScheduleImage, isTablet && styles.emptyScheduleImageTablet]}
@@ -1697,6 +1697,8 @@ const styles = StyleSheet.create({
   scheduleSection: {
     paddingTop: 4,
     paddingBottom: 96,
+    position: 'relative',
+    minHeight: 560,
   },
   scheduleHeaderRow: {
     flexDirection: 'row',
@@ -1754,6 +1756,19 @@ const styles = StyleSheet.create({
   },
   timelineList: {
     paddingLeft: 4,
+  },
+  emptyScheduleCardFixed: {
+    position: 'absolute',
+    top: 172,
+    left: 0,
+    right: 0,
+    backgroundColor: 'transparent',
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    width: '100%',
+    maxWidth: 520,
   },
   emptyScheduleCard: {
     backgroundColor: 'transparent',
