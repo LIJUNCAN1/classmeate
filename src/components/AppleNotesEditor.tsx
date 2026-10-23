@@ -14,6 +14,8 @@ import {
 import { Colors, Rounded, Shadows, getCourseColorScheme } from '../constants/theme';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { loadScheduleData } from '../services/scheduleStorage';
+import { Course } from '../types/schedule';
 
 let ExpoSpeechRecognition: any = null;
 try {
@@ -30,17 +32,6 @@ export interface AppleNotesEditorProps {
   onClose: () => void;
   onSave: (note: { courseName: string; title: string; content: string }) => void;
 }
-
-const COURSES_CATALOG = [
-  { name: '高等数学 (AI与数据)', category: '必修课', teacher: '张晓华 教授', time: '周一 08:00' },
-  { name: '计算机系统结构', category: '专业课', teacher: '王工 讲师', time: '周一 14:00' },
-  { name: '大学英语写作与思辨', category: '通识课', teacher: 'Sarah 外教', time: '周二 10:00' },
-  { name: '成人商务韩语', category: '选修课', teacher: 'Jennifer 老师', time: '周三 09:00' },
-  { name: 'TOPIK专攻精讲', category: '选修课', teacher: 'Stefanee 讲师', time: '周三 13:30' },
-  { name: '韩语口语突破1v1', category: '选修课', teacher: 'Cipher 老师', time: '周三 16:30' },
-  { name: '数据结构与算法', category: '专业课', teacher: '李院长', time: '周四 08:00' },
-  { name: '交互设计与UI艺术', category: '选修课', teacher: '陈总监', time: '周五 10:00' },
-];
 
 export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
   visible,
@@ -60,6 +51,31 @@ export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
   const [inputContent, setInputContent] = useState(initialContent || '');
   const [contentHeight, setContentHeight] = useState(380);
   const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
+
+  const [importedCourses, setImportedCourses] = useState<Course[]>([]);
+  const [customCourseInput, setCustomCourseInput] = useState('');
+
+  useEffect(() => {
+    loadScheduleData().then((data) => {
+      if (data && Array.isArray(data.courses)) {
+        setImportedCourses(data.courses);
+      }
+    });
+  }, []);
+
+  const catalogCourses = React.useMemo(() => {
+    const map = new Map<string, { name: string; teacher?: string; location?: string }>();
+    importedCourses.forEach((c) => {
+      if (c.name && !map.has(c.name)) {
+        map.set(c.name, {
+          name: c.name,
+          teacher: c.teacher || '',
+          location: c.location || '',
+        });
+      }
+    });
+    return Array.from(map.values());
+  }, [importedCourses]);
 
   useEffect(() => {
     if (initialCourseName) {
@@ -454,9 +470,6 @@ export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
           />
 
           <View style={styles.metaInfoRow}>
-            <Text style={styles.metaDateText}>
-              {new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' })} · {inputContent.length} 字
-            </Text>
 
             {/* 文本对齐与段落工具条（按要求：全部使用 icon 显示，不要加文字写在按键下面） */}
             <View style={styles.editorFormatToolbar}>
@@ -753,62 +766,91 @@ export const AppleNotesEditor: React.FC<AppleNotesEditorProps> = ({
               </View>
 
               <ScrollView style={styles.drawerCourseList} showsVerticalScrollIndicator={false}>
-                {COURSES_CATALOG.map((courseItem) => {
-                  const isSelected = inputCourseName.includes(courseItem.name.slice(0, 4));
+                {catalogCourses.length === 0 ? (
+                  <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 24, paddingHorizontal: 16 }}>
+                    <Ionicons name="school-outline" size={32} color="#94A3B8" style={{ marginBottom: 6 }} />
+                    <Text style={{ fontSize: 14, fontWeight: '700', color: '#475569', marginBottom: 4 }}>尚未导入教务课程</Text>
+                    <Text style={{ fontSize: 12, color: '#94A3B8', textAlign: 'center' }}>可在课表页面一键导入，或在下方直接输入课程名称</Text>
+                  </View>
+                ) : (
+                  catalogCourses.map((courseItem) => {
+                    const isSelected = inputCourseName === courseItem.name;
 
-                  return (
-                    <TouchableOpacity
-                      key={courseItem.name}
-                      style={[
-                        styles.drawerCourseItem,
-                        isSelected && styles.drawerCourseItemActive,
-                      ]}
-                      onPress={() => {
-                        setInputCourseName(courseItem.name);
-                        setCourseDrawerVisible(false);
-                      }}
-                      activeOpacity={0.7}
-                    >
-                      <View style={styles.drawerItemLeft}>
-                        {/* 图4要求：高等数学等前面的icon/圆点已去掉 */}
-                        <View style={styles.courseItemMeta}>
-                          <View style={styles.courseItemTitleRow}>
+                    return (
+                      <TouchableOpacity
+                        key={courseItem.name}
+                        style={[
+                          styles.drawerCourseItem,
+                          isSelected && styles.drawerCourseItemActive,
+                        ]}
+                        onPress={() => {
+                          setInputCourseName(courseItem.name);
+                          setCourseDrawerVisible(false);
+                        }}
+                        activeOpacity={0.7}
+                      >
+                        <View style={styles.drawerItemLeft}>
+                          <View style={styles.courseItemMeta}>
                             <Text style={styles.courseItemName}>{courseItem.name}</Text>
-                            <View
-                              style={[
-                                styles.categoryMiniBadge,
-                                courseItem.category === '必修课' && { backgroundColor: '#EFF6FF' },
-                                courseItem.category === '选修课' && { backgroundColor: '#F3E8FF' },
-                                courseItem.category === '专业课' && { backgroundColor: '#ECFDF5' },
-                                courseItem.category === '通识课' && { backgroundColor: '#FFFBEB' },
-                              ]}
-                            >
-                              <Text
-                                style={[
-                                  styles.categoryMiniText,
-                                  courseItem.category === '必修课' && { color: '#2563EB' },
-                                  courseItem.category === '选修课' && { color: '#9333EA' },
-                                  courseItem.category === '专业课' && { color: '#059669' },
-                                  courseItem.category === '通识课' && { color: '#D97706' },
-                                ]}
-                              >
-                                {courseItem.category}
+                            {courseItem.teacher ? (
+                              <Text style={styles.courseItemTeacher}>
+                                {courseItem.teacher} {courseItem.location ? `· ${courseItem.location}` : ''}
                               </Text>
-                            </View>
+                            ) : null}
                           </View>
-
-                          <Text style={styles.courseItemTeacher}>
-                            {courseItem.teacher} · {courseItem.time}
-                          </Text>
                         </View>
-                      </View>
 
-                      {isSelected && (
-                        <Ionicons name="checkmark-circle" size={20} color={Colors.primary} />
-                      )}
+                        {isSelected && (
+                          <Ionicons name="checkmark-circle" size={20} color={Colors.primary} />
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })
+                )}
+
+                {/* 自定义输入课程名称选项 */}
+                <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: '#E2E8F0' }}>
+                  <Text style={{ fontSize: 12, fontWeight: '700', color: '#475569', marginBottom: 8 }}>自定义课程名称</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <TextInput
+                      style={{ flex: 1, backgroundColor: '#F8FAFC', borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, fontSize: 13, color: '#0F172A' }}
+                      placeholder="输入课程名称..."
+                      placeholderTextColor="#94A3B8"
+                      value={customCourseInput}
+                      onChangeText={setCustomCourseInput}
+                    />
+                    <TouchableOpacity
+                      style={{ backgroundColor: Colors.primary, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 8 }}
+                      onPress={() => {
+                        if (customCourseInput.trim()) {
+                          setInputCourseName(customCourseInput.trim());
+                          setCourseDrawerVisible(false);
+                          setCustomCourseInput('');
+                        }
+                      }}
+                    >
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: '#FFFFFF' }}>使用</Text>
                     </TouchableOpacity>
-                  );
-                })}
+                  </View>
+                </View>
+
+                {/* 未关联课程选项 */}
+                <TouchableOpacity
+                  style={[
+                    styles.drawerCourseItem,
+                    inputCourseName === '未关联课程' && styles.drawerCourseItemActive,
+                    { marginTop: 8 }
+                  ]}
+                  onPress={() => {
+                    setInputCourseName('未关联课程');
+                    setCourseDrawerVisible(false);
+                  }}
+                >
+                  <Text style={[styles.courseItemName, { color: '#64748B' }]}>暂不关联课程（独立笔记）</Text>
+                  {inputCourseName === '未关联课程' && (
+                    <Ionicons name="checkmark-circle" size={20} color={Colors.primary} />
+                  )}
+                </TouchableOpacity>
               </ScrollView>
             </View>
           </TouchableOpacity>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -10,14 +10,18 @@ import {
   Platform,
   StatusBar as RNStatusBar,
   Animated,
+  Easing,
   PanResponder,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors, Rounded, Shadows, getCourseColorScheme } from '../constants/theme';
+import { Colors, Rounded, Shadows } from '../constants/theme';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Path } from 'react-native-svg';
 import { AnimatedCheckmark } from '../components/AnimatedCheckmark';
-import { FreeformCanvas } from '../components/FreeformCanvas';
+import { FreeformCanvas, DrawingStroke, StrokePoint } from '../components/FreeformCanvas';
+import { loadScheduleData } from '../services/scheduleStorage';
+import { Course } from '../types/schedule';
 
 let ExpoSpeechRecognition: any = null;
 try {
@@ -35,6 +39,7 @@ export interface NoteItem {
   tags: string[];
   type: 'text' | 'freeform';
   freeformPaths?: string[];
+  doodleStrokes?: DrawingStroke[];
   hasAudio?: boolean;
   hasImages?: boolean;
 }
@@ -44,17 +49,84 @@ interface NotesScreenProps {
   onClearInitialCourse?: () => void;
 }
 
-// 关联课程列表（含规范类别）
-const COURSES_CATALOG = [
-  { name: '高等数学 (AI与数据)', category: '必修课', teacher: '张晓华 教授', time: '周一 08:00' },
-  { name: '计算机系统结构', category: '专业课', teacher: '王工 讲师', time: '周一 14:00' },
-  { name: '大学英语写作与思辨', category: '通识课', teacher: 'Sarah 外教', time: '周二 10:00' },
-  { name: '成人商务韩语', category: '选修课', teacher: 'Jennifer 老师', time: '周三 09:00' },
-  { name: 'TOPIK专攻精讲', category: '选修课', teacher: 'Stefanee 讲师', time: '周三 13:30' },
-  { name: '韩语口语突破1v1', category: '选修课', teacher: 'Cipher 老师', time: '周三 16:30' },
-  { name: '数据结构与算法', category: '专业课', teacher: '李院长', time: '周四 08:00' },
-  { name: '交互设计与UI艺术', category: '选修课', teacher: '陈总监', time: '周五 10:00' },
+// 饱满高辨识度纯色课程标签色板（用户要求：纯色底加白字）
+const SOLID_COURSE_COLORS = [
+  '#059669', // 翡翠绿
+  '#2563EB', // 宝蓝
+  '#7C3AED', // 典雅紫
+  '#D97706', // 琥珀黄
+  '#DB2777', // 玫红
+  '#0891B2', // 青蓝
+  '#4F46E5', // 靛蓝
+  '#0D9488', // 墨青
+  '#EA580C', // 暖橙
 ];
+
+export function getSolidCourseColor(name: string): string {
+  if (!name || name === '未关联课程') return '#64748B';
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % SOLID_COURSE_COLORS.length;
+  return SOLID_COURSE_COLORS[index];
+}
+
+// 真实笔刷压感轮廓曲线算法，计算切向法向量并生成饱满带压感的闭合贝塞尔 Ribbon 曲线
+function strokeToOutlinePath(points: StrokePoint[], defaultWidth: number = 3.5): string {
+  if (!points || points.length === 0) return '';
+  if (points.length === 1) {
+    const p = points[0];
+    const r = (p.w || defaultWidth) / 2;
+    return `M ${p.x - r} ${p.y} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 ${-r * 2} 0 Z`;
+  }
+
+  const leftPts: { x: number; y: number }[] = [];
+  const rightPts: { x: number; y: number }[] = [];
+
+  for (let i = 0; i < points.length; i++) {
+    const curr = points[i];
+    let dx = 0;
+    let dy = 0;
+
+    if (i === 0) {
+      dx = points[1].x - curr.x;
+      dy = points[1].y - curr.y;
+    } else if (i === points.length - 1) {
+      dx = curr.x - points[i - 1].x;
+      dy = curr.y - points[i - 1].y;
+    } else {
+      dx = points[i + 1].x - points[i - 1].x;
+      dy = points[i + 1].y - points[i - 1].y;
+    }
+
+    const len = Math.hypot(dx, dy) || 1;
+    const nx = -dy / len;
+    const ny = dx / len;
+    const halfW = Math.max(1, (curr.w || defaultWidth) / 2);
+
+    leftPts.push({ x: curr.x + nx * halfW, y: curr.y + ny * halfW });
+    rightPts.push({ x: curr.x - nx * halfW, y: curr.y - ny * halfW });
+  }
+
+  let d = `M ${leftPts[0].x} ${leftPts[0].y}`;
+  for (let i = 1; i < leftPts.length; i++) {
+    const midX = (leftPts[i - 1].x + leftPts[i].x) / 2;
+    const midY = (leftPts[i - 1].y + leftPts[i].y) / 2;
+    d += ` Q ${leftPts[i - 1].x} ${leftPts[i - 1].y}, ${midX} ${midY}`;
+  }
+  d += ` L ${leftPts[leftPts.length - 1].x} ${leftPts[leftPts.length - 1].y}`;
+  d += ` L ${rightPts[rightPts.length - 1].x} ${rightPts[rightPts.length - 1].y}`;
+
+  for (let i = rightPts.length - 2; i >= 0; i--) {
+    const midX = (rightPts[i + 1].x + rightPts[i].x) / 2;
+    const midY = (rightPts[i + 1].y + rightPts[i].y) / 2;
+    d += ` Q ${rightPts[i + 1].x} ${rightPts[i + 1].y}, ${midX} ${midY}`;
+  }
+  d += ` L ${rightPts[0].x} ${rightPts[0].y} Z`;
+
+  return d;
+}
 
 export const NotesScreen: React.FC<NotesScreenProps> = ({
   initialCourseName,
@@ -66,7 +138,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     Platform.OS === 'android' ? (RNStatusBar.currentHeight || 40) : 48
   );
 
-  // 顶部生机草木绿流体色块向下浮现入场动效（与课表页对齐）
+  // 顶部生机草木绿流体色块向下浮现入场动效（单调递增，绝不回弹产生白边）
   const headerDropAnim = useRef(new Animated.Value(-28)).current;
   const headerFadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -81,26 +153,26 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     fadeAnim.setValue(0);
 
     Animated.parallel([
-      Animated.spring(headerDropAnim, {
+      Animated.timing(headerDropAnim, {
         toValue: 0,
-        friction: 7,
-        tension: 85,
+        duration: 250,
+        easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }),
       Animated.timing(headerFadeAnim, {
         toValue: 1,
-        duration: 260,
+        duration: 250,
         useNativeDriver: true,
       }),
-      Animated.spring(dropAnim, {
+      Animated.timing(dropAnim, {
         toValue: 0,
-        friction: 7,
-        tension: 85,
+        duration: 250,
+        easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }),
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 260,
+        duration: 250,
         useNativeDriver: true,
       }),
     ]).start();
@@ -156,15 +228,117 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
 
   // 抽屉状态：选择关联课程
   const [courseDrawerVisible, setCourseDrawerVisible] = useState(false);
+  const [customCourseInput, setCustomCourseInput] = useState('');
+  const [importedCourses, setImportedCourses] = useState<Course[]>([]);
 
-  // 手绘画板展开状态（整合在编辑器内）
-  const [showCanvas, setShowCanvas] = useState(false);
-  const [drawStrokes, setDrawStrokes] = useState<{ x: number; y: number }[]>([]);
-  const [penColor, setPenColor] = useState('#1F2937');
+  // 动态从本地加载真实导入的课程列表（彻底去除预设假课程）
+  const loadCourses = async () => {
+    try {
+      const data = await loadScheduleData();
+      if (data && Array.isArray(data.courses)) {
+        setImportedCourses(data.courses);
+      }
+    } catch (e) {}
+  };
 
-  // 苹果 Freeform 无边记无限画布状态（默认空白）
+  useEffect(() => {
+    loadCourses();
+  }, []);
+
+  const catalogCourses = useMemo(() => {
+    const map = new Map<string, { name: string; teacher?: string; location?: string }>();
+    importedCourses.forEach((c) => {
+      if (c.name && !map.has(c.name)) {
+        map.set(c.name, {
+          name: c.name,
+          teacher: c.teacher || '',
+          location: c.location || '',
+        });
+      }
+    });
+    return Array.from(map.values());
+  }, [importedCourses]);
+
+  // 涂鸦手绘覆盖模式（放在右下角语音输入上方，打开可在输入的文本上直接写字涂鸦）
+  const [isDoodleMode, setIsDoodleMode] = useState(false);
+  const [doodleStrokes, setDoodleStrokes] = useState<DrawingStroke[]>([]);
+  const [currentDoodleStroke, setCurrentDoodleStroke] = useState<StrokePoint[]>([]);
+
+  const isDoodleModeRef = useRef(isDoodleMode);
+  isDoodleModeRef.current = isDoodleMode;
+  const doodleStrokesRef = useRef<DrawingStroke[]>([]);
+  doodleStrokesRef.current = doodleStrokes;
+  const currentDoodleStrokeRef = useRef<StrokePoint[]>([]);
+
+  // 涂鸦手势（支持真实笔刷压感，在文本上方自由画图/写公式）
+  const doodlePanResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => isDoodleModeRef.current,
+      onMoveShouldSetPanResponder: () => isDoodleModeRef.current,
+      onPanResponderGrant: (evt) => {
+        const { locationX, locationY } = evt.nativeEvent;
+        const initialPt: StrokePoint = {
+          x: locationX,
+          y: locationY,
+          w: 3.5,
+          t: Date.now(),
+        };
+        currentDoodleStrokeRef.current = [initialPt];
+        setCurrentDoodleStroke([initialPt]);
+      },
+      onPanResponderMove: (evt) => {
+        const { locationX, locationY } = evt.nativeEvent;
+        const now = Date.now();
+        const pts = currentDoodleStrokeRef.current;
+        const lastPt = pts.length > 0 ? pts[pts.length - 1] : null;
+
+        let w = 3.5;
+        if (lastPt) {
+          const dist = Math.hypot(locationX - lastPt.x, locationY - lastPt.y);
+          if (dist < 1.0) return;
+          const dt = Math.max(10, now - (lastPt.t || now - 16));
+          const speed = dist / dt;
+
+          let speedFactor = 1.0;
+          if (speed > 1.2) {
+            speedFactor = Math.max(0.5, 1.2 / speed);
+          } else if (speed < 0.4) {
+            speedFactor = Math.min(1.5, 1.0 + (0.4 - speed) * 1.5);
+          }
+          const force = evt.nativeEvent.force;
+          if (typeof force === 'number' && force > 0) {
+            speedFactor *= Math.min(1.8, Math.max(0.5, force * 1.6));
+          }
+          w = 3.5 * speedFactor;
+          if (lastPt.w) {
+            w = lastPt.w * 0.35 + w * 0.65;
+          }
+        }
+        const nextPt: StrokePoint = { x: locationX, y: locationY, w, t: now };
+        pts.push(nextPt);
+        setCurrentDoodleStroke([...pts]);
+      },
+      onPanResponderRelease: () => {
+        const pts = currentDoodleStrokeRef.current;
+        if (pts.length > 0) {
+          const newStroke: DrawingStroke = {
+            points: [...pts],
+            color: '#1E293B',
+            width: 3.5,
+          };
+          const next = [...doodleStrokesRef.current, newStroke];
+          doodleStrokesRef.current = next;
+          setDoodleStrokes(next);
+          currentDoodleStrokeRef.current = [];
+          setCurrentDoodleStroke([]);
+        }
+      },
+    })
+  ).current;
+
+  // 苹果 Freeform 无边记无限画布状态（默认空白，无预设标题）
   const [freeformModalVisible, setFreeformModalVisible] = useState(false);
-  const [freeformTargetCourse, setFreeformTargetCourse] = useState('未关联课程');
+  const [freeformTargetCourse, setFreeformTargetCourse] = useState('');
   const [freeformTargetTitle, setFreeformTargetTitle] = useState('');
 
   // ================= 语音识别核心状态与交互 (图5 微信/iOS式全屏交互) =================
@@ -467,25 +641,9 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     })
   ).current;
 
-  // 手绘画板手势
-  const canvasPanResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: (evt) => {
-        const { locationX, locationY } = evt.nativeEvent;
-        setDrawStrokes((prev) => [...prev, { x: locationX, y: locationY }]);
-      },
-      onPanResponderMove: (evt) => {
-        const { locationX, locationY } = evt.nativeEvent;
-        setDrawStrokes((prev) => [...prev, { x: locationX, y: locationY }]);
-      },
-    })
-  ).current;
-
   // 打开笔记编辑
   const handleOpenNote = (note: NoteItem) => {
-    if (note.type === 'freeform') {
+    if (note.type === 'freeform' && (!note.content || note.content.includes('【无边记无限画纸】'))) {
       setFreeformTargetCourse(note.courseName);
       setFreeformTargetTitle(note.title);
       setFreeformModalVisible(true);
@@ -495,8 +653,9 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     setInputCourseName(note.courseName);
     setInputTitle(note.title);
     setInputContent(note.content);
-    setShowCanvas(false);
-    setDrawStrokes([]);
+    setDoodleStrokes(note.doodleStrokes || []);
+    doodleStrokesRef.current = note.doodleStrokes || [];
+    setIsDoodleMode(false);
     setCursorSelection({ start: note.content.length, end: note.content.length });
     setEditorVisible(true);
   };
@@ -507,8 +666,9 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     setInputCourseName('未关联课程');
     setInputTitle('');
     setInputContent('');
-    setShowCanvas(false);
-    setDrawStrokes([]);
+    setDoodleStrokes([]);
+    doodleStrokesRef.current = [];
+    setIsDoodleMode(false);
     setCursorSelection({ start: 0, end: 0 });
     setEditorVisible(true);
   };
@@ -529,7 +689,8 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
               courseName: inputCourseName,
               title: finalTitle,
               content: inputContent,
-              type: (showCanvas || drawStrokes.length > 0 ? 'freeform' : 'text') as 'freeform' | 'text',
+              doodleStrokes,
+              type: (doodleStrokes.length > 0 ? 'freeform' : 'text') as 'freeform' | 'text',
             }
           : n
       );
@@ -540,8 +701,9 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         title: finalTitle,
         date: '刚刚',
         content: inputContent,
+        doodleStrokes,
         tags: ['随堂笔记'],
-        type: (showCanvas || drawStrokes.length > 0 ? 'freeform' : 'text') as 'freeform' | 'text',
+        type: (doodleStrokes.length > 0 ? 'freeform' : 'text') as 'freeform' | 'text',
       };
       updatedNotes = [newNote, ...notes];
     }
@@ -578,14 +740,22 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* 顶部生机草木绿流体区域（带向下浮现入场动画） */}
+      {/* 顶部生机草木绿流体区域（带向下浮现入场动画，单调递增无回弹） */}
       <Animated.View
         style={[
           styles.heroHeader,
           {
             paddingTop: topPadding + 8,
             opacity: headerFadeAnim,
-            transform: [{ translateY: headerDropAnim }],
+            transform: [
+              {
+                translateY: headerDropAnim.interpolate({
+                  inputRange: [-100, 0, 100],
+                  outputRange: [-100, 0, 0],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ],
           },
         ]}
       >
@@ -593,12 +763,12 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
           <Text style={styles.screenMainTitle}>笔记</Text>
 
           <View style={styles.headerActionBtns}>
-            {/* 无边记快捷入口（图标与文字上下居中对齐） */}
+            {/* 无边记快捷入口（默认全新空白，无预设标题） */}
             <TouchableOpacity
               style={styles.greenFreeformBtn}
               onPress={() => {
-                setFreeformTargetCourse(COURSES_CATALOG[0].name);
-                setFreeformTargetTitle(`第 14 周 · ${COURSES_CATALOG[0].name} 脑力激荡`);
+                setFreeformTargetCourse('');
+                setFreeformTargetTitle('');
                 setFreeformModalVisible(true);
               }}
               activeOpacity={0.8}
@@ -698,7 +868,6 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         contentContainerStyle={{ paddingBottom: 96 }}
       >
         {filteredNotes.map((note) => {
-          const courseColor = getCourseColorScheme(note.courseName);
           return (
             <TouchableOpacity
               key={note.id}
@@ -707,17 +876,17 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
               onPress={() => handleOpenNote(note)}
             >
               <View style={styles.noteCardTopRow}>
-                {/* 课程标签：颜色严格对齐周课表 */}
+                {/* 课程标签：纯色底加白字（用户要求） */}
                 <View
                   style={[
                     styles.courseColorPill,
                     {
-                      backgroundColor: courseColor.bg,
-                      borderColor: courseColor.border,
+                      backgroundColor: getSolidCourseColor(note.courseName),
+                      borderWidth: 0,
                     },
                   ]}
                 >
-                  <Text style={[styles.courseColorPillText, { color: courseColor.text }]}>
+                  <Text style={styles.courseColorPillText}>
                     {note.courseName}
                   </Text>
                 </View>
@@ -729,9 +898,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
                 {note.title}
               </Text>
 
-              <Text style={styles.noteCardSnippet} numberOfLines={2}>
-                {note.content}
-              </Text>
+              {/* 用户要求：笔记的卡片去掉标题下面的说明 */}
 
               <View style={styles.noteCardFooter}>
                 <View style={styles.badgesRow}>
@@ -832,12 +999,8 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
               multiline={false}
             />
 
-            {/* 辅助信息与工具条 */}
+            {/* 辅助信息与工具条（已按用户要求去掉顶部的日期和字数显示） */}
             <View style={styles.metaInfoRow}>
-              <Text style={styles.metaDateText}>
-                {new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' })} · {inputContent.length} 字
-              </Text>
-
               {/* 文本对齐与段落工具条（按要求：全部使用 icon 显示，不要加文字写在按键下面） */}
               <View style={styles.editorFormatToolbar}>
                 {/* 对齐工具组 */}
@@ -918,104 +1081,112 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
                   </TouchableOpacity>
                 </View>
               </View>
+            </View>
 
-              <View style={styles.editorActionTools}>
-                {/* 展开/收起手绘涂鸦板 */}
-                <TouchableOpacity
-                  style={[styles.toolTogglePill, showCanvas && styles.toolTogglePillActive]}
-                  onPress={() => setShowCanvas((prev) => !prev)}
-                  activeOpacity={0.7}
-                >
-                  <Ionicons
-                    name="brush-outline"
-                    size={14}
-                    color={showCanvas ? '#FFFFFF' : '#4B5563'}
-                    style={{ marginRight: 4 }}
-                  />
-                  <Text style={[styles.toolToggleText, showCanvas && styles.toolToggleTextActive]}>
-                    {showCanvas ? '收起画板' : '涂鸦速记'}
-                  </Text>
-                </TouchableOpacity>
+            {/* 正文输入与覆盖涂鸦手绘层（无边框纯净文档，打开涂鸦开关可直接在文本上方自由写字） */}
+            <View style={styles.documentBodyWrapper}>
+              <TextInput
+                style={[
+                  styles.iosBodyInput,
+                  {
+                    textAlign,
+                    minHeight: Math.max(380, contentHeight),
+                  },
+                ]}
+                placeholder="在此开始记录课堂要点、推导过程... 也可使用底部语音速记直接在光标处填入。"
+                placeholderTextColor="#A0AEC0"
+                value={inputContent}
+                onChangeText={setInputContent}
+                multiline={true}
+                scrollEnabled={false}
+                textAlignVertical="top"
+                onContentSizeChange={(e) => {
+                  setContentHeight(e.nativeEvent.contentSize.height);
+                }}
+                onSelectionChange={(e) => {
+                  setCursorSelection(e.nativeEvent.selection);
+                }}
+              />
+
+              {/* 手绘涂鸦覆盖层：当右下角开关打开时，可直接在文本上方自由写字、批注、推导 */}
+              <View
+                style={StyleSheet.absoluteFill}
+                pointerEvents={isDoodleMode ? 'auto' : 'none'}
+                {...doodlePanResponder.panHandlers}
+              >
+                <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
+                  {doodleStrokes.map((s, idx) => (
+                    <Path
+                      key={`doodle-${idx}`}
+                      d={strokeToOutlinePath(s.points, s.width)}
+                      fill={s.color}
+                    />
+                  ))}
+                  {currentDoodleStroke.length > 0 && (
+                    <Path
+                      d={strokeToOutlinePath(currentDoodleStroke, 3.5)}
+                      fill="#1E293B"
+                    />
+                  )}
+                </Svg>
               </View>
             </View>
 
-            {/* 整合手绘板（展开时可直接在正文上方速记公式或手绘架构） */}
-            {showCanvas && (
-              <View style={styles.canvasSection}>
-                <View style={styles.canvasToolbar}>
-                  <Text style={styles.canvasHint}>🎨 随堂手绘板（在虚线区直接涂鸦）</Text>
-                  <View style={styles.colorPillsRow}>
-                    {['#1F2937', '#2563EB', '#10B981', '#DC2626'].map((col) => (
-                      <TouchableOpacity
-                        key={col}
-                        style={[
-                          styles.colorCircle,
-                          { backgroundColor: col },
-                          penColor === col && styles.colorCircleActive,
-                        ]}
-                        onPress={() => setPenColor(col)}
-                      />
-                    ))}
-                    <TouchableOpacity
-                      onPress={() => setDrawStrokes([])}
-                      style={styles.clearCanvasBtn}
-                    >
-                      <Text style={styles.clearCanvasText}>清空</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
-                <View style={styles.canvasSurface} {...canvasPanResponder.panHandlers}>
-                  {drawStrokes.length === 0 && (
-                    <View style={styles.canvasEmptyPlaceholder}>
-                      <Ionicons name="pencil-outline" size={24} color="#CBD5E1" />
-                      <Text style={styles.canvasEmptyText}>用手指在这里直接画图、写公式草稿</Text>
-                    </View>
-                  )}
-                  {drawStrokes.map((pt, idx) => (
-                    <View
-                      key={idx}
-                      style={{
-                        position: 'absolute',
-                        left: pt.x - 3,
-                        top: pt.y - 3,
-                        width: 6,
-                        height: 6,
-                        borderRadius: 3,
-                        backgroundColor: penColor,
-                      }}
-                    />
-                  ))}
-                </View>
-              </View>
-            )}
-
-            {/* 正文输入框：随文字一直往下延伸 */}
-            <TextInput
-              style={[
-                styles.iosBodyInput,
-                {
-                  textAlign,
-                  minHeight: Math.max(380, contentHeight),
-                },
-              ]}
-              placeholder="在此开始记录课堂要点、推导过程... 也可使用底部语音速记直接在光标处填入。"
-              placeholderTextColor="#A0AEC0"
-              value={inputContent}
-              onChangeText={setInputContent}
-              multiline={true}
-              scrollEnabled={false}
-              textAlignVertical="top"
-              onContentSizeChange={(e) => {
-                setContentHeight(e.nativeEvent.contentSize.height);
-              }}
-              onSelectionChange={(e) => {
-                setCursorSelection(e.nativeEvent.selection);
-              }}
-            />
-
             <View style={{ height: 180 }} />
           </ScrollView>
+
+          {/* 右下角涂鸦开关浮动工具（按用户要求：放在右下角，语音输入上面，打开可以在输入的文本上写字） */}
+          <View style={[styles.bottomRightDoodleAnchor, { bottom: Math.max(insets.bottom, 12) + 64 }]}>
+            {isDoodleMode && doodleStrokes.length > 0 && (
+              <TouchableOpacity
+                style={styles.doodleMiniActionBtn}
+                onPress={() => {
+                  const next = doodleStrokes.slice(0, -1);
+                  doodleStrokesRef.current = next;
+                  setDoodleStrokes(next);
+                }}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="arrow-undo-outline" size={16} color="#475569" />
+              </TouchableOpacity>
+            )}
+            {isDoodleMode && doodleStrokes.length > 0 && (
+              <TouchableOpacity
+                style={styles.doodleMiniActionBtn}
+                onPress={() => {
+                  doodleStrokesRef.current = [];
+                  setDoodleStrokes([]);
+                }}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="trash-outline" size={16} color="#EF4444" />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={[
+                styles.doodleToggleSwitch,
+                isDoodleMode && styles.doodleToggleSwitchActive,
+                Shadows.card,
+              ]}
+              onPress={() => setIsDoodleMode((prev) => !prev)}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name={isDoodleMode ? 'brush' : 'brush-outline'}
+                size={17}
+                color={isDoodleMode ? '#FFFFFF' : Colors.primary}
+                style={{ marginRight: 4 }}
+              />
+              <Text
+                style={[
+                  styles.doodleToggleSwitchText,
+                  isDoodleMode && styles.doodleToggleSwitchTextActive,
+                ]}
+              >
+                {isDoodleMode ? '涂鸦中' : '涂鸦'}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           {/* 底部语音交互条 */}
           <View style={[styles.bottomVoiceDock, { paddingBottom: Math.max(insets.bottom, 12) }]}>
@@ -1205,62 +1376,91 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
                 </View>
 
                 <ScrollView style={styles.drawerCourseList} showsVerticalScrollIndicator={false}>
-                  {COURSES_CATALOG.map((courseItem) => {
-                    const isSelected = inputCourseName.includes(courseItem.name.slice(0, 4));
+                  {catalogCourses.length === 0 ? (
+                    <View style={styles.emptyCourseDrawerNotice}>
+                      <Ionicons name="school-outline" size={32} color="#94A3B8" style={{ marginBottom: 6 }} />
+                      <Text style={styles.emptyCourseDrawerTitle}>尚未导入教务课程</Text>
+                      <Text style={styles.emptyCourseDrawerSub}>可在课表页面一键导入，或在下方直接输入课程名称</Text>
+                    </View>
+                  ) : (
+                    catalogCourses.map((courseItem) => {
+                      const isSelected = inputCourseName === courseItem.name;
 
-                    return (
-                      <TouchableOpacity
-                        key={courseItem.name}
-                        style={[
-                          styles.drawerCourseItem,
-                          isSelected && styles.drawerCourseItemActive,
-                        ]}
-                        onPress={() => {
-                          setInputCourseName(courseItem.name);
-                          setCourseDrawerVisible(false);
-                        }}
-                        activeOpacity={0.7}
-                      >
-                        <View style={styles.drawerItemLeft}>
-                          {/* 图4要求：高等数学等前面的icon/圆点已去掉 */}
-                          <View style={styles.courseItemMeta}>
-                            <View style={styles.courseItemTitleRow}>
+                      return (
+                        <TouchableOpacity
+                          key={courseItem.name}
+                          style={[
+                            styles.drawerCourseItem,
+                            isSelected && styles.drawerCourseItemActive,
+                          ]}
+                          onPress={() => {
+                            setInputCourseName(courseItem.name);
+                            setCourseDrawerVisible(false);
+                          }}
+                          activeOpacity={0.7}
+                        >
+                          <View style={styles.drawerItemLeft}>
+                            <View style={styles.courseItemMeta}>
                               <Text style={styles.courseItemName}>{courseItem.name}</Text>
-                              <View
-                                style={[
-                                  styles.categoryMiniBadge,
-                                  courseItem.category === '必修课' && { backgroundColor: '#EFF6FF' },
-                                  courseItem.category === '选修课' && { backgroundColor: '#F3E8FF' },
-                                  courseItem.category === '专业课' && { backgroundColor: '#ECFDF5' },
-                                  courseItem.category === '通识课' && { backgroundColor: '#FFFBEB' },
-                                ]}
-                              >
-                                <Text
-                                  style={[
-                                    styles.categoryMiniText,
-                                    courseItem.category === '必修课' && { color: '#2563EB' },
-                                    courseItem.category === '选修课' && { color: '#9333EA' },
-                                    courseItem.category === '专业课' && { color: '#059669' },
-                                    courseItem.category === '通识课' && { color: '#D97706' },
-                                  ]}
-                                >
-                                  {courseItem.category}
+                              {courseItem.teacher ? (
+                                <Text style={styles.courseItemTeacher}>
+                                  {courseItem.teacher} {courseItem.location ? `· ${courseItem.location}` : ''}
                                 </Text>
-                              </View>
+                              ) : null}
                             </View>
-
-                            <Text style={styles.courseItemTeacher}>
-                              {courseItem.teacher} · {courseItem.time}
-                            </Text>
                           </View>
-                        </View>
 
-                        {isSelected && (
-                          <Ionicons name="checkmark-circle" size={20} color={Colors.primary} />
-                        )}
+                          {isSelected && (
+                            <Ionicons name="checkmark-circle" size={20} color={Colors.primary} />
+                          )}
+                        </TouchableOpacity>
+                      );
+                    })
+                  )}
+
+                  {/* 自定义输入课程名称选项 */}
+                  <View style={styles.customCourseSection}>
+                    <Text style={styles.customCourseLabel}>自定义课程名称</Text>
+                    <View style={styles.customCourseInputRow}>
+                      <TextInput
+                        style={styles.customCourseInput}
+                        placeholder="输入课程名称..."
+                        placeholderTextColor="#94A3B8"
+                        value={customCourseInput}
+                        onChangeText={setCustomCourseInput}
+                      />
+                      <TouchableOpacity
+                        style={styles.customCourseApplyBtn}
+                        onPress={() => {
+                          if (customCourseInput.trim()) {
+                            setInputCourseName(customCourseInput.trim());
+                            setCourseDrawerVisible(false);
+                            setCustomCourseInput('');
+                          }
+                        }}
+                      >
+                        <Text style={styles.customCourseApplyText}>使用</Text>
                       </TouchableOpacity>
-                    );
-                  })}
+                    </View>
+                  </View>
+
+                  {/* 未关联课程选项 */}
+                  <TouchableOpacity
+                    style={[
+                      styles.drawerCourseItem,
+                      inputCourseName === '未关联课程' && styles.drawerCourseItemActive,
+                      { marginTop: 8 }
+                    ]}
+                    onPress={() => {
+                      setInputCourseName('未关联课程');
+                      setCourseDrawerVisible(false);
+                    }}
+                  >
+                    <Text style={[styles.courseItemName, { color: '#64748B' }]}>暂不关联课程（独立笔记）</Text>
+                    {inputCourseName === '未关联课程' && (
+                      <Ionicons name="checkmark-circle" size={20} color={Colors.primary} />
+                    )}
+                  </TouchableOpacity>
                 </ScrollView>
               </View>
             </TouchableOpacity>
@@ -1508,6 +1708,7 @@ const styles = StyleSheet.create({
   courseColorPillText: {
     fontSize: 11,
     fontWeight: '700',
+    color: '#FFFFFF',
   },
   noteDateText: {
     fontSize: 12,
@@ -2258,5 +2459,116 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#64748B',
     marginTop: 2,
+  },
+  documentBodyWrapper: {
+    position: 'relative',
+    minHeight: 380,
+  },
+  bottomRightDoodleAnchor: {
+    position: 'absolute',
+    right: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    zIndex: 90,
+  },
+  doodleMiniActionBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  doodleToggleSwitch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: Rounded.pill,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  doodleToggleSwitchActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  doodleToggleSwitchText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.primary,
+  },
+  doodleToggleSwitchTextActive: {
+    color: '#FFFFFF',
+  },
+  emptyCourseDrawerNotice: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+  },
+  emptyCourseDrawerTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#475569',
+    marginBottom: 4,
+  },
+  emptyCourseDrawerSub: {
+    fontSize: 12,
+    color: '#94A3B8',
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+  customCourseSection: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#E2E8F0',
+  },
+  customCourseLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#475569',
+    marginBottom: 8,
+  },
+  customCourseInputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  customCourseInput: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 13,
+    color: '#0F172A',
+  },
+  customCourseApplyBtn: {
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 8,
+  },
+  customCourseApplyText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
 });

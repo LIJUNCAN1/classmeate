@@ -8,6 +8,7 @@ import {
   Platform,
   StatusBar as RNStatusBar,
   Animated,
+  Easing,
   Modal,
   Image,
   useWindowDimensions,
@@ -279,10 +280,10 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     headerDropAnim.setValue(-28);
     headerFadeAnim.setValue(0);
     Animated.parallel([
-      Animated.spring(headerDropAnim, {
+      Animated.timing(headerDropAnim, {
         toValue: 0,
-        friction: 7,
-        tension: 85,
+        duration: 250,
+        easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }),
       Animated.timing(headerFadeAnim, {
@@ -722,7 +723,15 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
           {
             paddingTop: topPadding + 8,
             opacity: headerFadeAnim,
-            transform: [{ translateY: headerDropAnim }],
+            transform: [
+              {
+                translateY: headerDropAnim.interpolate({
+                  inputRange: [-100, 0, 100],
+                  outputRange: [-100, 0, 0],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ],
           },
         ]}
       >

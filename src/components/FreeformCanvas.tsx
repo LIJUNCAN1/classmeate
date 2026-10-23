@@ -26,6 +26,8 @@ export interface StickyNote {
 export interface StrokePoint {
   x: number;
   y: number;
+  w?: number;
+  t?: number;
 }
 
 export interface DrawingStroke {
@@ -43,22 +45,63 @@ interface FreeformCanvasProps {
   onSave: (data: { title: string; notes: StickyNote[]; strokes: DrawingStroke[] }) => void;
 }
 
-// 平滑贝塞尔曲线路径算法，将离散触控点连接为连续饱满的真实手绘墨线（彻底消除虚线断点）
-function pointsToSvgPath(points: StrokePoint[]): string {
+// 真实笔刷压感轮廓曲线算法，计算切向法向量并生成饱满带压感的闭合贝塞尔 Ribbon 曲线
+function strokeToOutlinePath(points: StrokePoint[], defaultWidth: number): string {
   if (!points || points.length === 0) return '';
   if (points.length === 1) {
-    return `M ${points[0].x} ${points[0].y} L ${points[0].x + 0.5} ${points[0].y + 0.5}`;
+    const p = points[0];
+    const r = (p.w || defaultWidth) / 2;
+    return `M ${p.x - r} ${p.y} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 ${-r * 2} 0 Z`;
   }
-  let d = `M ${points[0].x} ${points[0].y}`;
-  for (let i = 1; i < points.length; i++) {
-    const p0 = points[i - 1];
-    const p1 = points[i];
-    const midX = (p0.x + p1.x) / 2;
-    const midY = (p0.y + p1.y) / 2;
-    d += ` Q ${p0.x} ${p0.y}, ${midX} ${midY}`;
+
+  const leftPts: { x: number; y: number }[] = [];
+  const rightPts: { x: number; y: number }[] = [];
+
+  for (let i = 0; i < points.length; i++) {
+    const curr = points[i];
+    let dx = 0;
+    let dy = 0;
+
+    if (i === 0) {
+      dx = points[1].x - curr.x;
+      dy = points[1].y - curr.y;
+    } else if (i === points.length - 1) {
+      dx = curr.x - points[i - 1].x;
+      dy = curr.y - points[i - 1].y;
+    } else {
+      dx = points[i + 1].x - points[i - 1].x;
+      dy = points[i + 1].y - points[i - 1].y;
+    }
+
+    const len = Math.hypot(dx, dy) || 1;
+    const nx = -dy / len;
+    const ny = dx / len;
+    const halfW = Math.max(1, (curr.w || defaultWidth) / 2);
+
+    leftPts.push({ x: curr.x + nx * halfW, y: curr.y + ny * halfW });
+    rightPts.push({ x: curr.x - nx * halfW, y: curr.y - ny * halfW });
   }
-  const last = points[points.length - 1];
-  d += ` L ${last.x} ${last.y}`;
+
+  // 沿左侧正向曲线平滑连接
+  let d = `M ${leftPts[0].x} ${leftPts[0].y}`;
+  for (let i = 1; i < leftPts.length; i++) {
+    const midX = (leftPts[i - 1].x + leftPts[i].x) / 2;
+    const midY = (leftPts[i - 1].y + leftPts[i].y) / 2;
+    d += ` Q ${leftPts[i - 1].x} ${leftPts[i - 1].y}, ${midX} ${midY}`;
+  }
+  d += ` L ${leftPts[leftPts.length - 1].x} ${leftPts[leftPts.length - 1].y}`;
+
+  // 端点连接至右侧
+  d += ` L ${rightPts[rightPts.length - 1].x} ${rightPts[rightPts.length - 1].y}`;
+
+  // 沿右侧反向曲线平滑连接
+  for (let i = rightPts.length - 2; i >= 0; i--) {
+    const midX = (rightPts[i + 1].x + rightPts[i].x) / 2;
+    const midY = (rightPts[i + 1].y + rightPts[i].y) / 2;
+    d += ` Q ${rightPts[i + 1].x} ${rightPts[i + 1].y}, ${midX} ${midY}`;
+  }
+  d += ` L ${rightPts[0].x} ${rightPts[0].y} Z`;
+
   return d;
 }
 
@@ -76,18 +119,27 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
     Platform.OS === 'android' ? (RNStatusBar.currentHeight || 36) : 44
   );
 
-  const [title, setTitle] = useState(initialTitle || `${courseName} · 随堂脑图`);
+  const [title, setTitle] = useState(initialTitle || '');
 
   // 便签纸列表：全新空白开始，支持用户创建、修改与保存持久化，绝不回退至预设
   const [stickyNotes, setStickyNotes] = useState<StickyNote[]>(initialNotes || []);
 
-  // 手绘笔迹：全新空白开始
+  // 手绘笔迹：全新空白开始，支持真实压感与持久化
   const [strokes, setStrokes] = useState<DrawingStroke[]>(initialStrokes || []);
   const [currentStroke, setCurrentStroke] = useState<StrokePoint[]>([]);
 
   // 画笔工具栏状态 (仿苹果 Apple Pencil 悬浮工具坞)
   const [selectedTool, setSelectedTool] = useState<'pen' | 'highlighter' | 'eraser'>('pen');
   const [activeColor, setActiveColor] = useState<string>('#1E293B');
+
+  // 关键：解决 PanResponder 闭包陷阱的实时引用
+  const strokesRef = useRef<DrawingStroke[]>(strokes);
+  strokesRef.current = strokes;
+  const currentStrokeRef = useRef<StrokePoint[]>([]);
+  const selectedToolRef = useRef(selectedTool);
+  selectedToolRef.current = selectedTool;
+  const activeColorRef = useRef(activeColor);
+  activeColorRef.current = activeColor;
 
   const colorPalette = [
     '#1E293B', // 黑
@@ -137,17 +189,20 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
 
   // 撤销上一笔画
   const handleUndo = () => {
-    if (strokes.length > 0) {
-      setStrokes((prev) => prev.slice(0, -1));
+    if (strokesRef.current.length > 0) {
+      const nextStrokes = strokesRef.current.slice(0, -1);
+      strokesRef.current = nextStrokes;
+      setStrokes(nextStrokes);
     }
   };
 
   // 清空画板
   const handleClearAll = () => {
+    strokesRef.current = [];
     setStrokes([]);
   };
 
-  // 画板手势 (支持单指书写涂鸦，双指缩放画布)
+  // 画板手势 (支持单指带压感书写涂鸦，双指缩放画布)
   const canvasPanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -163,17 +218,26 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
         }
 
         const { locationX, locationY } = evt.nativeEvent;
-        if (selectedTool === 'eraser') {
-          setStrokes((prev) =>
-            prev.filter(
-              (s) =>
-                !s.points.some(
-                  (pt) => Math.hypot(pt.x - locationX, pt.y - locationY) < 20
-                )
-            )
+        const tool = selectedToolRef.current;
+        if (tool === 'eraser') {
+          const updated = strokesRef.current.filter(
+            (s) =>
+              !s.points.some(
+                (pt) => Math.hypot(pt.x - locationX, pt.y - locationY) < 22
+              )
           );
+          strokesRef.current = updated;
+          setStrokes(updated);
         } else {
-          setCurrentStroke([{ x: locationX, y: locationY }]);
+          const baseW = tool === 'highlighter' ? 14 : 3.5;
+          const initialPt: StrokePoint = {
+            x: locationX,
+            y: locationY,
+            w: baseW,
+            t: Date.now(),
+          };
+          currentStrokeRef.current = [initialPt];
+          setCurrentStroke([initialPt]);
         }
       },
       onPanResponderMove: (evt) => {
@@ -191,29 +255,72 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
         }
 
         const { locationX, locationY } = evt.nativeEvent;
-        if (selectedTool === 'eraser') {
-          setStrokes((prev) =>
-            prev.filter(
-              (s) =>
-                !s.points.some(
-                  (pt) => Math.hypot(pt.x - locationX, pt.y - locationY) < 20
-                )
-            )
+        const tool = selectedToolRef.current;
+        if (tool === 'eraser') {
+          const updated = strokesRef.current.filter(
+            (s) =>
+              !s.points.some(
+                (pt) => Math.hypot(pt.x - locationX, pt.y - locationY) < 22
+              )
           );
+          strokesRef.current = updated;
+          setStrokes(updated);
         } else {
-          setCurrentStroke((prev) => [...prev, { x: locationX, y: locationY }]);
+          const baseW = tool === 'highlighter' ? 14 : 3.5;
+          const now = Date.now();
+          const pts = currentStrokeRef.current;
+          const lastPt = pts.length > 0 ? pts[pts.length - 1] : null;
+
+          let w = baseW;
+          if (lastPt) {
+            const dist = Math.hypot(locationX - lastPt.x, locationY - lastPt.y);
+            if (dist < 1.0) return; // 过滤极小抖动
+            const dt = Math.max(10, now - (lastPt.t || now - 16));
+            const speed = dist / dt; // 移动速度 (px/ms)
+
+            let speedFactor = 1.0;
+            if (tool === 'pen') {
+              // 运笔越慢，笔划越浓郁粗厚（压感增强）；运笔飞快甩尾，笔锋变细（毛笔/钢笔真实手感）
+              if (speed > 1.2) {
+                speedFactor = Math.max(0.5, 1.2 / speed);
+              } else if (speed < 0.4) {
+                speedFactor = Math.min(1.5, 1.0 + (0.4 - speed) * 1.5);
+              }
+              const force = evt.nativeEvent.force;
+              if (typeof force === 'number' && force > 0) {
+                speedFactor *= Math.min(1.8, Math.max(0.5, force * 1.6));
+              }
+            }
+            w = baseW * speedFactor;
+            if (lastPt.w) {
+              w = lastPt.w * 0.35 + w * 0.65; // 平滑过渡
+            }
+          }
+
+          const nextPt: StrokePoint = { x: locationX, y: locationY, w, t: now };
+          pts.push(nextPt);
+          setCurrentStroke([...pts]);
         }
       },
       onPanResponderRelease: () => {
         initialDistanceRef.current = null;
-        if (selectedTool !== 'eraser' && currentStroke.length > 0) {
-          const width = selectedTool === 'highlighter' ? 14 : 3.5;
+        const tool = selectedToolRef.current;
+        const pts = currentStrokeRef.current;
+        if (tool !== 'eraser' && pts.length > 0) {
+          const baseW = tool === 'highlighter' ? 14 : 3.5;
           const strokeColor =
-            selectedTool === 'highlighter' ? activeColor + '70' : activeColor;
-          setStrokes((prev) => [
-            ...prev,
-            { points: currentStroke, color: strokeColor, width },
-          ]);
+            tool === 'highlighter'
+              ? activeColorRef.current + '70'
+              : activeColorRef.current;
+          const newStroke: DrawingStroke = {
+            points: [...pts],
+            color: strokeColor,
+            width: baseW,
+          };
+          const nextStrokes = [...strokesRef.current, newStroke];
+          strokesRef.current = nextStrokes;
+          setStrokes(nextStrokes);
+          currentStrokeRef.current = [];
           setCurrentStroke([]);
         }
       },
@@ -233,7 +340,7 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
               style={styles.canvasTitleInput}
               value={title}
               onChangeText={setTitle}
-              placeholder="无边记项目名称"
+              placeholder="无标题无边记"
             />
             {/* 按用户要求：去掉“无边记无限画布”说明，换成日期 */}
             <Text style={styles.canvasCourseTag}>{dateSubtitle}</Text>
@@ -295,27 +402,26 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
             ))}
           </View>
 
-          {/* 真实矢量平滑手绘笔迹 (彻底消除断点与虚线，形成连续饱满实线墨迹) */}
+          {/* 真实矢量平滑手绘笔迹 (彻底消除断点与虚线，形成连续饱满实线墨迹并具备压感) */}
           <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
             {strokes.map((stroke, sIdx) => (
               <Path
                 key={`stroke-${sIdx}`}
-                d={pointsToSvgPath(stroke.points)}
-                stroke={stroke.color}
-                strokeWidth={stroke.width}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
+                d={strokeToOutlinePath(stroke.points, stroke.width)}
+                fill={stroke.color}
               />
             ))}
             {currentStroke.length > 0 && (
               <Path
-                d={pointsToSvgPath(currentStroke)}
-                stroke={selectedTool === 'highlighter' ? activeColor + '70' : activeColor}
-                strokeWidth={selectedTool === 'highlighter' ? 14 : 3.5}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
+                d={strokeToOutlinePath(
+                  currentStroke,
+                  selectedTool === 'highlighter' ? 14 : 3.5
+                )}
+                fill={
+                  selectedTool === 'highlighter'
+                    ? activeColor + '70'
+                    : activeColor
+                }
               />
             )}
           </Svg>
@@ -422,14 +528,13 @@ export const FreeformCanvas: React.FC<FreeformCanvasProps> = ({
 
         <View style={styles.dockDivider} />
 
-        {/* 用户要求：便签按钮放进工具栏里 */}
+        {/* 用户要求：便签按钮放进工具栏里（去掉文字） */}
         <TouchableOpacity
           style={styles.dockStickyBtn}
           onPress={() => handleAddStickyNote('#FEF08A')}
           activeOpacity={0.7}
         >
-          <Ionicons name="copy" size={15} color="#D97706" style={{ marginRight: 3 }} />
-          <Text style={styles.dockStickyBtnText}>便签</Text>
+          <Ionicons name="copy-outline" size={18} color="#D97706" />
         </TouchableOpacity>
 
         <View style={styles.dockDivider} />

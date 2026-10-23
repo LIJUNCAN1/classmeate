@@ -9,6 +9,7 @@ import {
   StatusBar as RNStatusBar,
   Modal,
   Animated,
+  Easing,
   Linking,
   TextInput,
 } from 'react-native';
@@ -53,10 +54,10 @@ export const ToolsScreen: React.FC = () => {
     fadeAnim.setValue(0);
 
     Animated.parallel([
-      Animated.spring(headerDropAnim, {
+      Animated.timing(headerDropAnim, {
         toValue: 0,
-        friction: 7,
-        tension: 85,
+        duration: 250,
+        easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }),
       Animated.timing(headerFadeAnim, {
@@ -295,7 +296,15 @@ export const ToolsScreen: React.FC = () => {
           {
             paddingTop: topPadding + 8,
             opacity: headerFadeAnim,
-            transform: [{ translateY: headerDropAnim }],
+            transform: [
+              {
+                translateY: headerDropAnim.interpolate({
+                  inputRange: [-100, 0, 100],
+                  outputRange: [-100, 0, 0],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ],
           },
         ]}
       >

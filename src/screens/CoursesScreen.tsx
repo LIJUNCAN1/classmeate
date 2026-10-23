@@ -8,6 +8,7 @@ import {
   Platform,
   StatusBar as RNStatusBar,
   Animated,
+  Easing,
 } from 'react-native';
 import { Colors, Rounded, Shadows } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,10 +26,10 @@ export const CoursesScreen: React.FC = () => {
     headerDropAnim.setValue(-28);
     headerFadeAnim.setValue(0);
     Animated.parallel([
-      Animated.spring(headerDropAnim, {
+      Animated.timing(headerDropAnim, {
         toValue: 0,
-        friction: 7,
-        tension: 85,
+        duration: 250,
+        easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }),
       Animated.timing(headerFadeAnim, {
@@ -125,7 +126,15 @@ export const CoursesScreen: React.FC = () => {
           {
             paddingTop: topPadding + 10,
             opacity: headerFadeAnim,
-            transform: [{ translateY: headerDropAnim }],
+            transform: [
+              {
+                translateY: headerDropAnim.interpolate({
+                  inputRange: [-100, 0, 100],
+                  outputRange: [-100, 0, 0],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ],
           },
         ]}
       >
