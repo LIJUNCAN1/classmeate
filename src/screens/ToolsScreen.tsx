@@ -101,19 +101,27 @@ export const ToolsScreen: React.FC = () => {
   const [widgetModalVisible, setWidgetModalVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // 实时原子组件数据（从本地真实课表动态读取计算）
-  const [widgetData, setWidgetData] = useState<WidgetScheduleData>(() => computeWidgetData([]));
+  // 实时原子组件数据（从本地真实课表动态读取计算，支持切换日期）
+  const [widgetDayOfWeek, setWidgetDayOfWeek] = useState<number>(() => {
+    const d = new Date().getDay();
+    return d === 0 ? 7 : d;
+  });
+  const [widgetData, setWidgetData] = useState<WidgetScheduleData>(() => computeWidgetData([], 7));
 
-  const refreshWidgetInfo = useCallback(async () => {
+  const refreshWidgetInfo = useCallback(async (targetDay?: number) => {
     try {
+      const day = targetDay !== undefined ? targetDay : widgetDayOfWeek;
       const stored = await loadScheduleData();
-      const data = computeWidgetData(stored.courses);
+      const data = computeWidgetData(stored.courses, 7, day);
       setWidgetData(data);
-      syncScheduleToNativeWidget(data);
+      const todayDayOfWeek = new Date().getDay() === 0 ? 7 : new Date().getDay();
+      if (day === todayDayOfWeek) {
+        syncScheduleToNativeWidget(data);
+      }
     } catch (e) {
       console.warn('[ToolsScreen] Failed to refresh widget info:', e);
     }
-  }, []);
+  }, [widgetDayOfWeek]);
 
   useEffect(() => {
     refreshWidgetInfo();
@@ -242,6 +250,95 @@ export const ToolsScreen: React.FC = () => {
     } else {
       setCalcExpression((prev) => prev + btn);
     }
+  };
+
+  const handlePrevWidgetDay = () => {
+    const next = widgetDayOfWeek === 1 ? 7 : widgetDayOfWeek - 1;
+    setWidgetDayOfWeek(next);
+    refreshWidgetInfo(next);
+  };
+
+  const handleNextWidgetDay = () => {
+    const next = widgetDayOfWeek === 7 ? 1 : widgetDayOfWeek + 1;
+    setWidgetDayOfWeek(next);
+    refreshWidgetInfo(next);
+  };
+
+  // 300度弧线进度条（用户要求：在进度条中间分段，今天有几节课就分几段）
+  const renderWidgetArcSegments = (totalCount: number, finishedCount: number) => {
+    const cx = 105;
+    const cy = 90;
+    const R = 64;
+    const strokeWidth = 9;
+
+    if (totalCount <= 0) {
+      return (
+        <Path
+          d="M 73 145 A 64 64 0 1 1 137 145"
+          stroke="#E2E8F0"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          fill="none"
+        />
+      );
+    }
+
+    if (totalCount === 1) {
+      return (
+        <>
+          <Path
+            d="M 73 145 A 64 64 0 1 1 137 145"
+            stroke="#E2E8F0"
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+            fill="none"
+          />
+          {finishedCount >= 1 && (
+            <Path
+              d="M 73 145 A 64 64 0 1 1 137 145"
+              stroke="#10B981"
+              strokeWidth={strokeWidth}
+              strokeLinecap="round"
+              fill="none"
+            />
+          )}
+        </>
+      );
+    }
+
+    const N = Math.min(10, Math.max(2, totalCount));
+    const gapAngle = N >= 6 ? 4 : 6;
+    const totalGap = (N - 1) * gapAngle;
+    const segSweep = (300 - totalGap) / N;
+
+    const segments = [];
+    for (let i = 0; i < N; i++) {
+      const a1 = 120 + i * (segSweep + gapAngle);
+      const a2 = a1 + segSweep;
+      const r1 = (a1 * Math.PI) / 180;
+      const r2 = (a2 * Math.PI) / 180;
+
+      const x1 = cx + R * Math.cos(r1);
+      const y1 = cy + R * Math.sin(r1);
+      const x2 = cx + R * Math.cos(r2);
+      const y2 = cy + R * Math.sin(r2);
+      const largeArc = segSweep > 180 ? 1 : 0;
+      const d = `M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${R} ${R} 0 ${largeArc} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
+
+      const isFilled = i < finishedCount;
+      segments.push(
+        <Path
+          key={`seg-${i}`}
+          d={d}
+          stroke={isFilled ? '#10B981' : '#E2E8F0'}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          fill="none"
+        />
+      );
+    }
+
+    return segments;
   };
 
   // 核心常用工具（用户要求：在工具里新增二维码分享与桌面组件功能）
@@ -912,53 +1009,97 @@ export const ToolsScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
 
-            {/* 300度圆形线条角度图桌面组件效果展示 */}
+            {/* 300度圆形线条分段角度图桌面组件效果展示 */}
             <View style={styles.widgetCardContainer}>
               <View style={[styles.widgetSurfaceCard, Shadows.card]}>
-                {/* 300度圆形线条角度图与内部核心数据 */}
+                {/* 顶部状态栏：左侧课星球，星期几写中间左右可切换日期，右上角原子组件已去掉 */}
+                <View style={styles.widgetCardTopBar}>
+                  <Text style={styles.widgetBrandTitle}>课星球</Text>
+
+                  <View style={styles.widgetDaySwitcher}>
+                    <TouchableOpacity
+                      onPress={handlePrevWidgetDay}
+                      style={styles.widgetDayArrowBtn}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      activeOpacity={0.7}
+                    >
+                      <Ionicons name="chevron-back" size={13} color="#15803D" />
+                    </TouchableOpacity>
+
+                    <Text style={styles.widgetDayLabel}>
+                      {widgetData.dayOfWeekName}
+                      {widgetData.isToday ? ' (今天)' : ''}
+                    </Text>
+
+                    <TouchableOpacity
+                      onPress={handleNextWidgetDay}
+                      style={styles.widgetDayArrowBtn}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      activeOpacity={0.7}
+                    >
+                      <Ionicons name="chevron-forward" size={13} color="#15803D" />
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* 右上角原子组件按用户要求去掉，用透明占位平衡居中 */}
+                  <View style={{ width: 36 }} />
+                </View>
+
+                {/* 300度圆形线条分段角度图与内部核心数据（今天有几节课就分几段） */}
                 <View style={styles.widgetRingWrapper}>
                   <Svg width={210} height={180} viewBox="0 0 210 180">
-                    {/* 底轨：300度优雅弧线（从120度至60度顺时针300度，底部保留60度开口） */}
-                    <Path
-                      d="M 72 142 A 66 66 0 1 1 138 142"
-                      stroke="#E2E8F0"
-                      strokeWidth={10}
-                      strokeLinecap="round"
-                      fill="none"
-                    />
-                    {/* 活跃进度轨：300度生机绿弧线 */}
-                    <Path
-                      d="M 72 142 A 66 66 0 1 1 138 142"
-                      stroke="#10B981"
-                      strokeWidth={10}
-                      strokeLinecap="round"
-                      fill="none"
-                      strokeDasharray="345.6"
-                      strokeDashoffset={345.6 * (1 - Math.max(0.04, Math.min(1, widgetData.progressPercent)))}
-                    />
+                    {renderWidgetArcSegments(widgetData.totalCount, widgetData.finishedCount)}
                   </Svg>
 
                   {/* 环心与正下方区域 */}
                   <View style={styles.widgetRingContentBox}>
-                    {/* 中心：大字号醒目呈现今日剩余课程数（如 3 节剩余） */}
+                    {/* 中心：大字号醒目呈现剩余课程数 */}
                     <View style={styles.widgetCenterNumberRow}>
                       <Text style={styles.widgetNumberText}>{widgetData.remainingCount}</Text>
                       <Text style={styles.widgetNumberUnit}>节剩余</Text>
                     </View>
 
-                    {/* 正下方：清晰标注放学时间与倒计时（如 20:35 放学 · 距放学 2小时15分） */}
+                    {/* 正下方：放学时间（用户要求：去掉距放学还有多久） */}
                     <Text style={styles.widgetDismissalCombinedText} numberOfLines={1}>
-                      {widgetData.dismissalCombinedText}
+                      {widgetData.dismissalText}
                     </Text>
                   </View>
                 </View>
 
-                {/* 底部胶囊：展示下节课具体信息（如 下节: 形势与政策 @ 涵虚楼A101 · 14:00） */}
-                <View style={styles.widgetCapsule}>
-                  <Ionicons name="sparkles" size={13} color="#15803D" style={{ marginRight: 6 }} />
-                  <Text style={styles.widgetCapsuleText} numberOfLines={1}>
-                    {widgetData.nextCourseText}
-                  </Text>
+                {/* 底部课程表列表：从左到右 课程名和地点，右边写还有多久上课，一次只显示两门，已经结束的不显示 */}
+                <View style={styles.widgetCoursesContainer}>
+                  {widgetData.upcomingCourses.length === 0 ? (
+                    <View style={styles.widgetCourseEmptyRow}>
+                      <Ionicons name="sparkles" size={13} color="#15803D" style={{ marginRight: 6 }} />
+                      <Text style={styles.widgetCourseEmptyText}>
+                        {widgetData.totalCount === 0 ? '今日没课 · 享受大学时光' : '今日课程已全部结束 ✨'}
+                      </Text>
+                    </View>
+                  ) : (
+                    widgetData.upcomingCourses.slice(0, 2).map((item, idx) => (
+                      <View key={item.id || idx} style={styles.widgetCourseItemRow}>
+                        {/* 左边：课程名和地点 */}
+                        <View style={styles.widgetCourseLeftInfo}>
+                          <Text style={styles.widgetCourseItemName} numberOfLines={1}>
+                            {item.name}
+                          </Text>
+                          <Text style={styles.widgetCourseItemLocation} numberOfLines={1}>
+                            @{item.location || '待定教室'}
+                          </Text>
+                        </View>
+
+                        {/* 右边：还有多久上课的课程表 */}
+                        <View style={styles.widgetCourseRightInfo}>
+                          <View style={[styles.widgetTimeBadge, item.isCurrent && styles.widgetTimeBadgeCurrent]}>
+                            <Text style={[styles.widgetTimeBadgeText, item.isCurrent && styles.widgetTimeBadgeTextCurrent]}>
+                              {item.timeUntilStartText}
+                            </Text>
+                          </View>
+                          <Text style={styles.widgetTimeSubtitle}>{item.startTime}</Text>
+                        </View>
+                      </View>
+                    ))
+                  )}
                 </View>
               </View>
             </View>
@@ -1982,19 +2123,49 @@ const styles = StyleSheet.create({
     marginVertical: 14,
   },
   widgetSurfaceCard: {
-    width: 270,
+    width: 296,
     backgroundColor: '#FFFFFF',
-    borderRadius: 28,
+    borderRadius: 24,
     borderWidth: 1,
     borderColor: '#DCFCE7',
-    paddingVertical: 16,
+    paddingVertical: 14,
     paddingHorizontal: 14,
     alignItems: 'center',
     shadowColor: '#10B981',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.1,
     shadowRadius: 14,
-    elevation: 3,
+    elevation: 4,
+  },
+  widgetCardTopBar: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+    paddingHorizontal: 4,
+  },
+  widgetBrandTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#15803D',
+  },
+  widgetDaySwitcher: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0FDF4',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: Rounded.pill,
+    gap: 4,
+  },
+  widgetDayArrowBtn: {
+    padding: 2,
+  },
+  widgetDayLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#15803D',
   },
   widgetRingWrapper: {
     position: 'relative',
@@ -2036,24 +2207,74 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: -0.2,
   },
-  widgetCapsule: {
+  widgetCoursesContainer: {
+    width: '100%',
+    marginTop: 6,
+    gap: 6,
+  },
+  widgetCourseItemRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F0FDF4',
+    borderRadius: 12,
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#DCFCE7',
+  },
+  widgetCourseLeftInfo: {
+    flex: 1,
+    marginRight: 8,
+  },
+  widgetCourseItemName: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0F172A',
+    marginBottom: 2,
+  },
+  widgetCourseItemLocation: {
+    fontSize: 10.5,
+    color: '#64748B',
+  },
+  widgetCourseRightInfo: {
+    alignItems: 'flex-end',
+  },
+  widgetTimeBadge: {
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    marginBottom: 2,
+  },
+  widgetTimeBadgeCurrent: {
+    backgroundColor: '#FEF3C7',
+  },
+  widgetTimeBadgeText: {
+    fontSize: 10.5,
+    fontWeight: '700',
+    color: '#15803D',
+  },
+  widgetTimeBadgeTextCurrent: {
+    color: '#D97706',
+  },
+  widgetTimeSubtitle: {
+    fontSize: 10,
+    color: '#94A3B8',
+  },
+  widgetCourseEmptyRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#DCFCE7',
-    borderRadius: Rounded.pill,
-    borderWidth: 1,
-    borderColor: '#BBF7D0',
+    justifyContent: 'center',
+    backgroundColor: '#F0FDF4',
+    borderRadius: 12,
+    paddingVertical: 10,
     paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginTop: 6,
-    maxWidth: '100%',
   },
-  widgetCapsuleText: {
+  widgetCourseEmptyText: {
     fontSize: 11.5,
-    color: '#15803D',
     fontWeight: '700',
-    letterSpacing: -0.2,
-    flexShrink: 1,
+    color: '#15803D',
   },
   oppoGuideBox: {
     width: '100%',

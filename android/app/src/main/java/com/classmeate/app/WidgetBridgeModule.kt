@@ -25,7 +25,41 @@ class WidgetBridgeModule(private val reactContext: ReactApplicationContext) :
             apply()
         }
 
-        // 立即触发桌面小组件界面刷新
+        refreshWidget()
+    }
+
+    @ReactMethod
+    fun updateWidgetDetailData(
+        remaining: Int,
+        total: Int,
+        dismissal: String,
+        dayText: String,
+        c1Name: String,
+        c1Loc: String,
+        c1Time: String,
+        c2Name: String,
+        c2Loc: String,
+        c2Time: String
+    ) {
+        val prefs = reactContext.getSharedPreferences("classmeate_widget_data", Context.MODE_PRIVATE)
+        prefs.edit().apply {
+            putInt("remaining_count", remaining)
+            putInt("total_count", total)
+            putString("dismissal_text", dismissal)
+            putString("day_text", dayText)
+            putString("c1_name", c1Name)
+            putString("c1_location", c1Loc)
+            putString("c1_time", c1Time)
+            putString("c2_name", c2Name)
+            putString("c2_location", c2Loc)
+            putString("c2_time", c2Time)
+            apply()
+        }
+
+        refreshWidget()
+    }
+
+    private fun refreshWidget() {
         val appWidgetManager = AppWidgetManager.getInstance(reactContext)
         val componentName = ComponentName(reactContext, ScheduleWidgetProvider::class.java)
         val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)

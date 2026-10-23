@@ -923,14 +923,22 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                           </Text>
                         </View>
 
-                        {/* 第4行：浅绿水平进度条（图3：未填充是纯白色，已填充是绿色，底部严格对齐） */}
+                        {/* 第4行：分段进度条（用户要求：在进度条中间分段 今天有几节课就分几段，未填充是白色已填充是绿色） */}
                         <View style={styles.summaryProgressTrack}>
-                          <View
-                            style={[
-                              styles.summaryProgressFill,
-                              { width: `${Math.min(100, Math.max(0, todayRemainingSummary.progressPercent))}%` },
-                            ]}
-                          />
+                          {Array.from({ length: Math.max(1, todayRemainingSummary.totalCount) }).map((_, idx) => {
+                            const isFilled = idx < todayRemainingSummary.finishedCount;
+                            return (
+                              <View
+                                key={idx}
+                                style={[
+                                  styles.summaryProgressSegment,
+                                  isFilled
+                                    ? styles.summaryProgressSegmentFilled
+                                    : styles.summaryProgressSegmentEmpty,
+                                ]}
+                              />
+                            );
+                          })}
                         </View>
                       </View>
 
@@ -1508,17 +1516,23 @@ const styles = StyleSheet.create({
   },
   summaryProgressTrack: {
     height: 8,
-    backgroundColor: '#FFFFFF', // 图3：未填充是纯白色，已填充是绿色！
-    borderRadius: 4,
-    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
     marginBottom: 0,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(0, 0, 0, 0.04)',
   },
-  summaryProgressFill: {
-    height: '100%',
-    backgroundColor: '#22C55E',
+  summaryProgressSegment: {
+    flex: 1,
+    height: 8,
     borderRadius: 4,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
+  },
+  summaryProgressSegmentFilled: {
+    backgroundColor: '#22C55E',
+  },
+  summaryProgressSegmentEmpty: {
+    backgroundColor: '#FFFFFF',
   },
   summaryCollapseTrigger: {
     position: 'absolute',

@@ -46,23 +46,38 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
 
             // 从本地 SharedPreferences 读取最新课表摘要数据（若无则展示智能演示数据）
             val prefs = context.getSharedPreferences("classmeate_widget_data", Context.MODE_PRIVATE)
-            val remaining = prefs.getInt("remaining_count", 3)
-            val dismissal = prefs.getString("dismissal_text", "20:35 放学 · 距放学 2小时15分") ?: "20:35 放学 · 距放学 2小时15分"
-            val nextCourse = prefs.getString("next_course", "下节: 形势与政策 @ 涵虚楼A101 · 14:00") ?: "下节: 形势与政策 @ 涵虚楼A101 · 14:00"
-            val progress = prefs.getFloat("progress", 0.35f)
+            val remaining = prefs.getInt("remaining_count", 2)
+            val total = prefs.getInt("total_count", 4)
+            val finished = (total - remaining).coerceAtLeast(0)
+            val dismissal = prefs.getString("dismissal_text", "17:40 放学") ?: "17:40 放学"
+            val dayText = prefs.getString("day_text", "周五") ?: "周五"
+            val c1Name = prefs.getString("c1_name", "给水排水管道工程") ?: "给水排水管道工程"
+            val c1Loc = prefs.getString("c1_location", "@长智楼 A208") ?: "@长智楼 A208"
+            val c1Time = prefs.getString("c1_time", "25分钟后 · 10:05") ?: "25分钟后 · 10:05"
+            val c2Name = prefs.getString("c2_name", "计算机系统结构") ?: "计算机系统结构"
+            val c2Loc = prefs.getString("c2_location", "@信息实验楼 301") ?: "@信息实验楼 301"
+            val c2Time = prefs.getString("c2_time", "4小时后 · 14:00") ?: "4小时后 · 14:00"
 
-            // 绘制 300 度圆弧进度图（底部保留 60 度开口）
-            val arcBitmap = create300DegreeArcBitmap(progress)
+            // 绘制 300 度圆弧分段进度图（今天有几节课就分几段，底部保留 60 度开口）
+            val arcBitmap = create300DegreeArcBitmap(total, finished)
             views.setImageViewBitmap(R.id.widget_arc_image, arcBitmap)
 
+            views.setTextViewText(R.id.widget_day_text, dayText)
             views.setTextViewText(R.id.widget_count_number, remaining.toString())
             views.setTextViewText(R.id.widget_dismissal_time, dismissal)
-            views.setTextViewText(R.id.widget_next_class, nextCourse)
+
+            views.setTextViewText(R.id.widget_c1_name, c1Name)
+            views.setTextViewText(R.id.widget_c1_location, c1Loc)
+            views.setTextViewText(R.id.widget_c1_time, c1Time)
+
+            views.setTextViewText(R.id.widget_c2_name, c2Name)
+            views.setTextViewText(R.id.widget_c2_location, c2Loc)
+            views.setTextViewText(R.id.widget_c2_time, c2Time)
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
 
-        private fun create300DegreeArcBitmap(progress: Float): Bitmap {
+        private fun create300DegreeArcBitmap(totalCount: Int, finishedCount: Int): Bitmap {
             val size = 320
             val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
@@ -77,16 +92,32 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
             val padding = strokeWidth / 2 + 10f
             val oval = RectF(padding, padding, size - padding, size - padding)
 
-            // 底轨：300 度浅灰色弧线（从 120 度开始顺时针绘制 300 度，在 60 度处截止，底部保留 60 度开口）
-            paint.color = Color.parseColor("#E2E8F0")
-            canvas.drawArc(oval, 120f, 300f, false, paint)
+            val n = if (totalCount <= 0) 1 else totalCount.coerceAtMost(10)
+            if (totalCount <= 0) {
+                paint.color = Color.parseColor("#E2E8F0")
+                canvas.drawArc(oval, 120f, 300f, false, paint)
+                return bitmap
+            }
 
-            // 活跃进度轨：300 度生机草木绿弧线
-            val validProgress = progress.coerceIn(0f, 1f)
-            if (validProgress > 0f) {
-                paint.color = Color.parseColor("#10B981")
-                val sweep = 300f * validProgress
-                canvas.drawArc(oval, 120f, sweep, false, paint)
+            if (n == 1) {
+                paint.color = Color.parseColor("#E2E8F0")
+                canvas.drawArc(oval, 120f, 300f, false, paint)
+                if (finishedCount >= 1) {
+                    paint.color = Color.parseColor("#10B981")
+                    canvas.drawArc(oval, 120f, 300f, false, paint)
+                }
+                return bitmap
+            }
+
+            // 分段绘制：今天有几节课就分几段
+            val gap = if (n >= 6) 4f else 6f
+            val totalGap = (n - 1) * gap
+            val segSweep = (300f - totalGap) / n
+
+            for (i in 0 until n) {
+                val startAngle = 120f + i * (segSweep + gap)
+                paint.color = if (i < finishedCount) Color.parseColor("#10B981") else Color.parseColor("#E2E8F0")
+                canvas.drawArc(oval, startAngle, segSweep, false, paint)
             }
 
             return bitmap

@@ -7,7 +7,7 @@
     android:background="@drawable/widget_bg"
     android:padding="12dp">
 
-    <!-- 顶部状态行 -->
+    <!-- 顶部状态行：星期几写中间左右可切换日期，右上角原子组件已去掉 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,25 +16,54 @@
 
         <TextView
             android:id="@+id/widget_title"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="课星球"
             android:textColor="#15803D"
             android:textSize="12sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/widget_tag"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/widget_pill_bg"
-            android:paddingHorizontal="6dp"
-            android:paddingVertical="2dp"
-            android:text="原子组件"
-            android:textColor="#16A34A"
-            android:textSize="9sp"
-            android:textStyle="bold" />
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/widget_prev_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp"
+                android:text="‹"
+                android:textColor="#15803D"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_day_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="周五"
+                android:textColor="#15803D"
+                android:textSize="11.5sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_next_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp"
+                android:text="›"
+                android:textColor="#15803D"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 右上角原子组件按用户要求去掉，保持平衡占位 -->
+        <View
+            android:layout_width="32dp"
+            android:layout_height="1dp" />
     </LinearLayout>
 
     <!-- 中间：300度弧线进度图（底部开口60度） + 中心大字剩余课数 + 正下方放学倒计时 -->
@@ -89,40 +118,122 @@
                     android:includeFontPadding="false" />
             </LinearLayout>
 
-            <!-- 正下方：清晰标注放学时间与倒计时（如 20:35 放学 · 距放学 2小时15分） -->
+            <!-- 正下方：清晰标注放学时间（用户要求：去掉距放学还有多久） -->
             <TextView
                 android:id="@+id/widget_dismissal_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:paddingHorizontal="4dp"
-                android:text="20:35 放学 · 距放学 2小时15分"
+                android:text="17:40 放学"
                 android:textColor="#16A34A"
-                android:textSize="10sp"
+                android:textSize="10.5sp"
                 android:textStyle="bold"
                 android:singleLine="true" />
         </LinearLayout>
     </FrameLayout>
 
-    <!-- 底部胶囊：展示下节课具体信息（如 下节: 形势与政策 @ 涵虚楼A101 · 14:00） -->
+    <!-- 底部课程表列表：从左到右 课程名和地点，右边写还有多久上课，一次只显示两门，已结束的不显示 -->
     <LinearLayout
-        android:id="@+id/widget_capsule_row"
+        android:id="@+id/widget_courses_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/widget_pill_bg"
-        android:gravity="center"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="5dp">
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/widget_next_class"
-            android:layout_width="wrap_content"
+        <!-- 课程 1 -->
+        <LinearLayout
+            android:id="@+id/widget_course_1_row"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="下节: 形势与政策 @ 涵虚楼A101 · 14:00"
-            android:textColor="#15803D"
-            android:textSize="10.5sp"
-            android:textStyle="bold"
-            android:singleLine="true" />
+            android:background="@drawable/widget_pill_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3.5dp"
+            android:layout_marginBottom="3dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/widget_c1_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="给水排水管道工程"
+                    android:textColor="#0F172A"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/widget_c1_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@长智楼 A208"
+                    android:textColor="#64748B"
+                    android:textSize="8sp"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/widget_c1_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25分钟后 · 10:05"
+                android:textColor="#15803D"
+                android:textSize="9.5sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 课程 2 -->
+        <LinearLayout
+            android:id="@+id/widget_course_2_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/widget_pill_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3.5dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/widget_c2_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="计算机系统结构"
+                    android:textColor="#0F172A"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/widget_c2_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@信息实验楼 301"
+                    android:textColor="#64748B"
+                    android:textSize="8sp"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/widget_c2_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4小时后 · 14:00"
+                android:textColor="#15803D"
+                android:textSize="9.5sp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

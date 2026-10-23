@@ -3,122 +3,197 @@ import { Course } from '../types/schedule';
 import { isCourseInWeek, repairCourse } from './jwParser';
 import { loadScheduleData } from './scheduleStorage';
 
+export interface WidgetCourseItem {
+  id: string;
+  name: string;
+  location: string;
+  startTime: string;
+  endTime: string;
+  timeUntilStartText: string; // 如 "进行中", "25分钟后", "1小时20分后"
+  isCurrent: boolean;
+}
+
 export interface WidgetScheduleData {
   remainingCount: number;
   totalCount: number;
+  finishedCount: number;
   progressPercent: number; // 0.0 ~ 1.0
   dismissalTime: string;
   countdownText: string;
-  dismissalCombinedText: string; // 如 "20:35 放学 · 距放学 2小时15分"
-  nextCourseText: string; // 如 "下节: 形势与政策 @ 涵虚楼A101 · 14:00"
+  dismissalCombinedText: string; // 保持向后兼容
+  dismissalText: string; // 纯粹放学时间，如 "17:40 放学"（已去掉"距放学还有多久"）
+  nextCourseText: string;
+  upcomingCourses: WidgetCourseItem[]; // 一次只显示两门，已经结束的不显示
+  dayOfWeek: number; // 1 ~ 7
+  dayOfWeekName: string; // "周一", "周二", ..., "周日"
+  isToday: boolean;
   isSampleData: boolean;
 }
 
+const DAY_NAMES = ['', '周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+
 /**
- * 严格按照原子组件要求计算课表信息：
- * 1. 外圈：300 度的优雅弧线进度图（底部保留 60 度开口）
- * 2. 中心：大字号醒目呈现今日剩余课程数（如 3 节剩余）
- * 3. 正下方：清晰标注放学时间与倒计时（如 20:35 放学 · 距放学 2小时15分）
- * 4. 底部胶囊：展示下节课具体信息（如 下节: 形势与政策 @ 涵虚楼A101 · 14:00）
+ * 按照最新原子组件设计规范计算课表信息：
+ * 1. 顶部：星期几写中间，左右可切换日期，右上角去掉原子组件标签
+ * 2. 进度条：300度弧线在中间分段，今天有几节课就分几段
+ * 3. 中心：醒目呈现剩余课数，正下方去掉"距放学还有多久"
+ * 4. 底部列表：从左到右显示 课程名和地点，右边写还有多久上课，一次只显示两门，已结束的不显示
  */
-export function computeWidgetData(courses: Course[], realWeekNumber: number = 7): WidgetScheduleData {
+export function computeWidgetData(
+  courses: Course[],
+  realWeekNumber: number = 7,
+  targetDayOfWeek?: number
+): WidgetScheduleData {
   const now = new Date();
-  const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay(); // 1=周一, 7=周日
+  const currentTodayDayOfWeek = now.getDay() === 0 ? 7 : now.getDay(); // 1=周一, 7=周日
+  const dayOfWeek = targetDayOfWeek && targetDayOfWeek >= 1 && targetDayOfWeek <= 7
+    ? targetDayOfWeek
+    : currentTodayDayOfWeek;
+  const isToday = dayOfWeek === currentTodayDayOfWeek;
   const curMinutes = now.getHours() * 60 + now.getMinutes();
 
   // 若尚未导入任何课程，呈现真实标准示例数据
   if (!courses || courses.length === 0) {
+    const sampleCourses: WidgetCourseItem[] = [
+      {
+        id: 's1',
+        name: '给水排水管道工程',
+        location: '长智楼 A208',
+        startTime: '10:05',
+        endTime: '11:40',
+        timeUntilStartText: isToday ? '25分钟后' : '10:05 开始',
+        isCurrent: false,
+      },
+      {
+        id: 's2',
+        name: '计算机系统结构',
+        location: '信息实验楼 301',
+        startTime: '14:00',
+        endTime: '15:35',
+        timeUntilStartText: isToday ? '4小时后' : '14:00 开始',
+        isCurrent: false,
+      },
+    ];
+
     return {
-      remainingCount: 3,
+      remainingCount: 2,
       totalCount: 4,
-      progressPercent: 0.25,
-      dismissalTime: '20:35',
-      countdownText: '距放学 2小时15分',
-      dismissalCombinedText: '20:35 放学 · 距放学 2小时15分',
-      nextCourseText: '下节: 形势与政策 @ 涵虚楼A101 · 14:00',
+      finishedCount: 2,
+      progressPercent: 0.5,
+      dismissalTime: '17:40',
+      countdownText: '',
+      dismissalCombinedText: '17:40 放学',
+      dismissalText: '17:40 放学',
+      nextCourseText: '给水排水管道工程 @ 长智楼 A208 · 10:05',
+      upcomingCourses: sampleCourses,
+      dayOfWeek,
+      dayOfWeekName: DAY_NAMES[dayOfWeek] || '周五',
+      isToday,
       isSampleData: true,
     };
   }
 
-  // 筛选今日在该周的所有真实课程
-  const todayCourses = courses
+  // 筛选指定星期几在该周的所有真实课程
+  const dayCourses = courses
     .map(repairCourse)
     .filter((c) => c.dayOfWeek === dayOfWeek && isCourseInWeek(c.weekRange, realWeekNumber))
     .sort((a, b) => (a.startTime || '00:00').localeCompare(b.startTime || '00:00'));
 
-  if (todayCourses.length === 0) {
+  if (dayCourses.length === 0) {
     return {
       remainingCount: 0,
       totalCount: 0,
+      finishedCount: 0,
       progressPercent: 1.0,
       dismissalTime: '今日无课',
-      countdownText: '自由安排',
-      dismissalCombinedText: '今日无课 · 自由安排',
-      nextCourseText: '下节: 今日无课 · 享受大学时光',
+      countdownText: '无排课',
+      dismissalCombinedText: '今日无课',
+      dismissalText: '今日无排课',
+      nextCourseText: '今日无课 · 享受大学时光',
+      upcomingCourses: [],
+      dayOfWeek,
+      dayOfWeekName: DAY_NAMES[dayOfWeek] || '周一',
+      isToday,
       isSampleData: false,
     };
   }
 
-  // 计算今日尚未结束的课程
-  const remainingCourses = todayCourses.filter((c) => {
-    const [eh, em] = (c.endTime || '17:40').split(':').map(Number);
-    const endMin = (eh || 0) * 60 + (em || 0);
-    return endMin > curMinutes;
-  });
+  // 计算未结束的课程（如果是今天，则过滤掉已经结束的课程；如果是其他星期，全部视为未结束）
+  const activeOrUpcomingCourses = isToday
+    ? dayCourses.filter((c) => {
+        const [eh, em] = (c.endTime || '17:40').split(':').map(Number);
+        const endMin = (eh || 0) * 60 + (em || 0);
+        return endMin > curMinutes;
+      })
+    : dayCourses;
 
-  const remainingCount = remainingCourses.length;
-  const totalCount = todayCourses.length;
-  const finishedCount = Math.max(0, totalCount - remainingCount);
+  const totalCount = dayCourses.length;
+  const remainingCount = activeOrUpcomingCourses.length;
+  const finishedCount = isToday ? Math.max(0, totalCount - remainingCount) : 0;
   const progressPercent = totalCount > 0 ? finishedCount / totalCount : 1.0;
 
-  // 放学时间：今日最后一节课的下课时间
-  const lastCourse = todayCourses[todayCourses.length - 1];
+  // 放学时间：最后一节课的下课时间（去掉“距放学还有多久”）
+  const lastCourse = dayCourses[dayCourses.length - 1];
   const lastEndTime = lastCourse.endTime || '17:40';
-  const [leh, lem] = lastEndTime.split(':').map(Number);
-  const lastEndMin = (leh || 0) * 60 + (lem || 0);
-  const diff = lastEndMin - curMinutes;
+  const dismissalText = remainingCount === 0 && isToday ? '已放学' : `${lastEndTime} 放学`;
 
-  let countdownText = '今日课程已结束';
-  if (diff > 0) {
-    const h = Math.floor(diff / 60);
-    const m = diff % 60;
-    countdownText = h > 0 ? `距放学 ${h}小时${m}分` : `距放学 ${m}分钟`;
-  }
+  // 构建从左到右显示且一次只显示两门的课程列表（已结束的不显示）
+  const upcomingCourses: WidgetCourseItem[] = activeOrUpcomingCourses
+    .slice(0, 2)
+    .map((c) => {
+      const [sh, sm] = (c.startTime || '08:00').split(':').map(Number);
+      const [eh, em] = (c.endTime || '09:40').split(':').map(Number);
+      const startMin = (sh || 0) * 60 + (sm || 0);
+      const endMin = (eh || 0) * 60 + (em || 0);
 
-  const dismissalCombinedText = `${lastEndTime} 放学 · ${countdownText}`;
+      let timeUntilStartText = `${c.startTime} 开始`;
+      let isCurrent = false;
 
-  // 下节课解析
-  let nextCourseText = '今日课程已全部结束 ✨';
-  const upcoming = todayCourses.find((c) => {
-    const [sh, sm] = (c.startTime || '08:00').split(':').map(Number);
-    const startMin = (sh || 0) * 60 + (sm || 0);
-    return startMin > curMinutes;
-  });
+      if (isToday) {
+        if (curMinutes >= startMin && curMinutes <= endMin) {
+          timeUntilStartText = '进行中';
+          isCurrent = true;
+        } else if (curMinutes < startMin) {
+          const diff = startMin - curMinutes;
+          if (diff < 60) {
+            timeUntilStartText = `${diff}分钟后`;
+          } else {
+            const h = Math.floor(diff / 60);
+            const m = diff % 60;
+            timeUntilStartText = m > 0 ? `${h}小时${m}分后` : `${h}小时后`;
+          }
+        }
+      }
 
-  const current = todayCourses.find((c) => {
-    const [sh, sm] = (c.startTime || '08:00').split(':').map(Number);
-    const [eh, em] = (c.endTime || '09:40').split(':').map(Number);
-    const startMin = (sh || 0) * 60 + (sm || 0);
-    const endMin = (eh || 0) * 60 + (em || 0);
-    return curMinutes >= startMin && curMinutes <= endMin;
-  });
+      return {
+        id: c.id,
+        name: c.name,
+        location: c.location || '待定教室',
+        startTime: c.startTime || '08:00',
+        endTime: c.endTime || '09:40',
+        timeUntilStartText,
+        isCurrent,
+      };
+    });
 
-  if (upcoming) {
-    const loc = upcoming.location ? ` @ ${upcoming.location}` : '';
-    nextCourseText = `下节: ${upcoming.name}${loc} · ${upcoming.startTime}`;
-  } else if (current) {
-    const loc = current.location ? ` @ ${current.location}` : '';
-    nextCourseText = `正在上: ${current.name}${loc} · ${current.endTime}下课`;
-  }
+  const nextCourseText = upcomingCourses.length > 0
+    ? `${upcomingCourses[0].name} @ ${upcomingCourses[0].location} · ${upcomingCourses[0].startTime}`
+    : '今日课程已全部结束 ✨';
 
   return {
     remainingCount,
     totalCount,
+    finishedCount,
     progressPercent,
     dismissalTime: lastEndTime,
-    countdownText,
-    dismissalCombinedText,
+    countdownText: '',
+    dismissalCombinedText: dismissalText,
+    dismissalText,
     nextCourseText,
+    upcomingCourses,
+    dayOfWeek,
+    dayOfWeekName: DAY_NAMES[dayOfWeek] || '周一',
+    isToday,
     isSampleData: false,
   };
 }
@@ -135,13 +210,31 @@ export async function syncScheduleToNativeWidget(data?: WidgetScheduleData): Pro
     }
 
     if (Platform.OS === 'android' && NativeModules.WidgetBridge) {
-      NativeModules.WidgetBridge.updateWidgetData(
-        widgetData.remainingCount,
-        widgetData.totalCount,
-        widgetData.dismissalCombinedText,
-        widgetData.nextCourseText,
-        widgetData.progressPercent
-      );
+      const c1 = widgetData.upcomingCourses[0] || { name: '', location: '', startTime: '' };
+      const c2 = widgetData.upcomingCourses[1] || { name: '', location: '', startTime: '' };
+
+      if (NativeModules.WidgetBridge.updateWidgetDetailData) {
+        NativeModules.WidgetBridge.updateWidgetDetailData(
+          widgetData.remainingCount,
+          widgetData.totalCount,
+          widgetData.dismissalText,
+          widgetData.dayOfWeekName,
+          c1.name,
+          c1.location ? `@${c1.location}` : '',
+          c1.timeUntilStartText ? `${c1.timeUntilStartText} · ${c1.startTime}` : '',
+          c2.name,
+          c2.location ? `@${c2.location}` : '',
+          c2.timeUntilStartText ? `${c2.timeUntilStartText} · ${c2.startTime}` : ''
+        );
+      } else {
+        NativeModules.WidgetBridge.updateWidgetData(
+          widgetData.remainingCount,
+          widgetData.totalCount,
+          widgetData.dismissalText,
+          widgetData.nextCourseText,
+          widgetData.progressPercent
+        );
+      }
     }
   } catch (e) {
     console.warn('[widgetHelper] Failed to sync to native widget:', e);
