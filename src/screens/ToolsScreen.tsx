@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Rect, Path, G } from 'react-native-svg';
 import { ImportModal } from '../components/ImportModal';
 import { APP_VERSION } from '../constants/version';
+import { computeWidgetData, syncScheduleToNativeWidget, WidgetScheduleData } from '../services/widgetHelper';
+import { loadScheduleData } from '../services/scheduleStorage';
 
 // 导入课表预览示例课程数据（与课表页对齐）
 const IMPORTED_COURSES_SAMPLE = [
@@ -97,6 +99,24 @@ export const ToolsScreen: React.FC = () => {
   const [qrScanVisible, setQrScanVisible] = useState(false);
   const [widgetModalVisible, setWidgetModalVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // 实时原子组件数据（从本地真实课表动态读取计算）
+  const [widgetData, setWidgetData] = useState<WidgetScheduleData>(() => computeWidgetData([]));
+
+  const refreshWidgetInfo = useCallback(async () => {
+    try {
+      const stored = await loadScheduleData();
+      const data = computeWidgetData(stored.courses);
+      setWidgetData(data);
+      syncScheduleToNativeWidget(data);
+    } catch (e) {
+      console.warn('[ToolsScreen] Failed to refresh widget info:', e);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshWidgetInfo();
+  }, [refreshWidgetInfo]);
 
   const handleOpenImportModal = () => {
     setImportModalVisible(true);
@@ -317,6 +337,7 @@ export const ToolsScreen: React.FC = () => {
               activeOpacity={0.7}
               onPress={() => {
                 if (t.id === 'desktop_widget') {
+                  refreshWidgetInfo();
                   setWidgetModalVisible(true);
                 } else if (t.id === 'qr_share') {
                   setQrShareVisible(true);
@@ -373,6 +394,7 @@ export const ToolsScreen: React.FC = () => {
               activeOpacity={0.7}
               onPress={() => {
                 if (item.id === 'desktop_widget') {
+                  refreshWidgetInfo();
                   setWidgetModalVisible(true);
                 } else if (item.id === 'qr_share') {
                   setQrShareVisible(true);
@@ -886,10 +908,10 @@ export const ToolsScreen: React.FC = () => {
               <View style={[styles.widgetSurfaceCard, Shadows.card]}>
                 {/* 300度圆形线条角度图与内部核心数据 */}
                 <View style={styles.widgetRingWrapper}>
-                  <Svg width={200} height={180} viewBox="0 0 200 180">
-                    {/* 底轨：300度浅灰色弧线（从120度至60度，顺时针300度） */}
+                  <Svg width={210} height={180} viewBox="0 0 210 180">
+                    {/* 底轨：300度优雅弧线（从120度至60度顺时针300度，底部保留60度开口） */}
                     <Path
-                      d="M 68 141 A 64 64 0 1 1 132 141"
+                      d="M 72 142 A 66 66 0 1 1 138 142"
                       stroke="#E2E8F0"
                       strokeWidth={10}
                       strokeLinecap="round"
@@ -897,35 +919,36 @@ export const ToolsScreen: React.FC = () => {
                     />
                     {/* 活跃进度轨：300度生机绿弧线 */}
                     <Path
-                      d="M 68 141 A 64 64 0 1 1 132 141"
+                      d="M 72 142 A 66 66 0 1 1 138 142"
                       stroke="#10B981"
                       strokeWidth={10}
                       strokeLinecap="round"
                       fill="none"
-                      strokeDasharray="335.1"
-                      strokeDashoffset={335.1 * 0.35}
+                      strokeDasharray="345.6"
+                      strokeDashoffset={345.6 * (1 - Math.max(0.04, Math.min(1, widgetData.progressPercent)))}
                     />
                   </Svg>
 
-                  {/* 居中区域 */}
+                  {/* 环心与正下方区域 */}
                   <View style={styles.widgetRingContentBox}>
-                    {/* 中间是剩余的课程数 */}
+                    {/* 中心：大字号醒目呈现今日剩余课程数（如 3 节剩余） */}
                     <View style={styles.widgetCenterNumberRow}>
-                      <Text style={styles.widgetNumberText}>3</Text>
+                      <Text style={styles.widgetNumberText}>{widgetData.remainingCount}</Text>
                       <Text style={styles.widgetNumberUnit}>节剩余</Text>
                     </View>
 
-                    {/* 下面写着放学时间与倒计时 */}
-                    <Text style={styles.widgetDismissalText}>20:35 放学</Text>
-                    <Text style={styles.widgetCountdownText}>距放学 2小时15分</Text>
+                    {/* 正下方：清晰标注放学时间与倒计时（如 20:35 放学 · 距放学 2小时15分） */}
+                    <Text style={styles.widgetDismissalCombinedText} numberOfLines={1}>
+                      {widgetData.dismissalCombinedText}
+                    </Text>
                   </View>
                 </View>
 
-                {/* 底部写一下节课的名字 */}
-                <View style={styles.widgetBottomCourseRow}>
-                  <Ionicons name="time" size={13} color="#10B981" style={{ marginRight: 4 }} />
-                  <Text style={styles.widgetBottomCourseText} numberOfLines={1}>
-                    下节: 形势与政策 @ 涵虚楼A101 · 14:00
+                {/* 底部胶囊：展示下节课具体信息（如 下节: 形势与政策 @ 涵虚楼A101 · 14:00） */}
+                <View style={styles.widgetCapsule}>
+                  <Ionicons name="sparkles" size={13} color="#15803D" style={{ marginRight: 6 }} />
+                  <Text style={styles.widgetCapsuleText} numberOfLines={1}>
+                    {widgetData.nextCourseText}
                   </Text>
                 </View>
               </View>
@@ -1950,25 +1973,30 @@ const styles = StyleSheet.create({
     marginVertical: 14,
   },
   widgetSurfaceCard: {
-    width: 260,
+    width: 270,
     backgroundColor: '#FFFFFF',
-    borderRadius: 26,
+    borderRadius: 28,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    paddingVertical: 14,
-    paddingHorizontal: 12,
+    borderColor: '#DCFCE7',
+    paddingVertical: 16,
+    paddingHorizontal: 14,
     alignItems: 'center',
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 14,
+    elevation: 3,
   },
   widgetRingWrapper: {
     position: 'relative',
-    width: 200,
-    height: 175,
+    width: 210,
+    height: 180,
     alignItems: 'center',
     justifyContent: 'center',
   },
   widgetRingContentBox: {
     position: 'absolute',
-    top: 36,
+    top: 40,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -1979,42 +2007,43 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
   },
   widgetNumberText: {
-    fontSize: 34,
+    fontSize: 40,
     fontWeight: '900',
     color: '#0F172A',
     letterSpacing: -1,
+    lineHeight: 44,
   },
   widgetNumberUnit: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#64748B',
-    marginLeft: 3,
-  },
-  widgetDismissalText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '800',
-    color: '#10B981',
-    marginTop: 2,
+    color: '#64748B',
+    marginLeft: 4,
   },
-  widgetCountdownText: {
-    fontSize: 10.5,
-    color: '#94A3B8',
-    marginTop: 1,
+  widgetDismissalCombinedText: {
+    fontSize: 11.5,
+    fontWeight: '700',
+    color: '#16A34A',
+    marginTop: 6,
+    textAlign: 'center',
+    letterSpacing: -0.2,
   },
-  widgetBottomCourseRow: {
+  widgetCapsule: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F0FDF4',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    backgroundColor: '#DCFCE7',
     borderRadius: Rounded.pill,
-    marginTop: 4,
-    maxWidth: '92%',
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginTop: 6,
+    maxWidth: '100%',
   },
-  widgetBottomCourseText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#047857',
+  widgetCapsuleText: {
+    fontSize: 11.5,
+    color: '#15803D',
+    fontWeight: '700',
+    letterSpacing: -0.2,
     flexShrink: 1,
   },
   oppoGuideBox: {

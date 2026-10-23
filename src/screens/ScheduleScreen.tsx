@@ -34,6 +34,7 @@ import {
   loadNonCurrentWeekMode,
   saveNonCurrentWeekMode,
 } from '../services/scheduleStorage';
+import { syncScheduleToNativeWidget } from '../services/widgetHelper';
 
 interface ScheduleScreenProps {
   onNavigateToNotesTab?: (courseName: string) => void;
@@ -323,6 +324,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
       if (isMounted && stored.courses && stored.courses.length > 0) {
         const repaired = repairCourseList(stored.courses);
         setCoursesList(repaired);
+        syncScheduleToNativeWidget();
         if (stored.semester) {
           setCurrentSemester(stored.semester);
         }
@@ -660,6 +662,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     const repaired = repairCourseList(classmateCourses);
     setCoursesList(repaired);
     saveScheduleData(repaired, currentSemester);
+    syncScheduleToNativeWidget();
     setQrScannerVisible(false);
     setToastMessage(`🎉 扫码成功！已导入同学的 ${repaired.length} 门完整学期排课！`);
     setTimeout(() => setToastMessage(null), 3500);
@@ -692,6 +695,7 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     }
     // 持久化存储到本地 AsyncStorage，关闭或退出 App 绝不丢失！
     saveScheduleData(repaired, activeSem);
+    syncScheduleToNativeWidget();
     triggerEntranceAnimation();
     setToastMessage(`🎉 已成功智能导入 ${repaired.length} 门课程！已放入【${activeSem}】`);
     setTimeout(() => setToastMessage(null), 3500);
