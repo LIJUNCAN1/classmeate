@@ -87,13 +87,13 @@
             android:scaleType="fitCenter"
             android:contentDescription="分段弧线进度图" />
 
-        <!-- 环心数据信息：上浮对齐，确保与底部弧线开口留有充足空间，绝不遮挡文字 -->
+        <!-- 环心数据信息：上下居中对齐，与圆环弧线保持匀称留白 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center_horizontal|center_vertical"
-            android:paddingBottom="12dp">
+            android:gravity="center"
+            android:paddingBottom="4dp">
 
             <!-- 中心：大字号醒目呈现今日剩余课程数 -->
             <LinearLayout

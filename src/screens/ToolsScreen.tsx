@@ -264,13 +264,13 @@ export const ToolsScreen: React.FC = () => {
     refreshWidgetInfo(next);
   };
 
-  // 分段弧线进度条（用户要求：在进度条中间分段，今天有几节课就分几段，底部80度对称开口，绝不遮挡文字）
+  // 分段弧线进度条（用户要求：在进度条中间分段，今天有几节课就分几段，分段明显，底部80度对称开口）
   const renderWidgetArcSegments = (totalCount: number, finishedCount: number) => {
     const cx = 105;
-    const cy = 82;
+    const cy = 80;
     const R = 62;
     const strokeWidth = 8.5;
-    const totalSweep = 280; // 底部保留 80 度宽敞开口，两侧尖端与放学文字保留充裕间隙
+    const totalSweep = 280; // 底部保留 80 度宽敞开口
     const startBase = 130; // 从 130° 顺时针绘制 280° 至 50°
 
     if (totalCount <= 0) {
@@ -322,7 +322,8 @@ export const ToolsScreen: React.FC = () => {
     }
 
     const N = Math.min(10, Math.max(2, totalCount));
-    const gapAngle = N >= 6 ? 4 : 6;
+    // 动态增大间隙角（扣除两端圆角各占约 3.93° 后，仍有清晰明显的白色空隙）
+    const gapAngle = Math.max(10, 20 - N * 1.5);
     const totalGap = (N - 1) * gapAngle;
     const segSweep = (totalSweep - totalGap) / N;
 
@@ -1043,7 +1044,6 @@ export const ToolsScreen: React.FC = () => {
 
                     <Text style={styles.widgetDayLabel}>
                       {widgetData.dayOfWeekName}
-                      {widgetData.isToday ? ' (今天)' : ''}
                     </Text>
 
                     <TouchableOpacity
@@ -2191,22 +2191,24 @@ const styles = StyleSheet.create({
   },
   widgetRingContentBox: {
     position: 'absolute',
-    top: 36,
+    top: 0,
+    bottom: 0,
     left: 0,
     right: 0,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingBottom: 4,
   },
   widgetCenterNumberRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
   },
   widgetNumberText: {
-    fontSize: 36,
+    fontSize: 34,
     fontWeight: '900',
     color: '#0F172A',
     letterSpacing: -1,
-    lineHeight: 40,
+    lineHeight: 38,
   },
   widgetNumberUnit: {
     fontSize: 13,
@@ -2218,7 +2220,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: '#16A34A',
-    marginTop: 3,
+    marginTop: 2,
     textAlign: 'center',
     letterSpacing: -0.2,
   },

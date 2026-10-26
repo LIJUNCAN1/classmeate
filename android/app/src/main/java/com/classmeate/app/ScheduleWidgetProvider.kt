@@ -253,8 +253,8 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
                 return bitmap
             }
 
-            // 多节课：按节数等距分段
-            val gap = if (n >= 6) 4f else 6f
+            // 多节课：按节数等距分段（动态增大间隙角，扣除两端圆角后仍有清晰明显的白色空隙）
+            val gap = (20f - n * 1.5f).coerceIn(10f, 18f)
             val totalGap = (n - 1) * gap
             val segSweep = (totalSweep - totalGap) / n
 
