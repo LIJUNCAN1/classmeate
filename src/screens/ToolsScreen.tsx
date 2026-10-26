@@ -264,17 +264,25 @@ export const ToolsScreen: React.FC = () => {
     refreshWidgetInfo(next);
   };
 
-  // 300度弧线进度条（用户要求：在进度条中间分段，今天有几节课就分几段）
+  // 分段弧线进度条（用户要求：在进度条中间分段，今天有几节课就分几段，底部80度对称开口，绝不遮挡文字）
   const renderWidgetArcSegments = (totalCount: number, finishedCount: number) => {
     const cx = 105;
-    const cy = 90;
-    const R = 64;
-    const strokeWidth = 9;
+    const cy = 82;
+    const R = 62;
+    const strokeWidth = 8.5;
+    const totalSweep = 280; // 底部保留 80 度宽敞开口，两侧尖端与放学文字保留充裕间隙
+    const startBase = 130; // 从 130° 顺时针绘制 280° 至 50°
 
     if (totalCount <= 0) {
+      const r1 = (130 * Math.PI) / 180;
+      const r2 = (50 * Math.PI) / 180;
+      const x1 = cx + R * Math.cos(r1);
+      const y1 = cy + R * Math.sin(r1);
+      const x2 = cx + R * Math.cos(r2);
+      const y2 = cy + R * Math.sin(r2);
       return (
         <Path
-          d="M 73 145 A 64 64 0 1 1 137 145"
+          d={`M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${R} ${R} 0 1 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`}
           stroke="#E2E8F0"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
@@ -284,10 +292,17 @@ export const ToolsScreen: React.FC = () => {
     }
 
     if (totalCount === 1) {
+      const r1 = (130 * Math.PI) / 180;
+      const r2 = (50 * Math.PI) / 180;
+      const x1 = cx + R * Math.cos(r1);
+      const y1 = cy + R * Math.sin(r1);
+      const x2 = cx + R * Math.cos(r2);
+      const y2 = cy + R * Math.sin(r2);
+      const pathD = `M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${R} ${R} 0 1 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
       return (
         <>
           <Path
-            d="M 73 145 A 64 64 0 1 1 137 145"
+            d={pathD}
             stroke="#E2E8F0"
             strokeWidth={strokeWidth}
             strokeLinecap="round"
@@ -295,7 +310,7 @@ export const ToolsScreen: React.FC = () => {
           />
           {finishedCount >= 1 && (
             <Path
-              d="M 73 145 A 64 64 0 1 1 137 145"
+              d={pathD}
               stroke="#10B981"
               strokeWidth={strokeWidth}
               strokeLinecap="round"
@@ -309,11 +324,11 @@ export const ToolsScreen: React.FC = () => {
     const N = Math.min(10, Math.max(2, totalCount));
     const gapAngle = N >= 6 ? 4 : 6;
     const totalGap = (N - 1) * gapAngle;
-    const segSweep = (300 - totalGap) / N;
+    const segSweep = (totalSweep - totalGap) / N;
 
     const segments = [];
     for (let i = 0; i < N; i++) {
-      const a1 = 120 + i * (segSweep + gapAngle);
+      const a1 = startBase + i * (segSweep + gapAngle);
       const a2 = a1 + segSweep;
       const r1 = (a1 * Math.PI) / 180;
       const r2 = (a2 * Math.PI) / 180;
@@ -1045,9 +1060,9 @@ export const ToolsScreen: React.FC = () => {
                   <View style={{ width: 36 }} />
                 </View>
 
-                {/* 300度圆形线条分段角度图与内部核心数据（今天有几节课就分几段） */}
+                {/* 分段弧线角度图与内部核心数据（今天有几节课就分几段，底部80度开口绝不遮挡文字） */}
                 <View style={styles.widgetRingWrapper}>
-                  <Svg width={210} height={180} viewBox="0 0 210 180">
+                  <Svg width={210} height={160} viewBox="0 0 210 160">
                     {renderWidgetArcSegments(widgetData.totalCount, widgetData.finishedCount)}
                   </Svg>
 
@@ -2170,13 +2185,13 @@ const styles = StyleSheet.create({
   widgetRingWrapper: {
     position: 'relative',
     width: 210,
-    height: 180,
+    height: 160,
     alignItems: 'center',
     justifyContent: 'center',
   },
   widgetRingContentBox: {
     position: 'absolute',
-    top: 40,
+    top: 36,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -2187,23 +2202,23 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
   },
   widgetNumberText: {
-    fontSize: 40,
+    fontSize: 36,
     fontWeight: '900',
     color: '#0F172A',
     letterSpacing: -1,
-    lineHeight: 44,
+    lineHeight: 40,
   },
   widgetNumberUnit: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
     color: '#64748B',
     marginLeft: 4,
   },
   widgetDismissalCombinedText: {
-    fontSize: 11.5,
+    fontSize: 11,
     fontWeight: '700',
     color: '#16A34A',
-    marginTop: 6,
+    marginTop: 3,
     textAlign: 'center',
     letterSpacing: -0.2,
   },

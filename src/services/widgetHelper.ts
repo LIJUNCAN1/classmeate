@@ -199,17 +199,45 @@ export function computeWidgetData(
 }
 
 /**
- * 将最新课表数据同步到 Android 原生小组件 SharedPreferences 与 Widget
+ * 将最新课表数据（包含全周 7 天排课）同步到 Android 原生小组件 SharedPreferences 与 Widget
  */
 export async function syncScheduleToNativeWidget(data?: WidgetScheduleData): Promise<void> {
   try {
+    const stored = await loadScheduleData();
+    const now = new Date();
+    const todayDayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+
+    // 计算周一至周日全周 7 天的完整组件数据
+    const weeklyData = [1, 2, 3, 4, 5, 6, 7].map((day) => computeWidgetData(stored.courses, 7, day));
+
     let widgetData = data;
-    if (!widgetData) {
-      const stored = await loadScheduleData();
-      widgetData = computeWidgetData(stored.courses);
+    if (!widgetData || widgetData.dayOfWeek === todayDayOfWeek) {
+      widgetData = weeklyData.find((d) => d.dayOfWeek === todayDayOfWeek) || weeklyData[0];
     }
 
     if (Platform.OS === 'android' && NativeModules.WidgetBridge) {
+      // 序列化全周 7 天数据，供桌面小组件离线/在桌面直接切换星期
+      const weeklyPayload = weeklyData.map((d) => ({
+        dayOfWeek: d.dayOfWeek,
+        dayOfWeekName: d.dayOfWeekName,
+        totalCount: d.totalCount,
+        remainingCount: d.remainingCount,
+        finishedCount: d.finishedCount,
+        dismissalText: d.dismissalText,
+        courses: d.upcomingCourses.map((c) => ({
+          name: c.name,
+          location: c.location ? `@${c.location}` : '',
+          timeText: c.timeUntilStartText ? `${c.timeUntilStartText} · ${c.startTime}` : c.startTime,
+        })),
+      }));
+
+      if (NativeModules.WidgetBridge.updateWeeklySchedule) {
+        NativeModules.WidgetBridge.updateWeeklySchedule(
+          JSON.stringify(weeklyPayload),
+          widgetData.dayOfWeek
+        );
+      }
+
       const c1 = widgetData.upcomingCourses[0] || { name: '', location: '', startTime: '' };
       const c2 = widgetData.upcomingCourses[1] || { name: '', location: '', startTime: '' };
 

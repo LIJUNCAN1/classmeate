@@ -14,6 +14,17 @@ class WidgetBridgeModule(private val reactContext: ReactApplicationContext) :
     override fun getName(): String = "WidgetBridge"
 
     @ReactMethod
+    fun updateWeeklySchedule(weeklyJson: String, currentDay: Int) {
+        val prefs = reactContext.getSharedPreferences("classmeate_widget_data", Context.MODE_PRIVATE)
+        prefs.edit().apply {
+            putString("weekly_schedule_json", weeklyJson)
+            putInt("current_selected_day", currentDay)
+            apply()
+        }
+        refreshWidget()
+    }
+
+    @ReactMethod
     fun updateWidgetData(remaining: Int, total: Int, dismissal: String, nextCourse: String, progress: Double) {
         val prefs = reactContext.getSharedPreferences("classmeate_widget_data", Context.MODE_PRIVATE)
         prefs.edit().apply {

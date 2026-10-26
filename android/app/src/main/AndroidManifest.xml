@@ -35,6 +35,8 @@
         android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="com.classmeate.app.ACTION_PREV_DAY" />
+        <action android:name="com.classmeate.app.ACTION_NEXT_DAY" />
       </intent-filter>
       <meta-data
           android:name="android.appwidget.provider"

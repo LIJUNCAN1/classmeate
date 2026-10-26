@@ -34,11 +34,14 @@
                 android:id="@+id/widget_prev_day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="8dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="2dp"
                 android:text="‹"
                 android:textColor="#15803D"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true" />
 
             <TextView
                 android:id="@+id/widget_day_text"
@@ -46,18 +49,21 @@
                 android:layout_height="wrap_content"
                 android:text="周五"
                 android:textColor="#15803D"
-                android:textSize="11.5sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/widget_next_day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="8dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="2dp"
                 android:text="›"
                 android:textColor="#15803D"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true" />
         </LinearLayout>
 
         <!-- 右上角原子组件按用户要求去掉，保持平衡占位 -->
@@ -66,27 +72,28 @@
             android:layout_height="1dp" />
     </LinearLayout>
 
-    <!-- 中间：300度弧线进度图（底部开口60度） + 中心大字剩余课数 + 正下方放学倒计时 -->
+    <!-- 中间：分段弧线进度图（按今天几节课分几段，底部开口80度） + 中心大字剩余课数 + 上浮放学时间，绝不遮挡文字 -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginVertical="2dp">
 
-        <!-- 300度弧线进度图底层绘制 -->
+        <!-- 分段弧线进度图底层绘制 -->
         <ImageView
             android:id="@+id/widget_arc_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
-            android:contentDescription="300度弧线进度图" />
+            android:contentDescription="分段弧线进度图" />
 
-        <!-- 环心数据信息 -->
+        <!-- 环心数据信息：上浮对齐，确保与底部弧线开口留有充足空间，绝不遮挡文字 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center_horizontal|center_vertical"
+            android:paddingBottom="12dp">
 
             <!-- 中心：大字号醒目呈现今日剩余课程数 -->
             <LinearLayout
@@ -99,7 +106,7 @@
                     android:id="@+id/widget_count_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3"
+                    android:text="2"
                     android:textColor="#0F172A"
                     android:textSize="32sp"
                     android:textStyle="bold"
@@ -118,18 +125,19 @@
                     android:includeFontPadding="false" />
             </LinearLayout>
 
-            <!-- 正下方：清晰标注放学时间（用户要求：去掉距放学还有多久） -->
+            <!-- 正下方：清晰标注放学时间（用户要求：去掉距放学还有多久，进度条不能遮挡文字） -->
             <TextView
                 android:id="@+id/widget_dismissal_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:paddingHorizontal="4dp"
+                android:paddingHorizontal="6dp"
                 android:text="17:40 放学"
                 android:textColor="#16A34A"
-                android:textSize="10.5sp"
+                android:textSize="11sp"
                 android:textStyle="bold"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:includeFontPadding="false" />
         </LinearLayout>
     </FrameLayout>
 
@@ -230,6 +238,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="4小时后 · 14:00"
+                android:textColor="#15803D"
+                android:textSize="9.5sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 暂无待上课程状态 -->
+        <LinearLayout
+            android:id="@+id/widget_course_empty_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/widget_pill_bg"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="5dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/widget_empty_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="今日课程已全部结束 ✨"
                 android:textColor="#15803D"
                 android:textSize="9.5sp"
                 android:textStyle="bold" />
