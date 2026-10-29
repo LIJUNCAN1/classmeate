@@ -20,7 +20,7 @@ import Svg, { Rect, Path, G } from 'react-native-svg';
 import { ImportModal } from '../components/ImportModal';
 import { APP_VERSION } from '../constants/version';
 import { computeWidgetData, syncScheduleToNativeWidget, WidgetScheduleData } from '../services/widgetHelper';
-import { loadScheduleData } from '../services/scheduleStorage';
+import { loadScheduleData, calculateCurrentWeekNumber } from '../services/scheduleStorage';
 
 // 导入课表预览示例课程数据（与课表页对齐）
 const IMPORTED_COURSES_SAMPLE = [
@@ -106,13 +106,14 @@ export const ToolsScreen: React.FC = () => {
     const d = new Date().getDay();
     return d === 0 ? 7 : d;
   });
-  const [widgetData, setWidgetData] = useState<WidgetScheduleData>(() => computeWidgetData([], 7));
+  const [widgetData, setWidgetData] = useState<WidgetScheduleData>(() => computeWidgetData([], calculateCurrentWeekNumber()));
 
   const refreshWidgetInfo = useCallback(async (targetDay?: number) => {
     try {
       const day = targetDay !== undefined ? targetDay : widgetDayOfWeek;
       const stored = await loadScheduleData();
-      const data = computeWidgetData(stored.courses, 7, day);
+      const realWeek = calculateCurrentWeekNumber();
+      const data = computeWidgetData(stored.courses, realWeek, day);
       setWidgetData(data);
       const todayDayOfWeek = new Date().getDay() === 0 ? 7 : new Date().getDay();
       if (day === todayDayOfWeek) {

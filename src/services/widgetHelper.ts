@@ -1,7 +1,7 @@
 import { NativeModules, Platform } from 'react-native';
 import { Course } from '../types/schedule';
 import { isCourseInWeek, repairCourse } from './jwParser';
-import { loadScheduleData } from './scheduleStorage';
+import { loadScheduleData, calculateCurrentWeekNumber } from './scheduleStorage';
 
 export interface WidgetCourseItem {
   id: string;
@@ -41,7 +41,7 @@ const DAY_NAMES = ['', '周一', '周二', '周三', '周四', '周五', '周六
  */
 export function computeWidgetData(
   courses: Course[],
-  realWeekNumber: number = 7,
+  realWeekNumber: number = calculateCurrentWeekNumber(),
   targetDayOfWeek?: number
 ): WidgetScheduleData {
   const now = new Date();
@@ -207,8 +207,9 @@ export async function syncScheduleToNativeWidget(data?: WidgetScheduleData): Pro
     const now = new Date();
     const todayDayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
 
+    const currentRealWeek = calculateCurrentWeekNumber();
     // 计算周一至周日全周 7 天的完整组件数据
-    const weeklyData = [1, 2, 3, 4, 5, 6, 7].map((day) => computeWidgetData(stored.courses, 7, day));
+    const weeklyData = [1, 2, 3, 4, 5, 6, 7].map((day) => computeWidgetData(stored.courses, currentRealWeek, day));
 
     let widgetData = data;
     if (!widgetData || widgetData.dayOfWeek === todayDayOfWeek) {

@@ -25,7 +25,7 @@ export const WeekCalendarStrip: React.FC<WeekCalendarStripProps> = ({
   selectedDate,
   onSelectDate,
   onOpenWeekPicker,
-  realWeekNumber = 7,
+  realWeekNumber = 8,
   currentWeekNumberOverride,
   courses = [],
 }) => {

@@ -34,6 +34,7 @@ import {
   NonCurrentWeekMode,
   loadNonCurrentWeekMode,
   saveNonCurrentWeekMode,
+  calculateCurrentWeekNumber,
 } from '../services/scheduleStorage';
 import { syncScheduleToNativeWidget } from '../services/widgetHelper';
 
@@ -415,8 +416,9 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
 
   // 查看周课表 5x5 矩阵弹窗状态
   const [weekPickerVisible, setWeekPickerVisible] = useState(false);
-  const [currentWeekNumber, setCurrentWeekNumber] = useState(7); // 当前正在查看的周次 (默认为第7周)
-  const [realCurrentWeekNumber, setRealCurrentWeekNumber] = useState(7); // 现实中当前周/本周
+  const initialRealWeek = useMemo(() => calculateCurrentWeekNumber(), []);
+  const [currentWeekNumber, setCurrentWeekNumber] = useState(initialRealWeek); // 当前正在查看的周次 (根据开学日期动态计算)
+  const [realCurrentWeekNumber, setRealCurrentWeekNumber] = useState(initialRealWeek); // 现实中当前周/本周
 
   // 监听周次切换触发向下浮现动效
   useEffect(() => {

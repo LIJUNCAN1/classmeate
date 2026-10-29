@@ -103,13 +103,13 @@ function parseCourseSection(course: Course): { startPeriod: number; span: number
   return { startPeriod: 1, span: 2 };
 }
 
-function getWeekDays(weekIndex: number) {
+function getWeekDays(weekIndex: number, realWeekNumber: number = 8) {
   const now = new Date();
   const currentDay = now.getDay();
   const mondayDiff = currentDay === 0 ? -6 : 1 - currentDay;
   const currentMonday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + mondayDiff);
-  // 基准：当前实际处于第 7 周
-  const weekOffset = weekIndex - 7;
+  // 基于现实当前周计算周次偏移量
+  const weekOffset = weekIndex - realWeekNumber;
   const weekStart = new Date(currentMonday.getTime() + weekOffset * 7 * 86400000);
   const weekEnd = new Date(weekStart.getTime() + 6 * 86400000);
   const range = `${(weekStart.getMonth() + 1).toString().padStart(2, '0')}/${weekStart.getDate().toString().padStart(2, '0')} - ${(weekEnd.getMonth() + 1).toString().padStart(2, '0')}/${weekEnd.getDate().toString().padStart(2, '0')}`;
@@ -135,8 +135,8 @@ function getWeekDays(weekIndex: number) {
 export const WeekGridView: React.FC<WeekGridViewProps> = ({
   courses = [],
   onOpenNote,
-  currentWeekIndex: propWeekIndex = 7,
-  realCurrentWeekNumber = 7,
+  currentWeekIndex: propWeekIndex = 8,
+  realCurrentWeekNumber = 8,
   nonCurrentWeekMode = 'hide',
   onSelectWeek,
   onOpenWeekPicker,
@@ -152,7 +152,7 @@ export const WeekGridView: React.FC<WeekGridViewProps> = ({
   const weekFloatUpAnim = useRef(new Animated.Value(0)).current;
 
   // 切回本周 CTA 中心生长变大动效
-  const isNotRealWeek = currentWeekIndex !== (realCurrentWeekNumber || 7);
+  const isNotRealWeek = currentWeekIndex !== (realCurrentWeekNumber || 8);
   const backTodayScaleAnim = useRef(new Animated.Value(isNotRealWeek ? 1 : 0)).current;
 
   useEffect(() => {
@@ -240,7 +240,7 @@ export const WeekGridView: React.FC<WeekGridViewProps> = ({
   const isTablet = windowWidth >= 600;
 
   // 星期与日期定义（随周次切换动态计算）
-  const activeWeekData = getWeekDays(currentWeekIndex);
+  const activeWeekData = getWeekDays(currentWeekIndex, realCurrentWeekNumber || 8);
 
   // 节次定义 (10节课)
   const periods = [
@@ -699,7 +699,7 @@ export const WeekGridView: React.FC<WeekGridViewProps> = ({
                     useNativeDriver: true,
                   }),
                 ]).start(() => {
-                  handleSwitchWeek(realCurrentWeekNumber || 7);
+                  handleSwitchWeek(realCurrentWeekNumber || 8);
                 });
               }}
               activeOpacity={0.85}
