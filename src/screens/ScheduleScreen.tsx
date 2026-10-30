@@ -37,12 +37,13 @@ import {
   calculateCurrentWeekNumber,
 } from '../services/scheduleStorage';
 import { syncScheduleToNativeWidget } from '../services/widgetHelper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface ScheduleScreenProps {
   onNavigateToNotesTab?: (courseName: string) => void;
 }
 
-// 包含周一至周日完整一周的课程排期数据（最左侧规范为：必修课、选修课、专业课、通识课）
+// 包含周一至周日完整一周的课程排期数据（所有初始课程 notesCount 归零，纯净无预设笔记）
 const FULL_WEEK_COURSES: Course[] = [
   // 周一 (dayOfWeek = 1)
   {
@@ -55,7 +56,7 @@ const FULL_WEEK_COURSES: Course[] = [
     endTime: '09:35',
     stageTag: '必修课 · 48课时 · 周一1-2节',
     status: 'in_progress',
-    notesCount: 2,
+    notesCount: 0,
   },
   {
     id: 'c-2',
@@ -67,7 +68,7 @@ const FULL_WEEK_COURSES: Course[] = [
     endTime: '15:35',
     stageTag: '专业课 · 32课时 · 周一5-6节',
     status: 'pending',
-    notesCount: 1,
+    notesCount: 0,
   },
 
   // 周二 (dayOfWeek = 2)
@@ -95,7 +96,7 @@ const FULL_WEEK_COURSES: Course[] = [
     endTime: '10:35',
     stageTag: '选修课 · 36课时 · 周三1-2节',
     status: 'pending',
-    notesCount: 3,
+    notesCount: 0,
   },
   {
     id: 'c-5',
@@ -107,7 +108,7 @@ const FULL_WEEK_COURSES: Course[] = [
     endTime: '15:05',
     stageTag: '选修课 · 32课时 · 周三5-6节',
     status: 'pending',
-    notesCount: 1,
+    notesCount: 0,
   },
   {
     id: 'c-6',
@@ -133,7 +134,7 @@ const FULL_WEEK_COURSES: Course[] = [
     endTime: '09:35',
     stageTag: '专业课 · 48课时 · 周四1-2节',
     status: 'pending',
-    notesCount: 4,
+    notesCount: 0,
   },
 
   // 周五 (dayOfWeek = 5)
@@ -147,7 +148,7 @@ const FULL_WEEK_COURSES: Course[] = [
     endTime: '12:25',
     stageTag: '选修课 · 36课时 · 周五3-5节',
     status: 'pending',
-    notesCount: 2,
+    notesCount: 0,
   },
 ];
 
@@ -193,51 +194,10 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
     Record<string, { title: string; notes: StickyNote[]; strokes: DrawingStroke[] }>
   >({});
 
-  // 课程已有随堂笔记知识库映射（去查看直接打开已有笔记）
-  const COURSE_NOTE_LIBRARY: Record<string, { title: string; content: string }> = {
-    '高等数学': {
-      title: '第14周 · 多元函数微分学与梯度下降',
-      content: '二阶偏导数对称性几何意义；拉格朗日乘数法在约束极值求解中的工程应用。课堂例题第3道：如何通过海森矩阵判断多元函数鞍点。\n\n【核心考点】\n1. 偏导数连续是可微的充分条件。\n2. 梯度方向即为函数值增长最快的方向。',
-    },
-    '计算机系统结构': {
-      title: '第12周 · 指令级并行与流水线冲突',
-      content: '【核心架构】经典五级流水线（IF, ID, EX, MEM, WB）时序与旁路转发架构图谱。结构冲突、数据冲突与控制冲突的硬件解决方案对比。',
-    },
-    '商务韩语': {
-      title: '第14周 · 破冰洽谈与敬语句型',
-      content: '商务谈判中的开场礼仪；对客委婉语、谦逊语在合同初审时的严谨表述。需要重点注意双方落座顺序与初次交换名片的固定问候套语。',
-    },
-    'TOPIK': {
-      title: '第13周 · 阅读真题主旨归纳速判法',
-      content: '长难句倒装解构；段落首尾呼应词快筛技巧；历年错题第34-37题解析及高频副词总结。',
-    },
-    '数据结构': {
-      title: '第14周 · 红黑树旋转与平衡性质',
-      content: '红黑树的5大性质定理证明；插入节点后的双红修复逻辑，左旋与右旋变换的伪代码推导。',
-    },
-    '交互设计': {
-      title: '第14周 · 移动端交互设计与微动效规范',
-      content: '触控热区黄金法则、手势拖拽阻尼感计算公式以及高保真原型动效交付规范。',
-    },
-  };
-
-  const getExistingNote = (name?: string) => {
-    if (!name) return null;
-    for (const key of Object.keys(COURSE_NOTE_LIBRARY)) {
-      if (name.includes(key)) return COURSE_NOTE_LIBRARY[key];
-    }
-    return null;
-  };
-
-  // 点击卡片上的笔记操作：已有笔记直接打开，无笔记才弹出记录方式选择
+  // 点击卡片上的随堂笔记操作：弹出记录方式选择（全新空白无预设）
   const handleStartNoteForCourse = (course: Course) => {
     setSelectedCourseForNote(course);
-    if (course.notesCount > 0) {
-      // 图4要求：已有笔记去查看直接打开，无需多余弹窗
-      setAppleNotesEditorVisible(true);
-    } else {
-      setRecordModeModalVisible(true);
-    }
+    setRecordModeModalVisible(true);
   };
 
   // 退出笔记时：纯净关闭，不自动重复弹窗
@@ -760,6 +720,17 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
                 <Text style={styles.screenMainTitle}>第 {currentWeekNumber} 周</Text>
                 <Ionicons name="chevron-down" size={15} color="#FFFFFF" style={{ marginLeft: 4 }} />
               </TouchableOpacity>
+
+              {currentWeekNumber !== realCurrentWeekNumber && (
+                <TouchableOpacity
+                  style={styles.headerBackWeekPill}
+                  onPress={() => setCurrentWeekNumber(realCurrentWeekNumber)}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons name="refresh" size={12} color="#166534" style={{ marginRight: 3 }} />
+                  <Text style={styles.headerBackWeekText}>切回本周</Text>
+                </TouchableOpacity>
+              )}
             </View>
 
             {/* 模式切换：今日 vs 周课表 (带选中框平移动画) */}
@@ -1114,18 +1085,37 @@ export const ScheduleScreen: React.FC<ScheduleScreenProps> = ({
         </TouchableOpacity>
       </Modal>
 
-      {/* 随堂速记编辑器（直接开启已有笔记或新建笔记，退出时不重复弹窗） */}
+      {/* 随堂速记编辑器（全新空白开始，无预设标题与内容，支持真实保存） */}
       {appleNotesEditorVisible && (
         <AppleNotesEditor
           visible={appleNotesEditorVisible}
           initialCourseName={selectedCourseForNote?.name}
-          initialTitle={
-            getExistingNote(selectedCourseForNote?.name)?.title ||
-            `第 14 周 · ${selectedCourseForNote?.name} 随堂笔记`
-          }
-          initialContent={getExistingNote(selectedCourseForNote?.name)?.content || ''}
+          initialTitle=""
+          initialContent=""
           onClose={handleExitNote}
-          onSave={handleExitNote}
+          onSave={async (noteData) => {
+            try {
+              const currentNotesRaw = await AsyncStorage.getItem('@kexingqiu_notes');
+              const currentNotes = currentNotesRaw ? JSON.parse(currentNotesRaw) : [];
+              const finalTitle =
+                noteData.title.trim() ||
+                noteData.content.trim().split('\n')[0].substring(0, 24) ||
+                '新建随堂笔记';
+              const newNote = {
+                id: `n-${Date.now()}`,
+                courseName: noteData.courseName || selectedCourseForNote?.name || '未关联课程',
+                title: finalTitle,
+                date: '刚刚',
+                content: noteData.content,
+                tags: ['随堂速记'],
+                type: 'text' as const,
+              };
+              await AsyncStorage.setItem('@kexingqiu_notes', JSON.stringify([newNote, ...currentNotes]));
+              setToastMessage(`✅ 已保存【${selectedCourseForNote?.name}】随堂笔记`);
+              setTimeout(() => setToastMessage(null), 2500);
+            } catch (e) {}
+            handleExitNote();
+          }}
         />
       )}
 
@@ -1690,6 +1680,25 @@ const styles = StyleSheet.create({
     marginLeft: 2,
     paddingVertical: 2,
     paddingHorizontal: 4,
+  },
+  headerBackWeekPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 14,
+    marginLeft: 8,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  headerBackWeekText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#15803D',
   },
   screenMainTitle: {
     fontSize: 22,

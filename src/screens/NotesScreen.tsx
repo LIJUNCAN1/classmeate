@@ -188,7 +188,24 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
         try {
           const parsed = JSON.parse(val);
           if (Array.isArray(parsed)) {
-            setNotes(parsed);
+            // 严格过滤历史上曾经遗留的 mock 预设笔记，彻底杜绝任何自动预置假数据
+            const cleanNotes = parsed.filter((n: NoteItem) => {
+              if (!n) return false;
+              const isMockId = ['n1', 'n2', 'n3', 'n4'].includes(n.id);
+              const isMockTitle =
+                typeof n.title === 'string' &&
+                (n.title.includes('多元函数微分学') ||
+                  n.title.includes('破冰洽谈') ||
+                  n.title.includes('流水线冲突') ||
+                  n.title.includes('阅读真题主旨') ||
+                  n.title.includes('红黑树旋转') ||
+                  n.title.includes('移动端交互设计'));
+              return !isMockId && !isMockTitle;
+            });
+            setNotes(cleanNotes);
+            if (cleanNotes.length !== parsed.length) {
+              AsyncStorage.setItem('@kexingqiu_notes', JSON.stringify(cleanNotes));
+            }
           }
         } catch (e) {}
       }
@@ -865,9 +882,18 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
           },
         ]}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 96 }}
+        contentContainerStyle={{ paddingBottom: 96, flexGrow: 1 }}
       >
-        {filteredNotes.map((note) => {
+        {filteredNotes.length === 0 ? (
+          <View style={styles.emptyNotesContainer}>
+            <Ionicons name="document-text-outline" size={46} color="#CBD5E1" style={{ marginBottom: 10 }} />
+            <Text style={styles.emptyNotesTitle}>暂无随堂笔记</Text>
+            <Text style={styles.emptyNotesSubtitle}>
+              点击右上角「+」或底部悬浮键创建第一篇随堂笔记
+            </Text>
+          </View>
+        ) : (
+          filteredNotes.map((note) => {
           return (
             <TouchableOpacity
               key={note.id}
@@ -920,7 +946,8 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
               </View>
             </TouchableOpacity>
           );
-        })}
+        })
+        )}
       </Animated.ScrollView>
 
       {/* ================= 图5风格：全屏一体化笔记编辑器 ================= */}
@@ -1484,9 +1511,12 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
               const newNote: NoteItem = {
                 id: `n-${Date.now()}`,
                 courseName: freeformTargetCourse || '未关联课程',
-                title: data.title || '无边记手绘脑图',
+                title: data.title.trim() || (freeformTargetCourse ? `${freeformTargetCourse} 手写笔记` : '随堂手写笔记'),
                 date: '刚刚',
-                content: `【无边记无限画纸】包含 ${data.notes.length} 张彩色便签，${data.strokes.length} 段手绘架构笔迹。`,
+                content:
+                  data.notes.length > 0 || data.strokes.length > 0
+                    ? `包含 ${data.notes.length} 张便签，${data.strokes.length} 段墨水手绘。`
+                    : '',
                 tags: ['无边记手写', '思维导图'],
                 type: 'freeform',
               };
@@ -1684,6 +1714,24 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 4,
+  },
+  emptyNotesContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: 24,
+  },
+  emptyNotesTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#64748B',
+    marginBottom: 6,
+  },
+  emptyNotesSubtitle: {
+    fontSize: 13,
+    color: '#94A3B8',
+    textAlign: 'center',
+    lineHeight: 18,
   },
   iosNoteCard: {
     backgroundColor: '#FFFFFF',

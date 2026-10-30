@@ -175,6 +175,28 @@ export const WeekGridView: React.FC<WeekGridViewProps> = ({
   const weekSlideAnim = useRef(new Animated.Value(0)).current;
   const weekFloatUpAnim = useRef(new Animated.Value(0)).current;
 
+  // 用户要求保留【切回本周】CTA（仅当处于非本周时呈现弹性生长动效，彻底去除原有黑色底座）
+  const isNotRealWeek = currentWeekIndex !== (realCurrentWeekNumber || 8);
+  const backTodayScaleAnim = useRef(new Animated.Value(isNotRealWeek ? 1 : 0)).current;
+
+  useEffect(() => {
+    if (isNotRealWeek) {
+      backTodayScaleAnim.setValue(0);
+      Animated.spring(backTodayScaleAnim, {
+        toValue: 1,
+        tension: 90,
+        friction: 6,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(backTodayScaleAnim, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [isNotRealWeek]);
+
   useEffect(() => {
     if (propWeekIndex && propWeekIndex !== internalWeekIndex) {
       setInternalWeekIndex(propWeekIndex);
@@ -660,6 +682,42 @@ export const WeekGridView: React.FC<WeekGridViewProps> = ({
       )}
       </Animated.View>
 
+      {/* 用户要求保留：非本周时单独展示悬浮【切回本周】胶囊（无黑色底座及中间第7周上一周等冗余内容） */}
+      {isNotRealWeek && (
+        <Animated.View
+          style={[
+            styles.floatingBackTodayAnimWrap,
+            {
+              transform: [{ scale: backTodayScaleAnim }],
+            },
+          ]}
+        >
+          <TouchableOpacity
+            style={styles.floatingBackTodayBtn}
+            onPress={() => {
+              Animated.sequence([
+                Animated.timing(backTodayScaleAnim, {
+                  toValue: 1.15,
+                  duration: 70,
+                  useNativeDriver: true,
+                }),
+                Animated.timing(backTodayScaleAnim, {
+                  toValue: 0,
+                  duration: 120,
+                  useNativeDriver: true,
+                }),
+              ]).start(() => {
+                handleSwitchWeek(realCurrentWeekNumber || 8);
+              });
+            }}
+            activeOpacity={0.85}
+          >
+            <Ionicons name="refresh" size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
+            <Text style={styles.floatingBackTodayText}>切回本周 (第 {realCurrentWeekNumber || 8} 周)</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      )}
+
       {/* 课程详情与快速笔记浮层 */}
       {selectedCourse && (
         <Modal transparent animationType="fade" visible={true} onRequestClose={() => {
@@ -748,14 +806,9 @@ export const WeekGridView: React.FC<WeekGridViewProps> = ({
                 <View style={styles.notesSectionHeader}>
                   <AnimatedCheckmark checked={selectedCourse.notesCount > 0} size={16} />
                   <Text style={styles.notesSectionTitle}>
-                    {selectedCourse.notesCount > 0 ? '已有随堂笔记' : '暂无随堂笔记'}
+                    {selectedCourse.notesCount > 0 ? `已记录 ${selectedCourse.notesCount} 篇随堂笔记` : '暂无随堂笔记'}
                   </Text>
                 </View>
-                {selectedCourse.notesCount > 0 && (
-                  <Text style={styles.notesExcerpt}>
-                    已自动关联归档到本课时，包含随堂速记要点与重点板书。
-                  </Text>
-                )}
               </View>
 
               <TouchableOpacity
@@ -1324,5 +1377,32 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
+  },
+  // 用户保留：悬浮返回本周按钮（居中优雅胶囊，无多余底座）
+  floatingBackTodayAnimWrap: {
+    position: 'absolute',
+    bottom: 84,
+    alignSelf: 'center',
+    zIndex: 99,
+  },
+  floatingBackTodayBtn: {
+    flexDirection: 'row',
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 24,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  floatingBackTodayText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '800',
+    letterSpacing: 0.2,
   },
 });
