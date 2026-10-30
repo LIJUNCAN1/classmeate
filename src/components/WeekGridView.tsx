@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -66,14 +66,38 @@ interface WeekGridViewProps {
 }
 
 const COLOR_PALETTES = [
-  { bg: '#F4F0FD', accent: '#7A5AF8', text: '#5925DC', border: '#D9D6FE' }, // Purple
-  { bg: '#EBF5FE', accent: '#2E90FA', text: '#175CD3', border: '#B2DDFF' }, // Blue
-  { bg: '#FEF8EB', accent: '#F79009', text: '#B54708', border: '#FEDF89' }, // Amber/Yellow
-  { bg: '#FDF0F8', accent: '#EE46BC', text: '#C11574', border: '#FCCEEE' }, // Pink
-  { bg: '#EDFAEF', accent: '#12B76A', text: '#027A48', border: '#A6F4C5' }, // Green
-  { bg: '#FEF1EE', accent: '#F04438', text: '#B42318', border: '#FECDCA' }, // Coral
-  { bg: '#ECFDFF', accent: '#06AED4', text: '#0E7090', border: '#B5FDFF' }, // Cyan
-  { bg: '#F8F5FE', accent: '#9E77ED', text: '#6941C6', border: '#E9D7FE' }, // Violet
+  // 1. 经典薄荷绿 (清爽生机)
+  { bg: '#EBFBF3', accent: '#10B981', text: '#065F46', border: '#A7F3D0' },
+  // 2. 晴空霁蓝 (明亮科技)
+  { bg: '#EFF6FF', accent: '#3B82F6', text: '#1E40AF', border: '#BFDBFE' },
+  // 3. 香芋丁香紫 (优雅柔和)
+  { bg: '#F5F3FF', accent: '#8B5CF6', text: '#5B21B6', border: '#DDD6FE' },
+  // 4. 暖阳琥珀橙 (醒目温暖)
+  { bg: '#FFFBEB', accent: '#F59E0B', text: '#92400E', border: '#FDE68A' },
+  // 5. 珊瑚樱花粉 (甜美亲和)
+  { bg: '#FFF1F2', accent: '#F43F5E', text: '#9F1239', border: '#FECDD3' },
+  // 6. 碧海湖青绿 (沉稳清雅)
+  { bg: '#F0FDFA', accent: '#14B8A6', text: '#115E59', border: '#99F6E4' },
+  // 7. 暮日落霞橙 (饱满活力)
+  { bg: '#FFF7ED', accent: '#F97316', text: '#9A3412', border: '#FED7AA' },
+  // 8. 极光深靛蓝 (深邃知性)
+  { bg: '#EEF2FF', accent: '#6366F1', text: '#3730A3', border: '#C7D2FE' },
+  // 9. 蔷薇娇洋红 (俏皮鲜明)
+  { bg: '#FDF2F8', accent: '#EC4899', text: '#9D174D', border: '#FBCFE8' },
+  // 10. 青柠草地绿 (朝气蓬勃)
+  { bg: '#F7FEE7', accent: '#84CC16', text: '#3F6212', border: '#D9F99D' },
+  // 11. 紫罗兰幽香 (深邃层次)
+  { bg: '#FAF5FF', accent: '#A855F7', text: '#6B21A8', border: '#E9D5FF' },
+  // 12. 绿松石青蓝 (透彻灵动)
+  { bg: '#ECFEFF', accent: '#06B6D4', text: '#155E75', border: '#A5F3FC' },
+  // 13. 晚枫丹砂红 (热情醒目)
+  { bg: '#FEF2F2', accent: '#EF4444', text: '#991B1B', border: '#FECACA' },
+  // 14. 琉璃明鹅黄 (明媚阳光)
+  { bg: '#FEFCE8', accent: '#EAB308', text: '#854D0E', border: '#FEF08A' },
+  // 15. 静谧蓝石灰 (高级质感)
+  { bg: '#F1F5F9', accent: '#64748B', text: '#334155', border: '#CBD5E1' },
+  // 16. 魅惑紫晶色 (浓郁醒神)
+  { bg: '#F3E8FF', accent: '#7C3AED', text: '#581C87', border: '#DDD6FE' },
 ];
 
 function parseCourseSection(course: Course): { startPeriod: number; span: number } {
@@ -150,28 +174,6 @@ export const WeekGridView: React.FC<WeekGridViewProps> = ({
   const weekFadeAnim = useRef(new Animated.Value(1)).current;
   const weekSlideAnim = useRef(new Animated.Value(0)).current;
   const weekFloatUpAnim = useRef(new Animated.Value(0)).current;
-
-  // 切回本周 CTA 中心生长变大动效
-  const isNotRealWeek = currentWeekIndex !== (realCurrentWeekNumber || 8);
-  const backTodayScaleAnim = useRef(new Animated.Value(isNotRealWeek ? 1 : 0)).current;
-
-  useEffect(() => {
-    if (isNotRealWeek) {
-      backTodayScaleAnim.setValue(0);
-      Animated.spring(backTodayScaleAnim, {
-        toValue: 1,
-        tension: 90,
-        friction: 6,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      Animated.timing(backTodayScaleAnim, {
-        toValue: 0,
-        duration: 150,
-        useNativeDriver: true,
-      }).start();
-    }
-  }, [isNotRealWeek]);
 
   useEffect(() => {
     if (propWeekIndex && propWeekIndex !== internalWeekIndex) {
@@ -257,17 +259,32 @@ export const WeekGridView: React.FC<WeekGridViewProps> = ({
   ];
 
   // 1. 整理与修复所有课程
-  const repairedWeekCourses: WeekCourseItem[] = courses.map(repairCourse).map((c, idx) => {
+  const repairedList = useMemo(() => courses.map(repairCourse), [courses]);
+
+  // 建立唯一课程名 -> 配色映射字典
+  // 核心规则：同一门课程（名称一致）在全周任何时间段 100% 保持完全相同的专属颜色；不同课程依次分发不同色系，杜绝色彩紊乱
+  const courseColorMap = useMemo(() => {
+    const map = new Map<string, typeof COLOR_PALETTES[0]>();
+    const uniqueCourseNames: string[] = Array.from(
+      new Set(
+        repairedList
+          .map((c: Course) => (c.name || '').trim())
+          .filter((name): name is string => Boolean(name))
+      )
+    );
+    uniqueCourseNames.forEach((name: string, idx: number) => {
+      map.set(name, COLOR_PALETTES[idx % COLOR_PALETTES.length]);
+    });
+    return map;
+  }, [repairedList]);
+
+  const repairedWeekCourses: WeekCourseItem[] = repairedList.map((c: Course) => {
     const isCurrentWeek = isCourseInWeek(c.weekRange, currentWeekIndex);
     const { startPeriod, span } = parseCourseSection(c);
     const day = c.dayOfWeek || 1;
+    const cleanName = (c.name || '').trim();
+    const colorScheme = courseColorMap.get(cleanName) || COLOR_PALETTES[0];
 
-    let hash = 0;
-    for (let i = 0; i < c.name.length; i++) {
-      hash = (hash << 5) - hash + c.name.charCodeAt(i);
-      hash |= 0;
-    }
-    const colorScheme = COLOR_PALETTES[Math.abs(hash + idx) % COLOR_PALETTES.length];
     return {
       id: c.id,
       name: c.name,
@@ -643,73 +660,6 @@ export const WeekGridView: React.FC<WeekGridViewProps> = ({
       )}
       </Animated.View>
 
-      {/* 底部悬浮周次切换 CTA 与返回本周 */}
-      <View style={styles.floatingBottomDock}>
-        <View style={styles.floatingWeekSwitcherCard}>
-          <TouchableOpacity
-            style={styles.floatingWeekBtn}
-            onPress={() => handleSwitchWeek(Math.max(1, currentWeekIndex - 1))}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="chevron-back" size={15} color="#FFFFFF" />
-            <Text style={styles.floatingWeekBtnText}>上一周</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.floatingWeekCenterPill}
-            onPress={() => onOpenWeekPicker?.()}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.floatingWeekCenterText}>第 {currentWeekIndex} 周</Text>
-            <Ionicons name="chevron-down" size={12} color="#FFFFFF" style={{ marginLeft: 3 }} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.floatingWeekBtn}
-            onPress={() => handleSwitchWeek(currentWeekIndex + 1)}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.floatingWeekBtnText}>下一周</Text>
-            <Ionicons name="chevron-forward" size={15} color="#FFFFFF" />
-          </TouchableOpacity>
-        </View>
-
-        {/* 仅当处于非本周时，右侧展示中心生长变大动画的【切回本周】胶囊 */}
-        {isNotRealWeek && (
-          <Animated.View
-            style={[
-              styles.floatingBackTodayAnimWrap,
-              {
-                transform: [{ scale: backTodayScaleAnim }],
-              },
-            ]}
-          >
-            <TouchableOpacity
-              style={styles.floatingBackTodayBtn}
-              onPress={() => {
-                Animated.sequence([
-                  Animated.timing(backTodayScaleAnim, {
-                    toValue: 1.15,
-                    duration: 70,
-                    useNativeDriver: true,
-                  }),
-                  Animated.timing(backTodayScaleAnim, {
-                    toValue: 0,
-                    duration: 120,
-                    useNativeDriver: true,
-                  }),
-                ]).start(() => {
-                  handleSwitchWeek(realCurrentWeekNumber || 8);
-                });
-              }}
-              activeOpacity={0.85}
-            >
-              <Ionicons name="refresh" size={13} color="#FFFFFF" style={{ marginRight: 3 }} />
-              <Text style={styles.floatingBackTodayText}>切回本周</Text>
-            </TouchableOpacity>
-          </Animated.View>
-        )}
-      </View>
       {/* 课程详情与快速笔记浮层 */}
       {selectedCourse && (
         <Modal transparent animationType="fade" visible={true} onRequestClose={() => {
@@ -1374,78 +1324,5 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
-  },
-  // 底部悬浮周次切换 CTA 与返回本周
-  floatingBottomDock: {
-    position: 'absolute',
-    bottom: 84,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    zIndex: 99,
-  },
-  floatingWeekSwitcherCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(30, 41, 59, 0.94)',
-    borderRadius: 24,
-    paddingHorizontal: 6,
-    paddingVertical: 4,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  floatingWeekBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  floatingWeekBtnText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
-    marginHorizontal: 2,
-  },
-  floatingWeekCenterPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.18)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 14,
-    marginHorizontal: 4,
-  },
-  floatingWeekCenterText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  floatingBackTodayAnimWrap: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  floatingBackTodayBtn: {
-    flexDirection: 'row',
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    borderRadius: 24,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  floatingBackTodayText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '800',
   },
 });
