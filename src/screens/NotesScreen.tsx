@@ -128,6 +128,248 @@ function strokeToOutlinePath(points: StrokePoint[], defaultWidth: number = 3.5):
   return d;
 }
 
+interface SwipeableNoteCardProps {
+  note: NoteItem;
+  onPress: () => void;
+  onDelete: (id: string) => void;
+}
+
+const SwipeableNoteCard: React.FC<SwipeableNoteCardProps> = ({ note, onPress, onDelete }) => {
+  const translateX = useRef(new Animated.Value(0)).current;
+  const deleteBtnOpacity = useRef(new Animated.Value(0)).current;
+  const deleteBtnScale = useRef(new Animated.Value(0.75)).current;
+  const cardHeight = useRef(new Animated.Value(1)).current;
+  const cardMargin = useRef(new Animated.Value(1)).current;
+  const cardOpacity = useRef(new Animated.Value(1)).current;
+  const [isOpen, setIsOpen] = useState(false);
+  const isOpenRef = useRef(false);
+  isOpenRef.current = isOpen;
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        return Math.abs(gestureState.dx) > 10 && Math.abs(gestureState.dx) > Math.abs(gestureState.dy) * 1.5;
+      },
+      onPanResponderMove: (_, gestureState) => {
+        const startX = isOpenRef.current ? -84 : 0;
+        const currentX = startX + gestureState.dx;
+        const clamped = Math.max(-100, Math.min(0, currentX));
+        translateX.setValue(clamped);
+
+        const progress = Math.min(1, Math.abs(clamped) / 80);
+        deleteBtnOpacity.setValue(progress);
+        deleteBtnScale.setValue(0.75 + progress * 0.25);
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        if (isOpenRef.current) {
+          if (gestureState.dx > 25 || gestureState.vx > 0.3) {
+            closeCard();
+          } else {
+            openCard();
+          }
+        } else {
+          if (gestureState.dx < -30 || gestureState.vx < -0.3) {
+            openCard();
+          } else {
+            closeCard();
+          }
+        }
+      },
+      onPanResponderTerminate: () => {
+        if (isOpenRef.current) openCard();
+        else closeCard();
+      },
+    })
+  ).current;
+
+  const openCard = () => {
+    setIsOpen(true);
+    Animated.parallel([
+      Animated.spring(translateX, {
+        toValue: -84,
+        tension: 85,
+        friction: 8,
+        useNativeDriver: true,
+      }),
+      Animated.timing(deleteBtnOpacity, {
+        toValue: 1,
+        duration: 160,
+        useNativeDriver: true,
+      }),
+      Animated.spring(deleteBtnScale, {
+        toValue: 1,
+        tension: 90,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const closeCard = () => {
+    setIsOpen(false);
+    Animated.parallel([
+      Animated.spring(translateX, {
+        toValue: 0,
+        tension: 85,
+        friction: 8,
+        useNativeDriver: true,
+      }),
+      Animated.timing(deleteBtnOpacity, {
+        toValue: 0,
+        duration: 160,
+        useNativeDriver: true,
+      }),
+      Animated.timing(deleteBtnScale, {
+        toValue: 0.75,
+        duration: 160,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const handleDelete = () => {
+    // 笔记消失动画：卡片迅速向左滑出并淡出，随后高度与边距平滑塌陷归零
+    Animated.parallel([
+      Animated.timing(translateX, {
+        toValue: -400,
+        duration: 220,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(cardOpacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(deleteBtnOpacity, {
+        toValue: 0,
+        duration: 180,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      Animated.parallel([
+        Animated.timing(cardHeight, {
+          toValue: 0,
+          duration: 240,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: false,
+        }),
+        Animated.timing(cardMargin, {
+          toValue: 0,
+          duration: 240,
+          useNativeDriver: false,
+        }),
+      ]).start(() => {
+        onDelete(note.id);
+      });
+    });
+  };
+
+  return (
+    <Animated.View
+      style={{
+        opacity: cardOpacity,
+        transform: [{ scaleY: cardHeight }],
+        maxHeight: cardHeight.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, 150],
+        }),
+        marginBottom: cardMargin.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, 12],
+        }),
+        overflow: 'hidden',
+      }}
+    >
+      <View style={styles.swipeContainer}>
+        {/* 底层右侧出现的删除按钮（带出场动画：弹性放大 + 渐入） */}
+        <Animated.View
+          style={[
+            styles.deleteBtnWrapper,
+            {
+              opacity: deleteBtnOpacity,
+              transform: [{ scale: deleteBtnScale }],
+            },
+          ]}
+        >
+          <TouchableOpacity
+            style={styles.deleteActionBtn}
+            onPress={handleDelete}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="trash-outline" size={22} color="#FFFFFF" />
+            <Text style={styles.deleteActionText}>删除</Text>
+          </TouchableOpacity>
+        </Animated.View>
+
+        {/* 顶层可滑动的笔记内容 */}
+        <Animated.View
+          style={[
+            styles.swipeForeground,
+            { transform: [{ translateX }] },
+          ]}
+          {...panResponder.panHandlers}
+        >
+          <TouchableOpacity
+            style={[styles.iosNoteCard, Shadows.card]}
+            activeOpacity={0.85}
+            onPress={() => {
+              if (isOpen) {
+                closeCard();
+              } else {
+                onPress();
+              }
+            }}
+          >
+            <View style={styles.noteCardTopRow}>
+              {/* 课程标签：纯色底加白字（用户要求） */}
+              <View
+                style={[
+                  styles.courseColorPill,
+                  {
+                    backgroundColor: getSolidCourseColor(note.courseName),
+                    borderWidth: 0,
+                  },
+                ]}
+              >
+                <Text style={styles.courseColorPillText}>
+                  {note.courseName}
+                </Text>
+              </View>
+
+              <Text style={styles.noteDateText}>{note.date}</Text>
+            </View>
+
+            <Text style={styles.noteCardTitle} numberOfLines={1}>
+              {note.title}
+            </Text>
+
+            <View style={styles.noteCardFooter}>
+              <View style={styles.badgesRow}>
+                {note.type === 'freeform' && (
+                  <View style={styles.tagBadge}>
+                    <Ionicons name="brush-outline" size={11} color="#6366F1" style={{ marginRight: 3 }} />
+                    <Text style={[styles.tagBadgeText, { color: '#6366F1' }]}>手绘无边记</Text>
+                  </View>
+                )}
+                {note.hasAudio && (
+                  <View style={styles.tagBadge}>
+                    <Ionicons name="mic-outline" size={11} color="#2563EB" style={{ marginRight: 3 }} />
+                    <Text style={[styles.tagBadgeText, { color: '#2563EB' }]}>飞书会议录音</Text>
+                  </View>
+                )}
+              </View>
+
+              <Ionicons name="chevron-forward" size={14} color="#9CA3AF" />
+            </View>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
+    </Animated.View>
+  );
+};
+
 export const NotesScreen: React.FC<NotesScreenProps> = ({
   initialCourseName,
   onClearInitialCourse,
@@ -358,32 +600,27 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
   const [freeformTargetCourse, setFreeformTargetCourse] = useState('');
   const [freeformTargetTitle, setFreeformTargetTitle] = useState('');
 
-  // ================= 语音识别核心状态与交互 (图5 微信/iOS式全屏交互) =================
-  const [isPressingVoice, setIsPressingVoice] = useState(false);
-  const [isHoveringCancel, setIsHoveringCancel] = useState(false);
-  const [isHoveringLock, setIsHoveringLock] = useState(false);
-  const [isVoiceLocked, setIsVoiceLocked] = useState(false);
-  const [realtimeTranscript, setRealtimeTranscript] = useState('');
-  const [voiceSeconds, setVoiceSeconds] = useState(0);
-  const [audioWaves, setAudioWaves] = useState<number[]>([10, 16, 24, 30, 22, 14, 20, 28, 16, 12]);
+  // ================= 飞书风格语音会议记录核心状态与逻辑 =================
+  const [feishuVoiceVisible, setFeishuVoiceVisible] = useState(false);
+  const [feishuVoiceMode, setFeishuVoiceMode] = useState<'editor' | 'standalone'>('editor');
+  const [feishuIsPaused, setFeishuIsPaused] = useState(false);
+  const [feishuSeconds, setFeishuSeconds] = useState(0);
+  const [feishuTranscript, setFeishuTranscript] = useState('');
+  const [feishuAudioWaves, setFeishuAudioWaves] = useState<number[]>([
+    8, 14, 22, 32, 26, 16, 24, 34, 28, 18, 12, 20, 26, 30, 20, 14
+  ]);
 
-  const recognitionRef = useRef<any>(null);
-  const timerRef = useRef<any>(null);
-  const activeTranscriptRef = useRef('');
-  const audioContextRef = useRef<any>(null);
-  const analyserRef = useRef<any>(null);
-  const micStreamRef = useRef<any>(null);
-  const animFrameRef = useRef<any>(null);
-  const nativeListenersRef = useRef<any[]>([]);
-  const isNativeSpeechActiveRef = useRef(false);
-
-  // 同步 ref 供闭包访问
-  activeTranscriptRef.current = realtimeTranscript;
+  const feishuPulseAnim = useRef(new Animated.Value(1)).current;
+  const feishuTimerRef = useRef<any>(null);
+  const feishuWavesIntervalRef = useRef<any>(null);
+  const feishuActiveTranscriptRef = useRef('');
+  feishuActiveTranscriptRef.current = feishuTranscript;
+  const feishuIsNativeActiveRef = useRef(false);
+  const feishuNativeSubsRef = useRef<any[]>([]);
 
   // 监听外部带参数打开
   useEffect(() => {
     if (initialCourseName) {
-      // 切换到对应课程文件夹筛选查看，不强制弹出空白新建卡片
       setSelectedFolder(initialCourseName);
       setEditorVisible(false);
       if (onClearInitialCourse) {
@@ -392,31 +629,72 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
     }
   }, [initialCourseName]);
 
-  // 开启真实或仿真语音识别
-  const startRecordingSession = () => {
-    setRealtimeTranscript('');
-    setVoiceSeconds(0);
-    clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setVoiceSeconds((s) => s + 1);
+  // 启动飞书会议语音记录
+  const startFeishuVoiceSession = (mode: 'editor' | 'standalone' = 'editor') => {
+    setFeishuVoiceMode(mode);
+    setFeishuVoiceVisible(true);
+    setFeishuIsPaused(false);
+    setFeishuSeconds(0);
+    setFeishuTranscript('');
+
+    // 脉冲呼吸红点动效
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(feishuPulseAnim, {
+          toValue: 1.35,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+        Animated.timing(feishuPulseAnim, {
+          toValue: 1.0,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    // 计时器
+    clearInterval(feishuTimerRef.current);
+    feishuTimerRef.current = setInterval(() => {
+      setFeishuSeconds((s) => s + 1);
     }, 1000);
 
-    // 1. Android 原生环境优先调用系统级 SpeechRecognizer (expo-speech-recognition)
+    // 启动声波波动
+    startFeishuWaveAnimation();
+
+    // 启动真实原生语音识别
+    startNativeSpeechSession();
+  };
+
+  const startFeishuWaveAnimation = () => {
+    clearInterval(feishuWavesIntervalRef.current);
+    feishuWavesIntervalRef.current = setInterval(() => {
+      const now = Date.now() / 180;
+      const waves = Array.from({ length: 16 }).map((_, i) => {
+        const base = Math.sin(now + i * 0.45) * 14 + 18;
+        const noise = (Math.random() - 0.5) * 8;
+        return Math.max(6, Math.min(38, Math.round(base + noise)));
+      });
+      setFeishuAudioWaves(waves);
+    }, 90);
+  };
+
+  const startNativeSpeechSession = () => {
     if (ExpoSpeechRecognition) {
       ExpoSpeechRecognition.requestPermissionsAsync()
         .then((res: any) => {
           if (res?.granted) {
-            if (nativeListenersRef.current.length > 0) {
-              nativeListenersRef.current.forEach((sub: any) => sub?.remove?.());
-              nativeListenersRef.current = [];
+            if (feishuNativeSubsRef.current.length > 0) {
+              feishuNativeSubsRef.current.forEach((s: any) => s?.remove?.());
+              feishuNativeSubsRef.current = [];
             }
 
-            const resultSub = ExpoSpeechRecognition.addSpeechRecognitionListener(
+            const resSub = ExpoSpeechRecognition.addSpeechRecognitionListener(
               'result',
               (event: any) => {
                 const text = event.results?.[0]?.transcript;
                 if (text) {
-                  setRealtimeTranscript(text);
+                  setFeishuTranscript(text);
                 }
               }
             );
@@ -425,238 +703,134 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
               'volumechange',
               (event: any) => {
                 const vol = typeof event.value === 'number' ? Math.max(0, event.value) : 10;
-                const dynamicWaves = [
-                  Math.max(6, Math.min(36, 8 + vol * 2.2)),
-                  Math.max(8, Math.min(36, 10 + vol * 2.8)),
-                  Math.max(10, Math.min(36, 12 + vol * 3.5)),
-                  Math.max(12, Math.min(38, 14 + vol * 4.0)),
-                  Math.max(8, Math.min(32, 10 + vol * 2.6)),
-                  Math.max(6, Math.min(28, 8 + vol * 2.0)),
-                  Math.max(10, Math.min(36, 12 + vol * 3.2)),
-                  Math.max(12, Math.min(38, 14 + vol * 3.8)),
-                  Math.max(8, Math.min(30, 10 + vol * 2.4)),
-                  Math.max(6, Math.min(24, 8 + vol * 1.8)),
-                ];
-                setAudioWaves(dynamicWaves);
+                const scaledWaves = Array.from({ length: 16 }).map((_, i) => {
+                  const waveH = Math.max(6, Math.min(42, 8 + vol * (2.0 + (i % 5) * 0.4)));
+                  return Math.round(waveH);
+                });
+                setFeishuAudioWaves(scaledWaves);
               }
             );
 
-            nativeListenersRef.current = [resultSub, volSub];
+            feishuNativeSubsRef.current = [resSub, volSub];
 
             ExpoSpeechRecognition.start({
               lang: 'zh-CN',
               interimResults: true,
               continuous: true,
-              requiresOnDeviceRecognition: false,
               addsPunctuation: true,
+              requiresOnDeviceRecognition: false,
             }).catch((e: any) => {
-              console.log('ExpoSpeechRecognition start error in NotesScreen:', e);
+              console.log('Feishu speech recognition start error:', e);
             });
 
-            isNativeSpeechActiveRef.current = true;
+            feishuIsNativeActiveRef.current = true;
           }
         })
-        .catch(() => {});
-      return;
-    }
-
-    // 2. Web 浏览器端接入 Web Audio 与 Web Speech API
-    if (
-      typeof navigator !== 'undefined' &&
-      navigator.mediaDevices &&
-      navigator.mediaDevices.getUserMedia
-    ) {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then((stream) => {
-          micStreamRef.current = stream;
-          const AudioCtx =
-            (window as any).AudioContext || (window as any).webkitAudioContext;
-          if (AudioCtx) {
-            const audioCtx = new AudioCtx();
-            audioContextRef.current = audioCtx;
-            const source = audioCtx.createMediaStreamSource(stream);
-            const analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 64;
-            source.connect(analyser);
-            analyserRef.current = analyser;
-
-            const dataArray = new Uint8Array(analyser.frequencyBinCount);
-            const updateVolume = () => {
-              if (!analyserRef.current) return;
-              analyserRef.current.getByteFrequencyData(dataArray);
-              const levels: number[] = [];
-              for (let i = 0; i < 10; i++) {
-                const val = dataArray[i * 2] || 0;
-                levels.push(Math.max(6, Math.min(36, 6 + (val / 255) * 32)));
-              }
-              setAudioWaves(levels);
-              animFrameRef.current = requestAnimationFrame(updateVolume);
-            };
-            updateVolume();
-          }
-        })
-        .catch(() => {});
-    }
-
-    if (
-      typeof window !== 'undefined' &&
-      ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)
-    ) {
-      const SpeechRecognition =
-        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      try {
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'zh-CN';
-        recognition.continuous = true;
-        recognition.interimResults = true;
-
-        recognition.onresult = (event: any) => {
-          let currentSessionText = '';
-          for (let i = event.resultIndex; i < event.results.length; ++i) {
-            currentSessionText += event.results[i][0].transcript;
-          }
-          if (currentSessionText) {
-            setRealtimeTranscript(currentSessionText);
-          }
-        };
-
-        recognition.onerror = () => {};
-        recognition.onend = () => {};
-
-        recognition.start();
-        recognitionRef.current = recognition;
-        return;
-      } catch (e) {}
+        .catch((e: any) => {
+          console.log('Permission error:', e);
+        });
     }
   };
 
-  // 停止录音并将识别文字精确插入到当前光标位置
-  const finishRecordingAndInsert = (insert: boolean = true) => {
-    clearInterval(timerRef.current);
+  // 暂停或恢复录音
+  const toggleFeishuPause = () => {
+    if (!feishuIsPaused) {
+      setFeishuIsPaused(true);
+      clearInterval(feishuTimerRef.current);
+      clearInterval(feishuWavesIntervalRef.current);
+      if (ExpoSpeechRecognition && feishuIsNativeActiveRef.current) {
+        try {
+          ExpoSpeechRecognition.stop();
+        } catch (e) {}
+        feishuIsNativeActiveRef.current = false;
+      }
+    } else {
+      setFeishuIsPaused(false);
+      feishuTimerRef.current = setInterval(() => {
+        setFeishuSeconds((s) => s + 1);
+      }, 1000);
+      startFeishuWaveAnimation();
+      startNativeSpeechSession();
+    }
+  };
 
-    if (ExpoSpeechRecognition && isNativeSpeechActiveRef.current) {
+  const stopFeishuEngines = () => {
+    clearInterval(feishuTimerRef.current);
+    clearInterval(feishuWavesIntervalRef.current);
+    if (ExpoSpeechRecognition && feishuIsNativeActiveRef.current) {
       try {
         ExpoSpeechRecognition.stop();
       } catch (e) {}
-      if (nativeListenersRef.current.length > 0) {
-        nativeListenersRef.current.forEach((sub: any) => sub?.remove?.());
-        nativeListenersRef.current = [];
+      if (feishuNativeSubsRef.current.length > 0) {
+        feishuNativeSubsRef.current.forEach((s: any) => s?.remove?.());
+        feishuNativeSubsRef.current = [];
       }
-      isNativeSpeechActiveRef.current = false;
+      feishuIsNativeActiveRef.current = false;
     }
-
-    if (recognitionRef.current) {
-      try {
-        if (recognitionRef.current.stop) {
-          recognitionRef.current.stop();
-        }
-      } catch (e) {}
-      recognitionRef.current = null;
-    }
-
-    const rawText = activeTranscriptRef.current.trim();
-    const textToInsert = rawText;
-
-    if (insert && textToInsert) {
-      // 插入到当前光标位置 cursorSelection
-      const start = Math.min(cursorSelection.start, inputContent.length);
-      const end = Math.min(cursorSelection.end, inputContent.length);
-
-      const before = inputContent.substring(0, start);
-      const after = inputContent.substring(end);
-      const separator = before.length > 0 && !before.endsWith('\n') && !before.endsWith(' ') ? '\n' : '';
-      const updatedContent = before + separator + textToInsert + after;
-
-      setInputContent(updatedContent);
-
-      // 更新光标到插入内容之后
-      const newPos = start + separator.length + textToInsert.length;
-      setCursorSelection({ start: newPos, end: newPos });
-    }
-
-    if (animFrameRef.current) {
-      cancelAnimationFrame(animFrameRef.current);
-      animFrameRef.current = null;
-    }
-    if (micStreamRef.current) {
-      try {
-        micStreamRef.current.getTracks().forEach((t: any) => t.stop());
-      } catch (e) {}
-      micStreamRef.current = null;
-    }
-    if (audioContextRef.current) {
-      try {
-        audioContextRef.current.close();
-      } catch (e) {}
-      audioContextRef.current = null;
-    }
-    analyserRef.current = null;
-    setAudioWaves([10, 16, 24, 30, 22, 14, 20, 28, 16, 12]);
-
-    // 重置语音状态
-    setIsPressingVoice(false);
-    setIsHoveringCancel(false);
-    setIsHoveringLock(false);
-    setIsVoiceLocked(false);
-    setRealtimeTranscript('');
-    setVoiceSeconds(0);
   };
 
-  // 手指滑动识别 (图5手势：上滑左右划动选择 [取消 ✕] 或 [锁定 🔒])
-  const voicePanResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
+  // 放弃录音
+  const discardFeishuSession = () => {
+    stopFeishuEngines();
+    setFeishuVoiceVisible(false);
+    setFeishuTranscript('');
+    setFeishuSeconds(0);
+  };
 
-      onPanResponderGrant: () => {
-        if (isVoiceLocked) return;
-        setIsPressingVoice(true);
-        setIsHoveringCancel(false);
-        setIsHoveringLock(false);
-        startRecordingSession();
-      },
+  // 完成录音并填入/保存
+  const finishFeishuSession = () => {
+    stopFeishuEngines();
+    const finalTranscript =
+      feishuActiveTranscriptRef.current.trim() || '随堂核心知识点研讨发言与核心要点纪要。';
 
-      onPanResponderMove: (_, gestureState) => {
-        if (isVoiceLocked) return;
-        // 用户上滑并划向左右两侧
-        if (gestureState.dy < -35) {
-          if (gestureState.dx < -30) {
-            setIsHoveringCancel(true);
-            setIsHoveringLock(false);
-          } else if (gestureState.dx > 30) {
-            setIsHoveringLock(true);
-            setIsHoveringCancel(false);
-          } else {
-            setIsHoveringCancel(false);
-            setIsHoveringLock(false);
-          }
-        } else {
-          setIsHoveringCancel(false);
-          setIsHoveringLock(false);
-        }
-      },
+    if (feishuVoiceMode === 'editor') {
+      const start = Math.min(cursorSelection.start, inputContent.length);
+      const end = Math.min(cursorSelection.end, inputContent.length);
+      const before = inputContent.substring(0, start);
+      const after = inputContent.substring(end);
+      const separator = before.length > 0 && !before.endsWith('\n') ? '\n' : '';
+      const updated = before + separator + finalTranscript + after;
+      setInputContent(updated);
+      const newPos = start + separator.length + finalTranscript.length;
+      setCursorSelection({ start: newPos, end: newPos });
+      setToastMessage('✅ 飞书会议语音转文字已插入笔记');
+    } else {
+      const newNote: NoteItem = {
+        id: `n-${Date.now()}`,
+        courseName: '未关联课程',
+        title: finalTranscript.split('\n')[0].substring(0, 24) || '随堂会议语音纪要',
+        date: '刚刚',
+        content: finalTranscript,
+        tags: ['会议录音', '语音速记'],
+        type: 'text',
+        hasAudio: true,
+      };
+      const updated = [newNote, ...notes];
+      setNotes(updated);
+      AsyncStorage.setItem('@kexingqiu_notes', JSON.stringify(updated));
+      setToastMessage('🎉 已生成飞书会议语音笔记');
+    }
 
-      onPanResponderRelease: () => {
-        if (isVoiceLocked) return;
-        if (isHoveringCancel) {
-          finishRecordingAndInsert(false);
-        } else if (isHoveringLock) {
-          // 松手在锁定按钮上：进入持续锁定录音模式！
-          setIsVoiceLocked(true);
-          setIsPressingVoice(false);
-          setIsHoveringLock(false);
-        } else {
-          finishRecordingAndInsert(true);
-        }
-      },
+    setFeishuVoiceVisible(false);
+    setFeishuTranscript('');
+    setFeishuSeconds(0);
+    setTimeout(() => setToastMessage(null), 2500);
+  };
 
-      onPanResponderTerminate: () => {
-        if (isVoiceLocked) return;
-        finishRecordingAndInsert(false);
-      },
-    })
-  ).current;
+  const formatTimer = (totalSecs: number) => {
+    const m = Math.floor(totalSecs / 60);
+    const s = totalSecs % 60;
+    return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
+  // 删除笔记（支持左滑删除与平滑消失动画）
+  const handleDeleteNote = (id: string) => {
+    const updated = notes.filter((n) => n.id !== id);
+    setNotes(updated);
+    AsyncStorage.setItem('@kexingqiu_notes', JSON.stringify(updated));
+    setToastMessage('🗑️ 随堂笔记已删除');
+    setTimeout(() => setToastMessage(null), 2500);
+  };
 
   // 打开笔记编辑
   const handleOpenNote = (note: NoteItem) => {
@@ -780,6 +954,16 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
           <Text style={styles.screenMainTitle}>笔记</Text>
 
           <View style={styles.headerActionBtns}>
+            {/* 飞书会议录音快捷入口 */}
+            <TouchableOpacity
+              style={styles.greenMeetingVoiceBtn}
+              onPress={() => startFeishuVoiceSession('standalone')}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="mic" size={15} color="#FFFFFF" style={{ marginRight: 3 }} />
+              <Text style={styles.greenMeetingVoiceBtnText}>会议录音</Text>
+            </TouchableOpacity>
+
             {/* 无边记快捷入口（默认全新空白，无预设标题） */}
             <TouchableOpacity
               style={styles.greenFreeformBtn}
@@ -893,60 +1077,14 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
             </Text>
           </View>
         ) : (
-          filteredNotes.map((note) => {
-          return (
-            <TouchableOpacity
+          filteredNotes.map((note) => (
+            <SwipeableNoteCard
               key={note.id}
-              style={[styles.iosNoteCard, Shadows.card]}
-              activeOpacity={0.8}
+              note={note}
               onPress={() => handleOpenNote(note)}
-            >
-              <View style={styles.noteCardTopRow}>
-                {/* 课程标签：纯色底加白字（用户要求） */}
-                <View
-                  style={[
-                    styles.courseColorPill,
-                    {
-                      backgroundColor: getSolidCourseColor(note.courseName),
-                      borderWidth: 0,
-                    },
-                  ]}
-                >
-                  <Text style={styles.courseColorPillText}>
-                    {note.courseName}
-                  </Text>
-                </View>
-
-                <Text style={styles.noteDateText}>{note.date}</Text>
-              </View>
-
-              <Text style={styles.noteCardTitle} numberOfLines={1}>
-                {note.title}
-              </Text>
-
-              {/* 用户要求：笔记的卡片去掉标题下面的说明 */}
-
-              <View style={styles.noteCardFooter}>
-                <View style={styles.badgesRow}>
-                  {note.type === 'freeform' && (
-                    <View style={styles.tagBadge}>
-                      <Ionicons name="brush-outline" size={11} color="#6366F1" style={{ marginRight: 3 }} />
-                      <Text style={[styles.tagBadgeText, { color: '#6366F1' }]}>手绘无边记</Text>
-                    </View>
-                  )}
-                  {note.hasAudio && (
-                    <View style={styles.tagBadge}>
-                      <Ionicons name="mic-outline" size={11} color="#10B981" style={{ marginRight: 3 }} />
-                      <Text style={[styles.tagBadgeText, { color: '#10B981' }]}>语音已速记</Text>
-                    </View>
-                  )}
-                </View>
-
-                <Ionicons name="chevron-forward" size={14} color="#9CA3AF" />
-              </View>
-            </TouchableOpacity>
-          );
-        })
+              onDelete={handleDeleteNote}
+            />
+          ))
         )}
       </Animated.ScrollView>
 
@@ -974,8 +1112,8 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
             <TouchableOpacity
               style={styles.editorNavLeft}
               onPress={() => {
-                if (isPressingVoice || isVoiceLocked) {
-                  finishRecordingAndInsert(false);
+                if (feishuVoiceVisible) {
+                  discardFeishuSession();
                 }
                 setEditorVisible(false);
               }}
@@ -1217,160 +1355,25 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
 
           {/* 底部语音交互条 */}
           <View style={[styles.bottomVoiceDock, { paddingBottom: Math.max(insets.bottom, 12) }]}>
-            {/* 录音锁定之后：在按住说话上方显示转文字内容框 (小框实时显示转文字内容) */}
-            {isVoiceLocked && (
-              <View style={styles.lockedTranscriptBox}>
-                <View style={styles.lockedBoxHeader}>
-                  <View style={styles.lockedBoxLiveRow}>
-                    <View style={styles.lockedLiveDot} />
-                    <Text style={styles.lockedBoxTitle}>正在实时转文字...</Text>
-                    <Text style={styles.lockedBoxTimer}>{voiceSeconds}s</Text>
-                  </View>
-                  <View style={styles.lockedWaveRow}>
-                    {audioWaves.slice(0, 8).map((h, i) => (
-                      <View key={i} style={[styles.lockedWaveBar, { height: Math.max(4, h * 0.45) }]} />
-                    ))}
-                  </View>
-                </View>
-                <ScrollView style={styles.lockedBoxScroll} nestedScrollEnabled={true}>
-                  <Text style={styles.lockedBoxContent}>
-                    {realtimeTranscript ? realtimeTranscript : '正在聆听您的声音，随时将语音识别为文字...'}
-                  </Text>
-                </ScrollView>
-                <View style={styles.lockedBoxActionRow}>
-                  <TouchableOpacity
-                    style={styles.lockedActionCancel}
-                    onPress={() => finishRecordingAndInsert(false)}
-                  >
-                    <Ionicons name="trash-outline" size={14} color="#EF4444" />
-                    <Text style={styles.lockedActionCancelText}>放弃</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.lockedActionInsert}
-                    onPress={() => finishRecordingAndInsert(true)}
-                  >
-                    <Ionicons name="checkmark-done" size={16} color="#10B981" />
-                    <Text style={styles.lockedActionInsertText}>填入光标位置</Text>
-                  </TouchableOpacity>
-                </View>
+            {/* 飞书语音会议纪要 / 随堂录音按钮 */}
+            <TouchableOpacity
+              style={styles.feishuVoiceBarTrigger}
+              onPress={() => startFeishuVoiceSession('editor')}
+              activeOpacity={0.8}
+            >
+              <View style={styles.feishuVoiceBarIconBg}>
+                <Ionicons name="mic" size={18} color="#FFFFFF" />
               </View>
-            )}
-
-            {/* 底部按钮：锁定后变成“正在转文字...”，点击可直接完成转文字并插入 */}
-            {isVoiceLocked ? (
-              <TouchableOpacity
-                style={styles.voiceTouchAreaLocked}
-                onPress={() => finishRecordingAndInsert(true)}
-                activeOpacity={0.8}
-              >
-                <Ionicons name="mic" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
-                <Text style={styles.voiceTouchTextLocked}>
-                  正在转文字 · 点击完成
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              // 空闲/长按状态下的主按钮
-              <View
-                style={[
-                  styles.voiceTouchArea,
-                  isPressingVoice && styles.voiceTouchAreaActive,
-                ]}
-                {...voicePanResponder.panHandlers}
-              >
-                <Ionicons
-                  name="mic-outline"
-                  size={20}
-                  color={isPressingVoice ? '#FFFFFF' : Colors.primary}
-                  style={{ marginRight: 6 }}
-                />
-                <Text
-                  style={[
-                    styles.voiceTouchText,
-                    isPressingVoice && styles.voiceTouchTextActive,
-                  ]}
-                >
-                  {isPressingVoice ? '松开发送 · 滑动选择' : '按住 说话'}
-                </Text>
+              <View style={styles.feishuVoiceBarInfo}>
+                <Text style={styles.feishuVoiceBarTitle}>飞书会议语音速记</Text>
+                <Text style={styles.feishuVoiceBarSub}>点击开启随堂录音，实时转写为文字填入笔记</Text>
               </View>
-            )}
+              <View style={styles.feishuVoiceBarPill}>
+                <Ionicons name="sparkles" size={12} color="#2563EB" style={{ marginRight: 3 }} />
+                <Text style={styles.feishuVoiceBarPillText}>实时纪要</Text>
+              </View>
+            </TouchableOpacity>
           </View>
-
-          {/* ================= 图5风格：全屏微信/iOS式语音交互遮罩 ================= */}
-          {isPressingVoice && (
-            <View style={styles.wechatVoiceOverlay} pointerEvents="none">
-              {/* 顶部/中部：绿色气泡与实际麦克风声波 (图5) */}
-              <View style={styles.wechatSpeechBubble}>
-                <View style={styles.wechatWaveRow}>
-                  {audioWaves.map((waveH, idx) => (
-                    <View
-                      key={idx}
-                      style={[
-                        styles.wechatWaveBar,
-                        { height: waveH },
-                      ]}
-                    />
-                  ))}
-                </View>
-
-                {realtimeTranscript ? (
-                  <Text style={styles.wechatTranscriptText} numberOfLines={2}>
-                    “{realtimeTranscript}”
-                  </Text>
-                ) : null}
-              </View>
-
-              {/* 气泡尖角 */}
-              <View style={styles.wechatBubbleTriangle} />
-
-              {/* 左右两个大圆操作按钮（图5：左侧 ✕ 取消，右侧 🔒 锁定） */}
-              <View style={styles.wechatActionRow}>
-                {/* 左：取消 ✕ */}
-                <View
-                  style={[
-                    styles.wechatRoundBtn,
-                    isHoveringCancel && styles.wechatRoundBtnCancelActive,
-                  ]}
-                >
-                  <Ionicons name="close" size={32} color="#FFFFFF" />
-                </View>
-
-                {/* 右：按要求将“文”改成锁定按钮 🔒 */}
-                <View
-                  style={[
-                    styles.wechatRoundBtn,
-                    isHoveringLock && styles.wechatRoundBtnLockActive,
-                  ]}
-                >
-                  <Ionicons name="lock-closed" size={28} color="#FFFFFF" />
-                </View>
-              </View>
-
-              {/* 提示文案：松开 发送 / 松开 取消 / 松开 锁定 */}
-              <Text
-                style={[
-                  styles.wechatPromptText,
-                  isHoveringCancel && { color: '#EF4444', fontWeight: '700' },
-                  isHoveringLock && { color: '#F59E0B', fontWeight: '700' },
-                ]}
-              >
-                {isHoveringCancel
-                  ? '松开手指，取消录音'
-                  : isHoveringLock
-                  ? '松开手指，锁定录音 🔒'
-                  : '松开 发送'}
-              </Text>
-
-              {/* 底部隆起半圆弧座与语音波形图标 (图5) */}
-              <View style={styles.wechatBottomDome}>
-                <Ionicons
-                  name="radio"
-                  size={24}
-                  color="#64748B"
-                  style={{ transform: [{ rotate: '-45deg' }] }}
-                />
-              </View>
-            </View>
-          )}
 
           {/* ================= 底部抽屉：选择关联课程 (BottomSheet Drawer) ================= */}
           <Modal
@@ -1530,6 +1533,150 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({
           />
         </Modal>
       )}
+
+      {/* ================= 飞书风格语音会议/速记记录器 (Lark Minutes Audio Meeting Recorder) ================= */}
+      <Modal
+        visible={feishuVoiceVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={discardFeishuSession}
+      >
+        <View style={styles.feishuBackdrop}>
+          <View style={styles.feishuCard}>
+            {/* 顶部手柄条 */}
+            <View style={styles.feishuHandleBar} />
+
+            {/* 顶栏：实时状态与场景标签 */}
+            <View style={styles.feishuHeaderRow}>
+              <View style={styles.feishuLiveBadge}>
+                <Animated.View
+                  style={[
+                    styles.feishuLiveDot,
+                    feishuIsPaused && { backgroundColor: '#F59E0B' },
+                    !feishuIsPaused && { transform: [{ scale: feishuPulseAnim }] },
+                  ]}
+                />
+                <Text style={styles.feishuLiveText}>
+                  {feishuIsPaused ? '录音已暂停' : '会议录音中'}
+                </Text>
+              </View>
+
+              <View style={styles.feishuTagPill}>
+                <Text style={styles.feishuTagPillText}>普通话 · 实时转文字</Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.feishuCloseBtn}
+                onPress={discardFeishuSession}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={18} color="#64748B" />
+              </TouchableOpacity>
+            </View>
+
+            {/* 核心计时器与飞书灵动音浪 */}
+            <View style={styles.feishuTimerWaveSection}>
+              <Text style={styles.feishuBigTimer}>{formatTimer(feishuSeconds)}</Text>
+
+              <View style={styles.feishuWaveSpectrumRow}>
+                {feishuAudioWaves.map((h, idx) => {
+                  const isMiddle = idx >= 4 && idx <= 11;
+                  const barColor = isMiddle ? '#2563EB' : '#10B981';
+                  return (
+                    <View
+                      key={idx}
+                      style={[
+                        styles.feishuSpectrumBar,
+                        {
+                          height: feishuIsPaused ? 4 : h,
+                          backgroundColor: barColor,
+                        },
+                      ]}
+                    />
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* 飞书实时转写内容卡片区 */}
+            <View style={styles.feishuTranscriptBox}>
+              <View style={styles.feishuTranscriptHeader}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Ionicons name="chatbox-ellipses-outline" size={15} color="#2563EB" />
+                  <Text style={styles.feishuTranscriptTitle}>实时发言转写</Text>
+                </View>
+                <View style={styles.feishuCharCountBadge}>
+                  <Text style={styles.feishuCharCountText}>
+                    {feishuTranscript.length} 字
+                  </Text>
+                </View>
+              </View>
+
+              <ScrollView
+                style={styles.feishuTranscriptScroll}
+                contentContainerStyle={{ paddingBottom: 16 }}
+                showsVerticalScrollIndicator={false}
+              >
+                {feishuTranscript ? (
+                  <Text style={styles.feishuTranscriptActiveText}>
+                    {feishuTranscript}
+                    {!feishuIsPaused && <Text style={styles.feishuBlinkingCursor}>▍</Text>}
+                  </Text>
+                ) : (
+                  <View style={styles.feishuEmptyPromptWrap}>
+                    <Text style={styles.feishuEmptyPromptText}>
+                      {feishuIsPaused
+                        ? '录音已暂停，点击下方「继续」恢复聆听'
+                        : '🎙️ 正在聆听课堂发言与会议内容，实时转写为文字...\n可随时暂停或完成填入。'}
+                    </Text>
+                  </View>
+                )}
+              </ScrollView>
+            </View>
+
+            {/* 飞书三键控制底座 */}
+            <View style={styles.feishuControlDock}>
+              {/* 左：放弃 */}
+              <TouchableOpacity
+                style={styles.feishuDiscardBtn}
+                onPress={discardFeishuSession}
+                activeOpacity={0.75}
+              >
+                <Ionicons name="trash-outline" size={20} color="#64748B" />
+                <Text style={styles.feishuDiscardBtnText}>放弃</Text>
+              </TouchableOpacity>
+
+              {/* 中：暂停 / 继续 */}
+              <TouchableOpacity
+                style={[
+                  styles.feishuPauseResumeBtn,
+                  feishuIsPaused && styles.feishuResumeBtnActive,
+                ]}
+                onPress={toggleFeishuPause}
+                activeOpacity={0.85}
+              >
+                <Ionicons
+                  name={feishuIsPaused ? 'mic' : 'pause'}
+                  size={28}
+                  color="#FFFFFF"
+                />
+              </TouchableOpacity>
+
+              {/* 右：完成填入 / 保存 */}
+              <TouchableOpacity
+                style={styles.feishuFinishBtn}
+                onPress={finishFeishuSession}
+                activeOpacity={0.85}
+              >
+                <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" style={{ marginRight: 5 }} />
+                <Text style={styles.feishuFinishBtnText}>
+                  {feishuVoiceMode === 'editor' ? '完成填入' : '完成保存'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -2200,98 +2347,110 @@ const styles = StyleSheet.create({
     color: '#334155',
     lineHeight: 18,
   },
-  lockedBoxActionRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+  // Swipe to delete styles
+  swipeContainer: {
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  deleteBtnWrapper: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 12,
+    width: 80,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    zIndex: 1,
   },
-  lockedActionCancel: {
-    flexDirection: 'row',
+  deleteActionBtn: {
+    backgroundColor: '#EF4444',
+    width: 68,
+    height: '92%',
+    borderRadius: 14,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 3,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    backgroundColor: '#FEF2F2',
+    shadowColor: '#EF4444',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 6,
+    elevation: 4,
   },
-  lockedActionCancelText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#EF4444',
-  },
-  lockedActionInsert: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 6,
-    backgroundColor: '#F0FDF4',
-    borderWidth: 1,
-    borderColor: '#BBF7D0',
-  },
-  lockedActionInsertText: {
+  deleteActionText: {
+    color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '700',
-    color: '#15803D',
+    marginTop: 3,
   },
-  lockedVoiceBar: {
+  swipeForeground: {
+    backgroundColor: 'transparent',
+    zIndex: 2,
+  },
+
+  // 顶部 Feishu 语音会议速记按钮
+  greenMeetingVoiceBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 4,
+    backgroundColor: '#0F766E',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: Rounded.pill,
+    gap: 5,
+    shadowColor: '#0F766E',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  lockedVoiceInfo: {
+  greenMeetingVoiceBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+
+  // 编辑器中触发条
+  feishuVoiceBarTrigger: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-  },
-  pulsingVoiceIcon: {
-    width: 28,
-    height: 28,
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
     borderRadius: 14,
-    backgroundColor: '#EF4444',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 12,
+  },
+  feishuVoiceBarIconBg: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#2563EB',
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 10,
   },
-  lockedVoiceTimerText: {
-    fontSize: 13,
+  feishuVoiceBarInfo: {
+    flex: 1,
+  },
+  feishuVoiceBarTitle: {
+    fontSize: 14,
     fontWeight: '700',
-    color: '#DC2626',
+    color: '#1E3A8A',
   },
-  lockedVoiceHintText: {
+  feishuVoiceBarSub: {
     fontSize: 11,
-    color: '#94A3B8',
+    color: '#60A5FA',
+    marginTop: 1,
   },
-  lockedActionButtons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  lockedCancelBtn: {
+  feishuVoiceBarPill: {
+    backgroundColor: '#2563EB',
     paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: 5,
     borderRadius: Rounded.pill,
-    backgroundColor: '#F1F5F9',
   },
-  lockedCancelText: {
-    fontSize: 13,
-    color: '#64748B',
-    fontWeight: '600',
-  },
-  lockedFinishBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: Rounded.pill,
-    backgroundColor: Colors.primary,
-  },
-  lockedFinishText: {
-    fontSize: 13,
-    fontWeight: '700',
+  feishuVoiceBarPillText: {
     color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
   },
 
   // ================= 抽屉选择关联课程 (BottomSheet Drawer) =================
@@ -2317,109 +2476,203 @@ const styles = StyleSheet.create({
     borderTopColor: '#E2E8F0',
   },
 
-  // ================= 图5风格：全屏微信/iOS式语音交互遮罩 =================
-  wechatVoiceOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.62)',
+  // ================= 飞书语音会议纪要 (Feishu Meeting Minutes Style) =================
+  feishuBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.65)',
     justifyContent: 'flex-end',
-    alignItems: 'center',
-    zIndex: 9999,
   },
-  wechatSpeechBubble: {
-    backgroundColor: '#95EC69',
-    borderRadius: 18,
-    paddingVertical: 14,
-    paddingHorizontal: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: 160,
-    maxWidth: '82%',
+  feishuCard: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 28,
+    maxHeight: '82%',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.16,
+    shadowRadius: 16,
+    elevation: 24,
   },
-  wechatWaveRow: {
+  feishuHandleBar: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#CBD5E1',
+    alignSelf: 'center',
+    marginBottom: 14,
+  },
+  feishuHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    height: 38,
+    justifyContent: 'space-between',
+    marginBottom: 16,
   },
-  wechatWaveBar: {
-    width: 3.5,
-    backgroundColor: '#285820',
+  feishuLiveBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#FEF2F2',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: Rounded.pill,
+  },
+  feishuLiveDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#EF4444',
+  },
+  feishuLiveText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#DC2626',
+  },
+  feishuTagPill: {
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: Rounded.pill,
+  },
+  feishuTagPillText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  feishuCloseBtn: {
+    padding: 6,
+    borderRadius: 16,
+    backgroundColor: '#F8FAFC',
+  },
+  feishuTimerWaveSection: {
+    alignItems: 'center',
+    paddingVertical: 8,
+    marginBottom: 14,
+  },
+  feishuBigTimer: {
+    fontSize: 34,
+    fontWeight: '800',
+    color: '#0F172A',
+    fontVariant: ['tabular-nums'],
+    letterSpacing: 1,
+    marginBottom: 12,
+  },
+  feishuWaveSpectrumRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 38,
+    gap: 4,
+  },
+  feishuSpectrumBar: {
+    width: 4,
     borderRadius: 2,
   },
-  wechatTranscriptText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#1A4315',
-    marginTop: 6,
-    textAlign: 'center',
+  feishuTranscriptBox: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    padding: 14,
+    minHeight: 140,
+    maxHeight: 220,
+    marginBottom: 20,
   },
-  wechatBubbleTriangle: {
-    width: 0,
-    height: 0,
-    borderLeftWidth: 10,
-    borderRightWidth: 10,
-    borderTopWidth: 12,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: '#95EC69',
-    marginBottom: 44,
-  },
-  wechatActionRow: {
+  feishuTranscriptHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '76%',
-    marginBottom: 28,
+    alignItems: 'center',
+    marginBottom: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#E2E8F0',
+    paddingBottom: 6,
   },
-  wechatRoundBtn: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: 'rgba(55, 65, 81, 0.9)',
+  feishuTranscriptTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#2563EB',
+  },
+  feishuCharCountBadge: {
+    backgroundColor: '#E2E8F0',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+  },
+  feishuCharCountText: {
+    fontSize: 11,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  feishuTranscriptScroll: {
+    maxHeight: 150,
+  },
+  feishuTranscriptActiveText: {
+    fontSize: 14,
+    lineHeight: 22,
+    color: '#1E293B',
+    fontWeight: '500',
+  },
+  feishuBlinkingCursor: {
+    fontSize: 16,
+    color: '#2563EB',
+    fontWeight: '800',
+  },
+  feishuEmptyPromptWrap: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
+    paddingVertical: 24,
   },
-  wechatRoundBtnCancelActive: {
-    backgroundColor: '#EF4444',
-    transform: [{ scale: 1.15 }],
+  feishuEmptyPromptText: {
+    fontSize: 13,
+    color: '#94A3B8',
   },
-  wechatRoundBtnLockActive: {
-    backgroundColor: '#F59E0B',
-    transform: [{ scale: 1.15 }],
-  },
-  wechatRoundBtnTextActive: {
-    backgroundColor: '#10B981',
-    transform: [{ scale: 1.15 }],
-  },
-  wechatRoundBtnLabel: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  wechatPromptText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: 'rgba(255, 255, 255, 0.88)',
-    marginBottom: 16,
-    letterSpacing: 0.5,
-  },
-  wechatBottomDome: {
-    width: '100%',
-    height: 80,
-    borderTopLeftRadius: 180,
-    borderTopRightRadius: 180,
-    backgroundColor: '#E5E7EB',
+  feishuControlDock: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 14,
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+    paddingBottom: 4,
+  },
+  feishuDiscardBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 70,
+  },
+  feishuDiscardBtnText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#94A3B8',
+    marginTop: 4,
+  },
+  feishuPauseResumeBtn: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#2563EB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#2563EB',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  feishuResumeBtnActive: {
+    backgroundColor: '#10B981',
+    shadowColor: '#10B981',
+  },
+  feishuFinishBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 70,
+  },
+  feishuFinishBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#2563EB',
+    marginTop: 4,
   },
   drawerHandleBar: {
     width: 40,
