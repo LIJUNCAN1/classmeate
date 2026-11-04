@@ -154,63 +154,34 @@ export const ToolsScreen: React.FC = () => {
     }
   };
 
-  // 提交本地反馈记录
-  const handleFeedbackSubmit = async () => {
-    if (!feedbackContent.trim()) {
-      setToastMessage('⚠️ 请先输入您的反馈建议内容');
-      setTimeout(() => setToastMessage(null), 2000);
-      return;
-    }
-
-    setFeedbackSubmitting(true);
-    try {
-      const existingStr = await AsyncStorage.getItem('@classmeate_feedbacks');
-      const list = existingStr ? JSON.parse(existingStr) : [];
-      const newRecord = {
-        id: Date.now().toString(),
-        category: feedbackCategory,
-        content: feedbackContent.trim(),
-        contact: feedbackContact.trim(),
-        createdAt: new Date().toISOString(),
-        version: APP_VERSION,
-      };
-      list.unshift(newRecord);
-      await AsyncStorage.setItem('@classmeate_feedbacks', JSON.stringify(list));
-
-      setFeedbackSubmitting(false);
-      setFeedbackModalVisible(false);
-      setFeedbackContent('');
-      setFeedbackContact('');
-      setToastMessage('❤️ 感谢您的宝贵建议！已成功记录反馈');
-      setTimeout(() => setToastMessage(null), 3000);
-    } catch (e) {
-      setFeedbackSubmitting(false);
-      setToastMessage('⚠️ 记录反馈失败，请重试');
-      setTimeout(() => setToastMessage(null), 2500);
-    }
-  };
-
-  // 跳转到 GitHub Issues 提交反馈
+  // 跳转到 GitHub Issues 提交问题反馈（无需应用内登录，直达开源社区 Issues）
   const handleOpenGitHubIssues = () => {
     const categoryLabels: Record<string, string> = {
-      suggestion: '功能建议',
       bug: '缺陷报错',
+      suggestion: '功能建议',
       ui: '视觉体验',
       other: '日常吐槽',
     };
+    const desc = feedbackContent.trim();
     const title = encodeURIComponent(
-      `[${categoryLabels[feedbackCategory] || '反馈'}] ${
-        feedbackContent.trim().slice(0, 30) || '用户反馈与建议'
-      }`
+      desc
+        ? `[${categoryLabels[feedbackCategory] || '反馈'}] ${desc.slice(0, 30)}`
+        : `[${categoryLabels[feedbackCategory] || '反馈'}] 来自课星球用户的反馈`
     );
     const body = encodeURIComponent(
-      `### 反馈类型\n${categoryLabels[feedbackCategory] || '建议'}\n\n### 详细描述\n${
-        feedbackContent || '无'
+      `### 反馈类型\n${categoryLabels[feedbackCategory] || '缺陷报错'}\n\n### 详细描述\n${
+        desc || '（请在此补充具体问题现象或截图描述...）'
       }\n\n### 联系方式\n${
-        feedbackContact || '未提供'
-      }\n\n### 客户端环境\n- 版本: v${APP_VERSION}\n- 平台: Android Release\n\n---\n*来自课星球移动端直接提交*`
+        feedbackContact.trim() || '未提供'
+      }\n\n### 客户端环境\n- 软件版本: v${APP_VERSION}\n- 软件形态: 免登录单机版客户端 (Android Release)\n\n---\n*由课星球客户端直达提交*`
     );
+    setFeedbackModalVisible(false);
     Linking.openURL(`https://github.com/LIJUNCAN1/classmeate/issues/new?title=${title}&body=${body}`);
+  };
+
+  // 提交本地反馈记录并直达 GitHub
+  const handleFeedbackSubmit = () => {
+    handleOpenGitHubIssues();
   };
 
   // 实时原子组件数据（从本地真实课表动态读取计算，支持切换日期）
@@ -511,8 +482,8 @@ export const ToolsScreen: React.FC = () => {
     { id: 'desktop_widget', title: '桌面课表小组件与锁屏组件', icon: 'cube-outline' },
     { id: 'qr_share', title: '课表二维码分享与同学互传', icon: 'qr-code-outline' },
     { id: 'ics_export', title: '导出日历到手机系统日历', icon: 'share-social-outline' },
-    { id: 'check_update', title: '检查更新 (GitHub Releases)', icon: 'cloud-download-outline' },
-    { id: 'feedback', title: '建议反馈', icon: 'chatbox-ellipses-outline' },
+    { id: 'check_update', title: '检查更新', icon: 'cloud-download-outline' },
+    { id: 'feedback', title: '问题反馈', icon: 'chatbox-ellipses-outline' },
   ];
 
   return (
@@ -608,9 +579,6 @@ export const ToolsScreen: React.FC = () => {
               <View style={styles.toolTitleRow}>
                 <Text style={styles.toolTitle}>{t.title}</Text>
               </View>
-              <Text style={styles.toolDesc} numberOfLines={2}>
-                {t.desc}
-              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -1379,7 +1347,7 @@ export const ToolsScreen: React.FC = () => {
             <View style={styles.feedbackHeader}>
               <View style={styles.feedbackTitleRow}>
                 <Ionicons name="chatbox-ellipses" size={20} color={Colors.primary} />
-                <Text style={styles.feedbackTitle}>建议与反馈</Text>
+                <Text style={styles.feedbackTitle}>问题反馈</Text>
               </View>
               <TouchableOpacity
                 style={styles.feedbackCloseBtn}
@@ -1391,11 +1359,19 @@ export const ToolsScreen: React.FC = () => {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-              <Text style={styles.feedbackLabel}>选择反馈类型：</Text>
+              {/* 免登录纯绿色软件提示 */}
+              <View style={styles.feedbackNoLoginNotice}>
+                <Ionicons name="shield-checkmark" size={16} color="#059669" style={{ marginRight: 6 }} />
+                <Text style={styles.feedbackNoLoginNoticeText}>
+                  课星球为本地免登录软件，提交将一键直达 GitHub Issues 官方追踪
+                </Text>
+              </View>
+
+              <Text style={styles.feedbackLabel}>选择问题类型：</Text>
               <View style={styles.feedbackTypeGrid}>
                 {[
-                  { key: 'suggestion', label: '💡 功能建议' },
                   { key: 'bug', label: '🐛 缺陷报错' },
+                  { key: 'suggestion', label: '💡 功能建议' },
                   { key: 'ui', label: '🎨 视觉体验' },
                   { key: 'other', label: '💬 日常吐槽' },
                 ].map((cat) => {
@@ -1423,10 +1399,10 @@ export const ToolsScreen: React.FC = () => {
                 })}
               </View>
 
-              <Text style={styles.feedbackLabel}>详细描述：</Text>
+              <Text style={styles.feedbackLabel}>问题描述：</Text>
               <TextInput
                 style={styles.feedbackTextInput}
-                placeholder="请详细描述您的建议、想法或遇到的问题现象..."
+                placeholder="请详细描述您遇到的问题现象、复现步骤或期望的功能改进..."
                 placeholderTextColor="#94A3B8"
                 multiline
                 numberOfLines={4}
@@ -1442,7 +1418,7 @@ export const ToolsScreen: React.FC = () => {
               <Text style={styles.feedbackLabel}>联系方式（选填）：</Text>
               <TextInput
                 style={styles.feedbackContactInput}
-                placeholder="微信 / QQ / 邮箱（方便向您同步处理进度）"
+                placeholder="微信 / QQ / 邮箱（方便向您同步修复进展）"
                 placeholderTextColor="#94A3B8"
                 value={feedbackContact}
                 onChangeText={setFeedbackContact}
@@ -1450,31 +1426,24 @@ export const ToolsScreen: React.FC = () => {
               />
 
               <TouchableOpacity
-                style={[
-                  styles.feedbackSubmitBtn,
-                  feedbackSubmitting && { opacity: 0.7 },
-                ]}
+                style={styles.feedbackSubmitBtn}
                 activeOpacity={0.85}
-                disabled={feedbackSubmitting}
-                onPress={handleFeedbackSubmit}
+                onPress={handleOpenGitHubIssues}
               >
-                {feedbackSubmitting ? (
-                  <ActivityIndicator color="#FFFFFF" size="small" />
-                ) : (
-                  <>
-                    <Ionicons name="heart" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
-                    <Text style={styles.feedbackSubmitText}>提交反馈记录</Text>
-                  </>
-                )}
+                <Ionicons name="logo-github" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+                <Text style={styles.feedbackSubmitText}>直达 GitHub Issues 提交</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.feedbackGithubBtn}
                 activeOpacity={0.8}
-                onPress={handleOpenGitHubIssues}
+                onPress={() => {
+                  setFeedbackModalVisible(false);
+                  Linking.openURL('https://github.com/LIJUNCAN1/classmeate/issues');
+                }}
               >
-                <Ionicons name="logo-github" size={18} color="#334155" style={{ marginRight: 6 }} />
-                <Text style={styles.feedbackGithubText}>前往 GitHub Issues 发帖</Text>
+                <Ionicons name="chatbubbles-outline" size={18} color="#334155" style={{ marginRight: 6 }} />
+                <Text style={styles.feedbackGithubText}>浏览已有的 Issues 列表</Text>
               </TouchableOpacity>
             </ScrollView>
           </View>
@@ -2849,6 +2818,23 @@ const styles = StyleSheet.create({
   },
   feedbackCloseBtn: {
     padding: 4,
+  },
+  feedbackNoLoginNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 14,
+  },
+  feedbackNoLoginNoticeText: {
+    fontSize: 12,
+    color: '#15803D',
+    fontWeight: '600',
+    flex: 1,
   },
   feedbackLabel: {
     fontSize: 12,
