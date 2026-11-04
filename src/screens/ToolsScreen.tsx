@@ -12,13 +12,16 @@ import {
   Easing,
   Linking,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Rounded, Shadows } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Rect, Path, G } from 'react-native-svg';
 import { ImportModal } from '../components/ImportModal';
 import { APP_VERSION } from '../constants/version';
+import { fetchLatestGitHubRelease, GitHubReleaseInfo } from '../services/updateService';
 import { computeWidgetData, syncScheduleToNativeWidget, WidgetScheduleData } from '../services/widgetHelper';
 import { loadScheduleData, calculateCurrentWeekNumber } from '../services/scheduleStorage';
 
@@ -100,6 +103,115 @@ export const ToolsScreen: React.FC = () => {
   const [qrScanVisible, setQrScanVisible] = useState(false);
   const [widgetModalVisible, setWidgetModalVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // 检查更新相关状态 (GitHub Releases)
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const [updateModalVisible, setUpdateModalVisible] = useState(false);
+  const [latestRelease, setLatestRelease] = useState<GitHubReleaseInfo | null>(null);
+
+  // 建议反馈相关状态
+  const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
+  const [feedbackCategory, setFeedbackCategory] = useState<'suggestion' | 'bug' | 'ui' | 'other'>('suggestion');
+  const [feedbackContent, setFeedbackContent] = useState('');
+  const [feedbackContact, setFeedbackContact] = useState('');
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+
+  // 执行 GitHub Releases 检查更新
+  const handleCheckUpdate = async (isManual = true) => {
+    if (checkingUpdate) return;
+    setCheckingUpdate(true);
+    if (isManual) {
+      setToastMessage('🔍 正在连接 GitHub 检查最新版本...');
+    }
+
+    try {
+      const res = await fetchLatestGitHubRelease();
+      setCheckingUpdate(false);
+
+      if (res.success && res.data) {
+        if (res.data.hasUpdate) {
+          setLatestRelease(res.data);
+          setToastMessage(null);
+          setUpdateModalVisible(true);
+        } else {
+          if (isManual) {
+            setToastMessage(`🎉 当前已是最新版本 (v${APP_VERSION})`);
+            setTimeout(() => setToastMessage(null), 3000);
+          }
+        }
+      } else {
+        if (isManual) {
+          setToastMessage(`ℹ️ ${res.error || '未检测到新发布版本'}`);
+          setTimeout(() => setToastMessage(null), 3500);
+        }
+      }
+    } catch (e: any) {
+      setCheckingUpdate(false);
+      if (isManual) {
+        setToastMessage('⚠️ 网络请求超时，请检查网络设置');
+        setTimeout(() => setToastMessage(null), 3000);
+      }
+    }
+  };
+
+  // 提交本地反馈记录
+  const handleFeedbackSubmit = async () => {
+    if (!feedbackContent.trim()) {
+      setToastMessage('⚠️ 请先输入您的反馈建议内容');
+      setTimeout(() => setToastMessage(null), 2000);
+      return;
+    }
+
+    setFeedbackSubmitting(true);
+    try {
+      const existingStr = await AsyncStorage.getItem('@classmeate_feedbacks');
+      const list = existingStr ? JSON.parse(existingStr) : [];
+      const newRecord = {
+        id: Date.now().toString(),
+        category: feedbackCategory,
+        content: feedbackContent.trim(),
+        contact: feedbackContact.trim(),
+        createdAt: new Date().toISOString(),
+        version: APP_VERSION,
+      };
+      list.unshift(newRecord);
+      await AsyncStorage.setItem('@classmeate_feedbacks', JSON.stringify(list));
+
+      setFeedbackSubmitting(false);
+      setFeedbackModalVisible(false);
+      setFeedbackContent('');
+      setFeedbackContact('');
+      setToastMessage('❤️ 感谢您的宝贵建议！已成功记录反馈');
+      setTimeout(() => setToastMessage(null), 3000);
+    } catch (e) {
+      setFeedbackSubmitting(false);
+      setToastMessage('⚠️ 记录反馈失败，请重试');
+      setTimeout(() => setToastMessage(null), 2500);
+    }
+  };
+
+  // 跳转到 GitHub Issues 提交反馈
+  const handleOpenGitHubIssues = () => {
+    const categoryLabels: Record<string, string> = {
+      suggestion: '功能建议',
+      bug: '缺陷报错',
+      ui: '视觉体验',
+      other: '日常吐槽',
+    };
+    const title = encodeURIComponent(
+      `[${categoryLabels[feedbackCategory] || '反馈'}] ${
+        feedbackContent.trim().slice(0, 30) || '用户反馈与建议'
+      }`
+    );
+    const body = encodeURIComponent(
+      `### 反馈类型\n${categoryLabels[feedbackCategory] || '建议'}\n\n### 详细描述\n${
+        feedbackContent || '无'
+      }\n\n### 联系方式\n${
+        feedbackContact || '未提供'
+      }\n\n### 客户端环境\n- 版本: v${APP_VERSION}\n- 平台: Android Release\n\n---\n*来自课星球移动端直接提交*`
+    );
+    Linking.openURL(`https://github.com/LIJUNCAN1/classmeate/issues/new?title=${title}&body=${body}`);
+  };
 
   // 实时原子组件数据（从本地真实课表动态读取计算，支持切换日期）
   const [widgetDayOfWeek, setWidgetDayOfWeek] = useState<number>(() => {
@@ -399,6 +511,8 @@ export const ToolsScreen: React.FC = () => {
     { id: 'desktop_widget', title: '桌面课表小组件与锁屏组件', icon: 'cube-outline' },
     { id: 'qr_share', title: '课表二维码分享与同学互传', icon: 'qr-code-outline' },
     { id: 'ics_export', title: '导出日历到手机系统日历', icon: 'share-social-outline' },
+    { id: 'check_update', title: '检查更新 (GitHub Releases)', icon: 'cloud-download-outline' },
+    { id: 'feedback', title: '建议反馈', icon: 'chatbox-ellipses-outline' },
   ];
 
   return (
@@ -527,6 +641,10 @@ export const ToolsScreen: React.FC = () => {
                     setToastMessage('✅ 课表已成功同步导出至手机系统日历！');
                     setTimeout(() => setToastMessage(null), 3000);
                   }, 800);
+                } else if (item.id === 'check_update') {
+                  handleCheckUpdate(true);
+                } else if (item.id === 'feedback') {
+                  setFeedbackModalVisible(true);
                 }
               }}
             >
@@ -539,12 +657,17 @@ export const ToolsScreen: React.FC = () => {
           ))}
         </View>
 
-        {/* 底部版本号信息展示（用户要求：课星球左边的绿点去掉改成灰色 classplant，去掉已是最新版本） */}
+        {/* 底部版本号信息展示（版本下面写上 @黎俊灿） */}
         <View style={styles.footerVersionContainer}>
-          <View style={styles.footerVersionPill}>
+          <TouchableOpacity
+            style={styles.footerVersionPill}
+            activeOpacity={0.7}
+            onPress={() => handleCheckUpdate(true)}
+          >
             <View style={styles.footerVersionDotGray} />
             <Text style={styles.footerVersionText}>classplant v{APP_VERSION}</Text>
-          </View>
+          </TouchableOpacity>
+          <Text style={styles.footerAuthorText}>@黎俊灿</Text>
         </View>
 
         <View style={{ height: 90 }} />
@@ -1158,6 +1281,202 @@ export const ToolsScreen: React.FC = () => {
                 <Text style={styles.qrSecondaryActionBtnText}>同步原子组件实时数据</Text>
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* GitHub Releases 检查更新弹窗 */}
+      <Modal
+        visible={updateModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setUpdateModalVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={[styles.updateModalCard, Shadows.card]}>
+            <View style={styles.updateHeaderBadge}>
+              <View style={styles.updateIconCircle}>
+                <Ionicons name="rocket" size={32} color="#FFFFFF" />
+              </View>
+            </View>
+
+            <Text style={styles.updateTitle}>发现新版本！</Text>
+
+            <View style={styles.updateVersionTagRow}>
+              <View style={styles.updateOldVersionPill}>
+                <Text style={styles.updateOldVersionText}>当前 v{APP_VERSION}</Text>
+              </View>
+              <Ionicons name="arrow-forward" size={14} color="#94A3B8" />
+              <View style={styles.updateNewVersionPill}>
+                <Text style={styles.updateNewVersionText}>{latestRelease?.tagName || '最新版'}</Text>
+              </View>
+            </View>
+
+            {latestRelease?.publishedAt ? (
+              <Text style={styles.updatePublishDate}>发布日期：{latestRelease.publishedAt}</Text>
+            ) : null}
+
+            <View style={styles.updateLogBox}>
+              <Text style={styles.updateLogTitle}>更新日志：</Text>
+              <ScrollView style={styles.updateLogScroll} showsVerticalScrollIndicator={true}>
+                <Text style={styles.updateLogText}>
+                  {latestRelease?.body || latestRelease?.name || '本次更新包含性能提升与体验优化，建议立即升级体验！'}
+                </Text>
+              </ScrollView>
+            </View>
+
+            <View style={styles.updateBtnColumn}>
+              <TouchableOpacity
+                style={styles.updatePrimaryBtn}
+                activeOpacity={0.85}
+                onPress={() => {
+                  if (latestRelease?.downloadUrl) {
+                    Linking.openURL(latestRelease.downloadUrl);
+                  }
+                  setUpdateModalVisible(false);
+                }}
+              >
+                <Ionicons name="cloud-download-outline" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+                <Text style={styles.updatePrimaryBtnText}>立即下载更新 (APK)</Text>
+              </TouchableOpacity>
+
+              <View style={styles.updateSecondaryRow}>
+                <TouchableOpacity
+                  style={styles.updateGhostBtn}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    if (latestRelease?.htmlUrl) {
+                      Linking.openURL(latestRelease.htmlUrl);
+                    }
+                  }}
+                >
+                  <Ionicons name="logo-github" size={16} color="#64748B" style={{ marginRight: 4 }} />
+                  <Text style={styles.updateGhostBtnText}>GitHub Release</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.updateGhostBtn}
+                  activeOpacity={0.7}
+                  onPress={() => setUpdateModalVisible(false)}
+                >
+                  <Text style={styles.updateCloseBtnText}>稍后再说</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 建议与反馈弹窗 */}
+      <Modal
+        visible={feedbackModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setFeedbackModalVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={[styles.feedbackModalCard, Shadows.card]}>
+            <View style={styles.feedbackHeader}>
+              <View style={styles.feedbackTitleRow}>
+                <Ionicons name="chatbox-ellipses" size={20} color={Colors.primary} />
+                <Text style={styles.feedbackTitle}>建议与反馈</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.feedbackCloseBtn}
+                onPress={() => setFeedbackModalVisible(false)}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={20} color="#64748B" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+              <Text style={styles.feedbackLabel}>选择反馈类型：</Text>
+              <View style={styles.feedbackTypeGrid}>
+                {[
+                  { key: 'suggestion', label: '💡 功能建议' },
+                  { key: 'bug', label: '🐛 缺陷报错' },
+                  { key: 'ui', label: '🎨 视觉体验' },
+                  { key: 'other', label: '💬 日常吐槽' },
+                ].map((cat) => {
+                  const isActive = feedbackCategory === cat.key;
+                  return (
+                    <TouchableOpacity
+                      key={cat.key}
+                      style={[
+                        styles.feedbackTypePill,
+                        isActive && styles.feedbackTypePillActive,
+                      ]}
+                      activeOpacity={0.75}
+                      onPress={() => setFeedbackCategory(cat.key as any)}
+                    >
+                      <Text
+                        style={[
+                          styles.feedbackTypePillText,
+                          isActive && styles.feedbackTypePillTextActive,
+                        ]}
+                      >
+                        {cat.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              <Text style={styles.feedbackLabel}>详细描述：</Text>
+              <TextInput
+                style={styles.feedbackTextInput}
+                placeholder="请详细描述您的建议、想法或遇到的问题现象..."
+                placeholderTextColor="#94A3B8"
+                multiline
+                numberOfLines={4}
+                textAlignVertical="top"
+                value={feedbackContent}
+                onChangeText={setFeedbackContent}
+                maxLength={500}
+              />
+              <Text style={styles.feedbackCharCount}>
+                {feedbackContent.length}/500
+              </Text>
+
+              <Text style={styles.feedbackLabel}>联系方式（选填）：</Text>
+              <TextInput
+                style={styles.feedbackContactInput}
+                placeholder="微信 / QQ / 邮箱（方便向您同步处理进度）"
+                placeholderTextColor="#94A3B8"
+                value={feedbackContact}
+                onChangeText={setFeedbackContact}
+                maxLength={80}
+              />
+
+              <TouchableOpacity
+                style={[
+                  styles.feedbackSubmitBtn,
+                  feedbackSubmitting && { opacity: 0.7 },
+                ]}
+                activeOpacity={0.85}
+                disabled={feedbackSubmitting}
+                onPress={handleFeedbackSubmit}
+              >
+                {feedbackSubmitting ? (
+                  <ActivityIndicator color="#FFFFFF" size="small" />
+                ) : (
+                  <>
+                    <Ionicons name="heart" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+                    <Text style={styles.feedbackSubmitText}>提交反馈记录</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.feedbackGithubBtn}
+                activeOpacity={0.8}
+                onPress={handleOpenGitHubIssues}
+              >
+                <Ionicons name="logo-github" size={18} color="#334155" style={{ marginRight: 6 }} />
+                <Text style={styles.feedbackGithubText}>前往 GitHub Issues 发帖</Text>
+              </TouchableOpacity>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -2352,5 +2671,278 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#64748B',
     fontVariant: ['tabular-nums'],
+  },
+  footerAuthorText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#94A3B8',
+    letterSpacing: 0.5,
+  },
+
+  // ================= 检查更新弹窗样式 =================
+  updateModalCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    paddingHorizontal: 22,
+    paddingTop: 24,
+    paddingBottom: 20,
+    width: '88%',
+    maxWidth: 360,
+    alignItems: 'center',
+  },
+  updateHeaderBadge: {
+    marginBottom: 12,
+  },
+  updateIconCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  updateTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginBottom: 10,
+  },
+  updateVersionTagRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  updateOldVersionPill: {
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  updateOldVersionText: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  updateNewVersionPill: {
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  updateNewVersionText: {
+    fontSize: 12,
+    color: '#059669',
+    fontWeight: '800',
+  },
+  updatePublishDate: {
+    fontSize: 11,
+    color: '#94A3B8',
+    marginBottom: 12,
+  },
+  updateLogBox: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    padding: 12,
+    width: '100%',
+    maxHeight: 160,
+    marginBottom: 18,
+  },
+  updateLogTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#334155',
+    marginBottom: 6,
+  },
+  updateLogScroll: {
+    maxHeight: 120,
+  },
+  updateLogText: {
+    fontSize: 13,
+    lineHeight: 20,
+    color: '#475569',
+  },
+  updateBtnColumn: {
+    width: '100%',
+    gap: 8,
+  },
+  updatePrimaryBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
+    paddingVertical: 12,
+    borderRadius: 12,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  updatePrimaryBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  updateSecondaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 4,
+    paddingHorizontal: 6,
+  },
+  updateGhostBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 4,
+  },
+  updateGhostBtnText: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  updateCloseBtnText: {
+    fontSize: 12,
+    color: '#94A3B8',
+    fontWeight: '500',
+  },
+
+  // ================= 建议反馈弹窗样式 =================
+  feedbackModalCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 24,
+    width: '90%',
+    maxWidth: 420,
+    maxHeight: '85%',
+  },
+  feedbackHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingBottom: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#F1F5F9',
+  },
+  feedbackTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  feedbackTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  feedbackCloseBtn: {
+    padding: 4,
+  },
+  feedbackLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#475569',
+    marginBottom: 8,
+  },
+  feedbackTypeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 14,
+  },
+  feedbackTypePill: {
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 10,
+    backgroundColor: '#F1F5F9',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  feedbackTypePillActive: {
+    backgroundColor: '#ECFDF5',
+    borderColor: Colors.primary,
+  },
+  feedbackTypePillText: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  feedbackTypePillTextActive: {
+    color: Colors.primary,
+    fontWeight: '700',
+  },
+  feedbackTextInput: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 12,
+    padding: 12,
+    fontSize: 13,
+    color: '#0F172A',
+    minHeight: 96,
+  },
+  feedbackCharCount: {
+    fontSize: 11,
+    color: '#94A3B8',
+    textAlign: 'right',
+    marginTop: 4,
+    marginBottom: 12,
+  },
+  feedbackContactInput: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 13,
+    color: '#0F172A',
+    marginBottom: 18,
+  },
+  feedbackSubmitBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
+    paddingVertical: 12,
+    borderRadius: 12,
+    marginBottom: 8,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  feedbackSubmitText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  feedbackGithubBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  feedbackGithubText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#334155',
   },
 });
