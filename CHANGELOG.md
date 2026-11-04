@@ -1,5 +1,14 @@
 # 更新日志 (Changelog)
 
+## [v0.5.2] - 2026-11-04
+
+1. center update modal and feedback modal on screen with dedicated center backdrop
+2. simplify tools menu items, remove card description subtitles, and streamline direct-to-github issue feedback
+3. use green monster cover icon, auto version bumping & changelog, expand nationwide schools database including CUMT
+4. add GitHub Releases update checker, feedback modal, and author attribution @黎俊灿
+5. add swipe-to-delete with entrance and collapse exit animations, and revamp voice recording to Feishu meeting style
+6. fix blank desktop widget caused by unsupported View tag in RemoteViews and enhance layout reliability
+
 ## [v0.5.1] - 2026-11-04
 
 1. 全新专属封面与图标：更换为可爱绿色耳机怪兽封面与桌面图标；

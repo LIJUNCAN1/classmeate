@@ -2,7 +2,7 @@
   "expo": {
     "name": "课星球",
     "slug": "classmeate",
-    "version": "0.5.1",
+    "version": "0.5.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,7 +18,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "versionCode": 51
+      "versionCode": 52
     },
     "web": {
       "favicon": "./assets/favicon.png"
