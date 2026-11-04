@@ -8,6 +8,8 @@ import { BottomNavBar, MainTabType } from './src/components/BottomNavBar';
 import { Colors } from './src/constants/theme';
 import { AnimatedSplashScreen } from './src/components/AnimatedSplashScreen';
 import { syncScheduleToNativeWidget } from './src/services/widgetHelper';
+import { fetchLatestGitHubRelease, GitHubReleaseInfo } from './src/services/updateService';
+import { UpdateModal } from './src/components/UpdateModal';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -15,9 +17,26 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<MainTabType>('schedule');
   const [pendingNoteCourse, setPendingNoteCourse] = useState<string | undefined>(undefined);
 
-  // 每次应用启动立即同步全周课表至原生桌面小组件
+  // 打开软件自动检测更新状态
+  const [autoUpdateModalVisible, setAutoUpdateModalVisible] = useState(false);
+  const [autoReleaseInfo, setAutoReleaseInfo] = useState<GitHubReleaseInfo | null>(null);
+
+  // 每次应用启动：1. 立即同步全周课表至原生桌面小组件 2. 自动检测最新版本
   useEffect(() => {
     syncScheduleToNativeWidget();
+
+    // 打开软件自动检测更新（静默检测，有新版本才展示弹窗）
+    (async () => {
+      try {
+        const res = await fetchLatestGitHubRelease();
+        if (res.success && res.data?.hasUpdate) {
+          setAutoReleaseInfo(res.data);
+          setAutoUpdateModalVisible(true);
+        }
+      } catch (e) {
+        // 静默失败，不打扰用户
+      }
+    })();
   }, []);
 
   const handleNavigateToNotes = (courseName: string) => {
@@ -48,6 +67,13 @@ export default function App() {
         <BottomNavBar
           activeTab={activeTab}
           onTabChange={(tabId) => setActiveTab(tabId)}
+        />
+
+        {/* 全局打开软件自动更新检测弹窗 */}
+        <UpdateModal
+          visible={autoUpdateModalVisible}
+          onClose={() => setAutoUpdateModalVisible(false)}
+          release={autoReleaseInfo}
         />
       </View>
     </SafeAreaProvider>

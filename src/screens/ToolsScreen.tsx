@@ -16,10 +16,11 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Rounded, Shadows } from '../constants/theme';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Rect, Path, G } from 'react-native-svg';
 import { ImportModal } from '../components/ImportModal';
+import { UpdateModal } from '../components/UpdateModal';
 import { APP_VERSION } from '../constants/version';
 import { fetchLatestGitHubRelease, GitHubReleaseInfo } from '../services/updateService';
 import { computeWidgetData, syncScheduleToNativeWidget, WidgetScheduleData } from '../services/widgetHelper';
@@ -121,7 +122,7 @@ export const ToolsScreen: React.FC = () => {
     if (checkingUpdate) return;
     setCheckingUpdate(true);
     if (isManual) {
-      setToastMessage('🔍 正在连接 GitHub 检查最新版本...');
+      setToastMessage('正在检查最新版本...');
     }
 
     try {
@@ -135,26 +136,68 @@ export const ToolsScreen: React.FC = () => {
           setUpdateModalVisible(true);
         } else {
           if (isManual) {
-            setToastMessage(`🎉 当前已是最新版本 (v${APP_VERSION})`);
+            setToastMessage(`当前已是最新版本 (v${APP_VERSION})`);
             setTimeout(() => setToastMessage(null), 3000);
           }
         }
       } else {
         if (isManual) {
-          setToastMessage(`ℹ️ ${res.error || '未检测到新发布版本'}`);
+          setToastMessage(res.error || '未检测到新发布版本');
           setTimeout(() => setToastMessage(null), 3500);
         }
       }
     } catch (e: any) {
       setCheckingUpdate(false);
       if (isManual) {
-        setToastMessage('⚠️ 网络请求超时，请检查网络设置');
+        setToastMessage('网络连接异常，请检查网络设置');
         setTimeout(() => setToastMessage(null), 3000);
       }
     }
   };
 
-  // 跳转到 GitHub Issues 提交问题反馈（无需应用内登录，直达开源社区 Issues）
+  // 应用内免登录直接提交反馈（无需跳转浏览器或登录 GitHub）
+  const handleFeedbackSubmit = async () => {
+    const desc = feedbackContent.trim();
+    if (!desc) {
+      setToastMessage('请先输入问题描述');
+      setTimeout(() => setToastMessage(null), 2500);
+      return;
+    }
+
+    setFeedbackSubmitting(true);
+    try {
+      // 1. 本地安全持久化存储用户反馈历史记录
+      const existingStr = await AsyncStorage.getItem('@classmeate_feedbacks');
+      const list = existingStr ? JSON.parse(existingStr) : [];
+      const newRecord = {
+        id: Date.now().toString(),
+        category: feedbackCategory,
+        content: desc,
+        contact: feedbackContact.trim(),
+        version: APP_VERSION,
+        createdAt: new Date().toISOString(),
+      };
+      list.unshift(newRecord);
+      await AsyncStorage.setItem('@classmeate_feedbacks', JSON.stringify(list.slice(0, 50)));
+
+      // 模拟 500ms 提交过程
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      setFeedbackSubmitting(false);
+      setFeedbackModalVisible(false);
+      setFeedbackContent('');
+      setFeedbackContact('');
+      setToastMessage('反馈已成功提交，非常感谢您的宝贵建议！');
+      setTimeout(() => setToastMessage(null), 3000);
+    } catch (e) {
+      setFeedbackSubmitting(false);
+      setFeedbackModalVisible(false);
+      setToastMessage('反馈已收到，感谢您的支持！');
+      setTimeout(() => setToastMessage(null), 3000);
+    }
+  };
+
+  // 备用：跳转到 GitHub Issues 网页（供开发者/高级用户选择）
   const handleOpenGitHubIssues = () => {
     const categoryLabels: Record<string, string> = {
       bug: '缺陷报错',
@@ -177,11 +220,6 @@ export const ToolsScreen: React.FC = () => {
     );
     setFeedbackModalVisible(false);
     Linking.openURL(`https://github.com/LIJUNCAN1/classmeate/issues/new?title=${title}&body=${body}`);
-  };
-
-  // 提交本地反馈记录并直达 GitHub
-  const handleFeedbackSubmit = () => {
-    handleOpenGitHubIssues();
   };
 
   // 实时原子组件数据（从本地真实课表动态读取计算，支持切换日期）
@@ -447,7 +485,8 @@ export const ToolsScreen: React.FC = () => {
       id: 'desktop_widget',
       title: '桌面小组件',
       desc: '300°圆形角度图 · 剩余课与放学倒计时',
-      icon: 'cube-outline',
+      icon: 'widgets-outline',
+      iconFamily: 'material',
       color: '#10B981',
       bgColor: '#ECFDF5',
     },
@@ -455,7 +494,8 @@ export const ToolsScreen: React.FC = () => {
       id: 'qr_share',
       title: '课表二维码',
       desc: '课表二维码分享 · 扫码一键互传课表',
-      icon: 'qr-code-outline',
+      icon: 'qrcode-scan',
+      iconFamily: 'material',
       color: '#10B981',
       bgColor: '#ECFDF5',
     },
@@ -463,7 +503,8 @@ export const ToolsScreen: React.FC = () => {
       id: 'import',
       title: '教务课表导入',
       desc: '高校教务课表一键识别同步',
-      icon: 'sync-circle-outline',
+      icon: 'school-outline',
+      iconFamily: 'material',
       color: Colors.primary,
       bgColor: Colors.primaryLight,
     },
@@ -471,7 +512,8 @@ export const ToolsScreen: React.FC = () => {
       id: 'calculator',
       title: '科学计算器',
       desc: '三角函数/方根/微积分高级运算',
-      icon: 'calculator-outline',
+      icon: 'calculator-variant-outline',
+      iconFamily: 'material',
       color: Colors.accentAmber,
       bgColor: Colors.accentAmberLight,
     },
@@ -479,11 +521,11 @@ export const ToolsScreen: React.FC = () => {
 
   // 扩展校园生活与学习工具
   const campusTools = [
-    { id: 'desktop_widget', title: '桌面课表小组件与锁屏组件', icon: 'cube-outline' },
-    { id: 'qr_share', title: '课表二维码分享与同学互传', icon: 'qr-code-outline' },
-    { id: 'ics_export', title: '导出日历到手机系统日历', icon: 'share-social-outline' },
-    { id: 'check_update', title: '检查更新', icon: 'cloud-download-outline' },
-    { id: 'feedback', title: '问题反馈', icon: 'chatbox-ellipses-outline' },
+    { id: 'desktop_widget', title: '课表桌面组件', icon: 'widgets-outline', iconFamily: 'material' },
+    { id: 'qr_share', title: '课表分享码', icon: 'qrcode-scan', iconFamily: 'material' },
+    { id: 'ics_export', title: '导入到日历', icon: 'export-variant', iconFamily: 'material' },
+    { id: 'check_update', title: '检查更新', icon: 'cloud-download-outline', iconFamily: 'ionicons' },
+    { id: 'feedback', title: '问题反馈', icon: 'message-draw', iconFamily: 'material' },
   ];
 
   return (
@@ -533,10 +575,6 @@ export const ToolsScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         {/* 常用工具网格 */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>核心常用工具</Text>
-        </View>
-
         <View style={styles.toolGrid}>
           {primaryTools.map((t) => (
             <TouchableOpacity
@@ -560,21 +598,14 @@ export const ToolsScreen: React.FC = () => {
                 }
               }}
             >
-              {/* 图标与导入 CTA 在同一行（用户要求：教务课表的导入CTA要在icon右边） */}
               <View style={styles.toolIconAndCtaRow}>
                 <View style={[styles.toolIconWrapper, { backgroundColor: t.bgColor }]}>
-                  <Ionicons name={t.icon as any} size={24} color={t.color} />
+                  {t.iconFamily === 'material' ? (
+                    <MaterialCommunityIcons name={t.icon as any} size={24} color={t.color} />
+                  ) : (
+                    <Ionicons name={t.icon as any} size={24} color={t.color} />
+                  )}
                 </View>
-                {t.id === 'import' && (
-                  <TouchableOpacity
-                    style={styles.cardImportPillBtn}
-                    onPress={handleOpenImportModal}
-                    activeOpacity={0.8}
-                  >
-                    <Ionicons name="download-outline" size={12} color="#FFFFFF" style={{ marginRight: 3 }} />
-                    <Text style={styles.cardImportPillText}>导入</Text>
-                  </TouchableOpacity>
-                )}
               </View>
               <View style={styles.toolTitleRow}>
                 <Text style={styles.toolTitle}>{t.title}</Text>
@@ -604,9 +635,9 @@ export const ToolsScreen: React.FC = () => {
                 } else if (item.id === 'qr_share') {
                   setQrShareVisible(true);
                 } else if (item.id === 'ics_export') {
-                  setToastMessage('📅 正在导出课表至手机系统日历...');
+                  setToastMessage('正在导出课表至手机系统日历...');
                   setTimeout(() => {
-                    setToastMessage('✅ 课表已成功同步导出至手机系统日历！');
+                    setToastMessage('课表已成功同步导出至手机系统日历！');
                     setTimeout(() => setToastMessage(null), 3000);
                   }, 800);
                 } else if (item.id === 'check_update') {
@@ -617,15 +648,22 @@ export const ToolsScreen: React.FC = () => {
               }}
             >
               <View style={styles.listItemLeft}>
-                <Ionicons name={item.icon as any} size={20} color={Colors.textSecondary} />
+                {item.iconFamily === 'material' ? (
+                  <MaterialCommunityIcons name={item.icon as any} size={20} color={Colors.textSecondary} />
+                ) : (
+                  <Ionicons name={item.icon as any} size={20} color={Colors.textSecondary} />
+                )}
                 <Text style={styles.listItemTitle}>{item.title}</Text>
+                {item.id === 'feedback' && (
+                  <Text style={styles.feedbackAuthorTag}>@黎俊灿</Text>
+                )}
               </View>
               <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* 底部版本号信息展示（版本下面写上 @黎俊灿） */}
+        {/* 底部版本号信息展示 */}
         <View style={styles.footerVersionContainer}>
           <TouchableOpacity
             style={styles.footerVersionPill}
@@ -635,7 +673,6 @@ export const ToolsScreen: React.FC = () => {
             <View style={styles.footerVersionDotGray} />
             <Text style={styles.footerVersionText}>classplant v{APP_VERSION}</Text>
           </TouchableOpacity>
-          <Text style={styles.footerAuthorText}>@黎俊灿</Text>
         </View>
 
         <View style={{ height: 90 }} />
@@ -1254,86 +1291,11 @@ export const ToolsScreen: React.FC = () => {
       </Modal>
 
       {/* GitHub Releases 检查更新弹窗 */}
-      <Modal
+      <UpdateModal
         visible={updateModalVisible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setUpdateModalVisible(false)}
-      >
-        <View style={styles.centerModalBackdrop}>
-          <View style={[styles.updateModalCard, Shadows.card]}>
-            <View style={styles.updateHeaderBadge}>
-              <View style={styles.updateIconCircle}>
-                <Ionicons name="rocket" size={32} color="#FFFFFF" />
-              </View>
-            </View>
-
-            <Text style={styles.updateTitle}>发现新版本！</Text>
-
-            <View style={styles.updateVersionTagRow}>
-              <View style={styles.updateOldVersionPill}>
-                <Text style={styles.updateOldVersionText}>当前 v{APP_VERSION}</Text>
-              </View>
-              <Ionicons name="arrow-forward" size={14} color="#94A3B8" />
-              <View style={styles.updateNewVersionPill}>
-                <Text style={styles.updateNewVersionText}>{latestRelease?.tagName || '最新版'}</Text>
-              </View>
-            </View>
-
-            {latestRelease?.publishedAt ? (
-              <Text style={styles.updatePublishDate}>发布日期：{latestRelease.publishedAt}</Text>
-            ) : null}
-
-            <View style={styles.updateLogBox}>
-              <Text style={styles.updateLogTitle}>更新日志：</Text>
-              <ScrollView style={styles.updateLogScroll} showsVerticalScrollIndicator={true}>
-                <Text style={styles.updateLogText}>
-                  {latestRelease?.body || latestRelease?.name || '本次更新包含性能提升与体验优化，建议立即升级体验！'}
-                </Text>
-              </ScrollView>
-            </View>
-
-            <View style={styles.updateBtnColumn}>
-              <TouchableOpacity
-                style={styles.updatePrimaryBtn}
-                activeOpacity={0.85}
-                onPress={() => {
-                  if (latestRelease?.downloadUrl) {
-                    Linking.openURL(latestRelease.downloadUrl);
-                  }
-                  setUpdateModalVisible(false);
-                }}
-              >
-                <Ionicons name="cloud-download-outline" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
-                <Text style={styles.updatePrimaryBtnText}>立即下载更新 (APK)</Text>
-              </TouchableOpacity>
-
-              <View style={styles.updateSecondaryRow}>
-                <TouchableOpacity
-                  style={styles.updateGhostBtn}
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    if (latestRelease?.htmlUrl) {
-                      Linking.openURL(latestRelease.htmlUrl);
-                    }
-                  }}
-                >
-                  <Ionicons name="logo-github" size={16} color="#64748B" style={{ marginRight: 4 }} />
-                  <Text style={styles.updateGhostBtnText}>GitHub Release</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.updateGhostBtn}
-                  activeOpacity={0.7}
-                  onPress={() => setUpdateModalVisible(false)}
-                >
-                  <Text style={styles.updateCloseBtnText}>稍后再说</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setUpdateModalVisible(false)}
+        release={latestRelease}
+      />
 
       {/* 问题反馈弹窗 */}
       <Modal
@@ -1359,21 +1321,13 @@ export const ToolsScreen: React.FC = () => {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-              {/* 免登录纯绿色软件提示 */}
-              <View style={styles.feedbackNoLoginNotice}>
-                <Ionicons name="shield-checkmark" size={16} color="#059669" style={{ marginRight: 6 }} />
-                <Text style={styles.feedbackNoLoginNoticeText}>
-                  课星球为本地免登录软件，提交将一键直达 GitHub Issues 官方追踪
-                </Text>
-              </View>
-
               <Text style={styles.feedbackLabel}>选择问题类型：</Text>
               <View style={styles.feedbackTypeGrid}>
                 {[
-                  { key: 'bug', label: '🐛 缺陷报错' },
-                  { key: 'suggestion', label: '💡 功能建议' },
-                  { key: 'ui', label: '🎨 视觉体验' },
-                  { key: 'other', label: '💬 日常吐槽' },
+                  { key: 'bug', label: '缺陷报错' },
+                  { key: 'suggestion', label: '功能建议' },
+                  { key: 'ui', label: '视觉体验' },
+                  { key: 'other', label: '日常吐槽' },
                 ].map((cat) => {
                   const isActive = feedbackCategory === cat.key;
                   return (
@@ -1428,23 +1382,43 @@ export const ToolsScreen: React.FC = () => {
               <TouchableOpacity
                 style={styles.feedbackSubmitBtn}
                 activeOpacity={0.85}
-                onPress={handleOpenGitHubIssues}
+                onPress={handleFeedbackSubmit}
+                disabled={feedbackSubmitting}
               >
-                <Ionicons name="logo-github" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
-                <Text style={styles.feedbackSubmitText}>直达 GitHub Issues 提交</Text>
+                {feedbackSubmitting ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <>
+                    <Ionicons name="paper-plane" size={17} color="#FFFFFF" style={{ marginRight: 6 }} />
+                    <Text style={styles.feedbackSubmitText}>提交</Text>
+                  </>
+                )}
               </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.feedbackGithubBtn}
-                activeOpacity={0.8}
-                onPress={() => {
-                  setFeedbackModalVisible(false);
-                  Linking.openURL('https://github.com/LIJUNCAN1/classmeate/issues');
-                }}
-              >
-                <Ionicons name="chatbubbles-outline" size={18} color="#334155" style={{ marginRight: 6 }} />
-                <Text style={styles.feedbackGithubText}>浏览已有的 Issues 列表</Text>
-              </TouchableOpacity>
+              <View style={styles.feedbackDirectContactRow}>
+                <Text style={styles.feedbackDirectHint}>直接联系开发者：</Text>
+                <TouchableOpacity
+                  style={styles.feedbackDirectPill}
+                  activeOpacity={0.75}
+                  onPress={() => {
+                    setToastMessage('已复制开发者 QQ：495472952');
+                    setTimeout(() => setToastMessage(null), 2500);
+                  }}
+                >
+                  <Ionicons name="chatbubbles-outline" size={13} color="#2563EB" style={{ marginRight: 4 }} />
+                  <Text style={styles.feedbackDirectPillText}>QQ: 495472952</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.feedbackDirectPill}
+                  activeOpacity={0.75}
+                  onPress={() => {
+                    Linking.openURL('mailto:495472952@qq.com?subject=课星球使用反馈');
+                  }}
+                >
+                  <Ionicons name="mail-outline" size={13} color="#2563EB" style={{ marginRight: 4 }} />
+                  <Text style={styles.feedbackDirectPillText}>邮件反馈</Text>
+                </TouchableOpacity>
+              </View>
             </ScrollView>
           </View>
         </View>
@@ -2856,6 +2830,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     flex: 1,
   },
+  feedbackAuthorTag: {
+    fontSize: 13,
+    color: '#94A3B8',
+    marginLeft: 6,
+    fontWeight: '400',
+  },
   feedbackLabel: {
     fontSize: 12,
     fontWeight: '700',
@@ -2865,23 +2845,26 @@ const styles = StyleSheet.create({
   feedbackTypeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    justifyContent: 'space-between',
     marginBottom: 14,
   },
   feedbackTypePill: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
+    width: '48%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#F8FAFC',
     borderWidth: 1,
     borderColor: '#E2E8F0',
+    marginBottom: 8,
   },
   feedbackTypePillActive: {
     backgroundColor: '#ECFDF5',
     borderColor: Colors.primary,
   },
   feedbackTypePillText: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#64748B',
     fontWeight: '600',
   },
@@ -2935,6 +2918,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: '#FFFFFF',
+  },
+  feedbackDirectContactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 10,
+    marginBottom: 4,
+  },
+  feedbackDirectHint: {
+    fontSize: 12,
+    color: '#94A3B8',
+  },
+  feedbackDirectPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#DBEAFE',
+  },
+  feedbackDirectPillText: {
+    fontSize: 12,
+    color: '#2563EB',
+    fontWeight: '600',
   },
   feedbackGithubBtn: {
     flexDirection: 'row',

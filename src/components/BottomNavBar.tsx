@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Animated, Dimensions } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type MainTabType = 'schedule' | 'notes' | 'tools';
@@ -10,10 +10,10 @@ interface BottomNavBarProps {
   onTabChange: (tabId: MainTabType) => void;
 }
 
-const TABS: { id: MainTabType; icon: string; activeIcon: string }[] = [
-  { id: 'schedule', icon: 'home-outline', activeIcon: 'home' },
-  { id: 'notes', icon: 'calendar-outline', activeIcon: 'calendar' },
-  { id: 'tools', icon: 'grid-outline', activeIcon: 'grid' },
+const TABS: { id: MainTabType; icon: any; activeIcon: any }[] = [
+  { id: 'schedule', icon: 'home-variant-outline', activeIcon: 'home-variant' },
+  { id: 'notes', icon: 'calendar-month-outline', activeIcon: 'calendar-month' },
+  { id: 'tools', icon: 'view-grid-outline', activeIcon: 'view-grid' },
 ];
 
 const CAPSULE_WIDTH = 216;
@@ -90,9 +90,9 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
               onPress={() => onTabChange(tab.id)}
               activeOpacity={0.7}
             >
-              <Ionicons
+              <MaterialCommunityIcons
                 name={(isActive ? tab.activeIcon : tab.icon) as any}
-                size={23}
+                size={24}
                 color={isActive ? '#16A34A' : '#64748B'}
               />
             </TouchableOpacity>
