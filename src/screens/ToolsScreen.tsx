@@ -1260,7 +1260,7 @@ export const ToolsScreen: React.FC = () => {
         animationType="fade"
         onRequestClose={() => setUpdateModalVisible(false)}
       >
-        <View style={styles.modalBackdrop}>
+        <View style={styles.centerModalBackdrop}>
           <View style={[styles.updateModalCard, Shadows.card]}>
             <View style={styles.updateHeaderBadge}>
               <View style={styles.updateIconCircle}>
@@ -1335,14 +1335,14 @@ export const ToolsScreen: React.FC = () => {
         </View>
       </Modal>
 
-      {/* 建议与反馈弹窗 */}
+      {/* 问题反馈弹窗 */}
       <Modal
         visible={feedbackModalVisible}
         transparent={true}
-        animationType="slide"
+        animationType="fade"
         onRequestClose={() => setFeedbackModalVisible(false)}
       >
-        <View style={styles.modalBackdrop}>
+        <View style={styles.centerModalBackdrop}>
           <View style={[styles.feedbackModalCard, Shadows.card]}>
             <View style={styles.feedbackHeader}>
               <View style={styles.feedbackTitleRow}>
@@ -1974,6 +1974,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.55)',
     justifyContent: 'flex-end',
+  },
+  // 居中模态弹窗背景（更新弹窗、反馈弹窗专用）
+  centerModalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.62)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
   },
 
   // Piik 全屏口令教室样式
@@ -2651,13 +2659,19 @@ const styles = StyleSheet.create({
   // ================= 检查更新弹窗样式 =================
   updateModalCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 24,
+    borderRadius: 28,
     paddingHorizontal: 22,
-    paddingTop: 24,
-    paddingBottom: 20,
-    width: '88%',
-    maxWidth: 360,
+    paddingTop: 26,
+    paddingBottom: 22,
+    width: '100%',
+    maxWidth: 340,
     alignItems: 'center',
+    alignSelf: 'center',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 24,
   },
   updateHeaderBadge: {
     marginBottom: 12,
@@ -2789,13 +2803,19 @@ const styles = StyleSheet.create({
   // ================= 建议反馈弹窗样式 =================
   feedbackModalCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 24,
+    borderRadius: 28,
     paddingHorizontal: 20,
-    paddingTop: 18,
+    paddingTop: 20,
     paddingBottom: 24,
-    width: '90%',
-    maxWidth: 420,
+    width: '100%',
+    maxWidth: 380,
     maxHeight: '85%',
+    alignSelf: 'center',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 24,
   },
   feedbackHeader: {
     flexDirection: 'row',
