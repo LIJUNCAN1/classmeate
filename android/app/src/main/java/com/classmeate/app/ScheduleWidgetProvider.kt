@@ -19,6 +19,20 @@ import java.util.Calendar
 
 class ScheduleWidgetProvider : AppWidgetProvider() {
 
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        try {
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            val componentName = ComponentName(context, ScheduleWidgetProvider::class.java)
+            val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
+            for (appWidgetId in appWidgetIds) {
+                updateAppWidget(context, appWidgetManager, appWidgetId)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -70,145 +84,153 @@ class ScheduleWidgetProvider : AppWidgetProvider() {
             appWidgetManager: AppWidgetManager,
             appWidgetId: Int
         ) {
-            val views = RemoteViews(context.packageName, R.layout.widget_schedule_2x2)
+            try {
+                val views = RemoteViews(context.packageName, R.layout.widget_schedule_2x2)
 
-            // 点击小组件卡片主体直接启动课星球主界面
-            val intent = Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            }
-            val pendingIntent = PendingIntent.getActivity(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
+                // 点击小组件卡片主体直接启动课星球主界面
+                val intent = Intent(context, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+                val pendingIntent = PendingIntent.getActivity(
+                    context,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
 
-            // 星期几左右切换按钮交互绑定
-            val prevIntent = Intent(context, ScheduleWidgetProvider::class.java).apply {
-                action = ACTION_PREV_DAY
-            }
-            val prevPending = PendingIntent.getBroadcast(
-                context,
-                101,
-                prevIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            views.setOnClickPendingIntent(R.id.widget_prev_day, prevPending)
+                // 星期几左右切换按钮交互绑定
+                val prevIntent = Intent(context, ScheduleWidgetProvider::class.java).apply {
+                    action = ACTION_PREV_DAY
+                }
+                val prevPending = PendingIntent.getBroadcast(
+                    context,
+                    101,
+                    prevIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                views.setOnClickPendingIntent(R.id.widget_prev_day, prevPending)
 
-            val nextIntent = Intent(context, ScheduleWidgetProvider::class.java).apply {
-                action = ACTION_NEXT_DAY
-            }
-            val nextPending = PendingIntent.getBroadcast(
-                context,
-                102,
-                nextIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            views.setOnClickPendingIntent(R.id.widget_next_day, nextPending)
+                val nextIntent = Intent(context, ScheduleWidgetProvider::class.java).apply {
+                    action = ACTION_NEXT_DAY
+                }
+                val nextPending = PendingIntent.getBroadcast(
+                    context,
+                    102,
+                    nextIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                views.setOnClickPendingIntent(R.id.widget_next_day, nextPending)
 
-            // 从本地 SharedPreferences 读取数据
-            val prefs = context.getSharedPreferences("classmeate_widget_data", Context.MODE_PRIVATE)
-            val selectedDay = prefs.getInt("current_selected_day", getTodayDayOfWeek())
-            val weeklyJson = prefs.getString("weekly_schedule_json", null)
+                // 从本地 SharedPreferences 读取数据
+                val prefs = context.getSharedPreferences("classmeate_widget_data", Context.MODE_PRIVATE)
+                val selectedDay = prefs.getInt("current_selected_day", getTodayDayOfWeek())
+                val weeklyJson = prefs.getString("weekly_schedule_json", null)
 
-            var dayText = DAY_NAMES.getOrElse(selectedDay) { "周五" }
-            var remaining = 2
-            var total = 4
-            var finished = 2
-            var dismissal = "17:40 放学"
-            var c1Name = ""
-            var c1Loc = ""
-            var c1Time = ""
-            var c2Name = ""
-            var c2Loc = ""
-            var c2Time = ""
-            var hasCourses = false
+                var dayText = DAY_NAMES.getOrElse(selectedDay) { "周五" }
+                var remaining = 2
+                var total = 4
+                var finished = 2
+                var dismissal = "17:40 放学"
+                var c1Name = ""
+                var c1Loc = ""
+                var c1Time = ""
+                var c2Name = ""
+                var c2Loc = ""
+                var c2Time = ""
+                var hasCourses = false
 
-            if (!weeklyJson.isNullOrEmpty()) {
-                try {
-                    val arr = JSONArray(weeklyJson)
-                    for (i in 0 until arr.length()) {
-                        val obj = arr.getJSONObject(i)
-                        if (obj.optInt("dayOfWeek", -1) == selectedDay) {
-                            dayText = obj.optString("dayOfWeekName", dayText)
-                            total = obj.optInt("totalCount", 0)
-                            remaining = obj.optInt("remainingCount", 0)
-                            finished = obj.optInt("finishedCount", 0)
-                            dismissal = obj.optString("dismissalText", "已放学")
-                            val coursesArr = obj.optJSONArray("courses")
-                            if (coursesArr != null && coursesArr.length() > 0) {
-                                hasCourses = true
-                                val c1Obj = coursesArr.optJSONObject(0)
-                                if (c1Obj != null) {
-                                    c1Name = c1Obj.optString("name", "")
-                                    c1Loc = c1Obj.optString("location", "")
-                                    c1Time = c1Obj.optString("timeText", "")
-                                }
-                                if (coursesArr.length() > 1) {
-                                    val c2Obj = coursesArr.optJSONObject(1)
-                                    if (c2Obj != null) {
-                                        c2Name = c2Obj.optString("name", "")
-                                        c2Loc = c2Obj.optString("location", "")
-                                        c2Time = c2Obj.optString("timeText", "")
+                if (!weeklyJson.isNullOrEmpty()) {
+                    try {
+                        val arr = JSONArray(weeklyJson)
+                        for (i in 0 until arr.length()) {
+                            val obj = arr.getJSONObject(i)
+                            if (obj.optInt("dayOfWeek", -1) == selectedDay) {
+                                dayText = obj.optString("dayOfWeekName", dayText)
+                                total = obj.optInt("totalCount", 0)
+                                remaining = obj.optInt("remainingCount", 0)
+                                finished = obj.optInt("finishedCount", 0)
+                                dismissal = obj.optString("dismissalText", "已放学")
+                                val coursesArr = obj.optJSONArray("courses")
+                                if (coursesArr != null && coursesArr.length() > 0) {
+                                    hasCourses = true
+                                    val c1Obj = coursesArr.optJSONObject(0)
+                                    if (c1Obj != null) {
+                                        c1Name = c1Obj.optString("name", "")
+                                        c1Loc = c1Obj.optString("location", "")
+                                        c1Time = c1Obj.optString("timeText", "")
+                                    }
+                                    if (coursesArr.length() > 1) {
+                                        val c2Obj = coursesArr.optJSONObject(1)
+                                        if (c2Obj != null) {
+                                            c2Name = c2Obj.optString("name", "")
+                                            c2Loc = c2Obj.optString("location", "")
+                                            c2Time = c2Obj.optString("timeText", "")
+                                        }
                                     }
                                 }
+                                break
                             }
-                            break
                         }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                } catch (e: Exception) {
+                } else {
+                    // 默认演示数据
+                    remaining = prefs.getInt("remaining_count", 2)
+                    total = prefs.getInt("total_count", 4)
+                    finished = (total - remaining).coerceAtLeast(0)
+                    dismissal = prefs.getString("dismissal_text", "17:40 放学") ?: "17:40 放学"
+                    dayText = prefs.getString("day_text", DAY_NAMES.getOrElse(selectedDay) { "周五" }) ?: "周五"
+                    c1Name = prefs.getString("c1_name", "给水排水管道工程") ?: "给水排水管道工程"
+                    c1Loc = prefs.getString("c1_location", "@长智楼 A208") ?: "@长智楼 A208"
+                    c1Time = prefs.getString("c1_time", "25分钟后 · 10:05") ?: "25分钟后 · 10:05"
+                    c2Name = prefs.getString("c2_name", "计算机系统结构") ?: "计算机系统结构"
+                    c2Loc = prefs.getString("c2_location", "@信息实验楼 301") ?: "@信息实验楼 301"
+                    c2Time = prefs.getString("c2_time", "4小时后 · 14:00") ?: "4小时后 · 14:00"
+                    hasCourses = c1Name.isNotEmpty()
+                }
+
+                // 绘制分段弧线进度图（按今天几节课分几段，底部80度对称开口，绝不遮挡文字）
+                try {
+                    val arcBitmap = createSegmentedArcBitmap(total, finished)
+                    views.setImageViewBitmap(R.id.widget_arc_image, arcBitmap)
+                } catch (e: Throwable) {
                     e.printStackTrace()
                 }
-            } else {
-                // 默认演示数据
-                remaining = prefs.getInt("remaining_count", 2)
-                total = prefs.getInt("total_count", 4)
-                finished = (total - remaining).coerceAtLeast(0)
-                dismissal = prefs.getString("dismissal_text", "17:40 放学") ?: "17:40 放学"
-                dayText = prefs.getString("day_text", DAY_NAMES.getOrElse(selectedDay) { "周五" }) ?: "周五"
-                c1Name = prefs.getString("c1_name", "给水排水管道工程") ?: "给水排水管道工程"
-                c1Loc = prefs.getString("c1_location", "@长智楼 A208") ?: "@长智楼 A208"
-                c1Time = prefs.getString("c1_time", "25分钟后 · 10:05") ?: "25分钟后 · 10:05"
-                c2Name = prefs.getString("c2_name", "计算机系统结构") ?: "计算机系统结构"
-                c2Loc = prefs.getString("c2_location", "@信息实验楼 301") ?: "@信息实验楼 301"
-                c2Time = prefs.getString("c2_time", "4小时后 · 14:00") ?: "4小时后 · 14:00"
-                hasCourses = c1Name.isNotEmpty()
-            }
 
-            // 绘制分段弧线进度图（按今天几节课分几段，底部80度对称开口，绝不遮挡文字）
-            val arcBitmap = createSegmentedArcBitmap(total, finished)
-            views.setImageViewBitmap(R.id.widget_arc_image, arcBitmap)
+                views.setTextViewText(R.id.widget_day_text, dayText)
+                views.setTextViewText(R.id.widget_count_number, remaining.toString())
+                views.setTextViewText(R.id.widget_dismissal_time, dismissal)
 
-            views.setTextViewText(R.id.widget_day_text, dayText)
-            views.setTextViewText(R.id.widget_count_number, remaining.toString())
-            views.setTextViewText(R.id.widget_dismissal_time, dismissal)
-
-            // 下方课程表列表：从左到右 课程名和地点，右边写还有多久上课，一次只显示两门，已结束的不显示
-            if (!hasCourses || c1Name.isEmpty()) {
-                views.setViewVisibility(R.id.widget_course_1_row, View.GONE)
-                views.setViewVisibility(R.id.widget_course_2_row, View.GONE)
-                views.setViewVisibility(R.id.widget_course_empty_row, View.VISIBLE)
-                val emptyMsg = if (total == 0) "今日没课 · 享受大学时光" else "今日课程已全部结束 ✨"
-                views.setTextViewText(R.id.widget_empty_text, emptyMsg)
-            } else {
-                views.setViewVisibility(R.id.widget_course_empty_row, View.GONE)
-                views.setViewVisibility(R.id.widget_course_1_row, View.VISIBLE)
-                views.setTextViewText(R.id.widget_c1_name, c1Name)
-                views.setTextViewText(R.id.widget_c1_location, c1Loc)
-                views.setTextViewText(R.id.widget_c1_time, c1Time)
-
-                if (c2Name.isNotEmpty()) {
-                    views.setViewVisibility(R.id.widget_course_2_row, View.VISIBLE)
-                    views.setTextViewText(R.id.widget_c2_name, c2Name)
-                    views.setTextViewText(R.id.widget_c2_location, c2Loc)
-                    views.setTextViewText(R.id.widget_c2_time, c2Time)
-                } else {
+                // 下方课程表列表：从左到右 课程名和地点，右边写还有多久上课，一次只显示两门，已结束的不显示
+                if (!hasCourses || c1Name.isEmpty()) {
+                    views.setViewVisibility(R.id.widget_course_1_row, View.GONE)
                     views.setViewVisibility(R.id.widget_course_2_row, View.GONE)
-                }
-            }
+                    views.setViewVisibility(R.id.widget_course_empty_row, View.VISIBLE)
+                    val emptyMsg = if (total == 0) "今日没课 · 享受大学时光" else "今日课程已全部结束 ✨"
+                    views.setTextViewText(R.id.widget_empty_text, emptyMsg)
+                } else {
+                    views.setViewVisibility(R.id.widget_course_empty_row, View.GONE)
+                    views.setViewVisibility(R.id.widget_course_1_row, View.VISIBLE)
+                    views.setTextViewText(R.id.widget_c1_name, c1Name)
+                    views.setTextViewText(R.id.widget_c1_location, c1Loc)
+                    views.setTextViewText(R.id.widget_c1_time, c1Time)
 
-            appWidgetManager.updateAppWidget(appWidgetId, views)
+                    if (c2Name.isNotEmpty()) {
+                        views.setViewVisibility(R.id.widget_course_2_row, View.VISIBLE)
+                        views.setTextViewText(R.id.widget_c2_name, c2Name)
+                        views.setTextViewText(R.id.widget_c2_location, c2Loc)
+                        views.setTextViewText(R.id.widget_c2_time, c2Time)
+                    } else {
+                        views.setViewVisibility(R.id.widget_course_2_row, View.GONE)
+                    }
+                }
+
+                appWidgetManager.updateAppWidget(appWidgetId, views)
+            } catch (t: Throwable) {
+                t.printStackTrace()
+            }
         }
 
         /**

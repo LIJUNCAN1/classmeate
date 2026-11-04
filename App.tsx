@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ScheduleScreen } from './src/screens/ScheduleScreen';
@@ -7,12 +7,18 @@ import { ToolsScreen } from './src/screens/ToolsScreen';
 import { BottomNavBar, MainTabType } from './src/components/BottomNavBar';
 import { Colors } from './src/constants/theme';
 import { AnimatedSplashScreen } from './src/components/AnimatedSplashScreen';
+import { syncScheduleToNativeWidget } from './src/services/widgetHelper';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   // 底部精简页面：课程表、笔记、工具
   const [activeTab, setActiveTab] = useState<MainTabType>('schedule');
   const [pendingNoteCourse, setPendingNoteCourse] = useState<string | undefined>(undefined);
+
+  // 每次应用启动立即同步全周课表至原生桌面小组件
+  useEffect(() => {
+    syncScheduleToNativeWidget();
+  }, []);
 
   const handleNavigateToNotes = (courseName: string) => {
     setPendingNoteCourse(courseName);
