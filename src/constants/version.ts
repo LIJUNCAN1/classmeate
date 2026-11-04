@@ -1,5 +1,5 @@
-export const APP_VERSION = '0.5.2';
+export const APP_VERSION = '0.5.4';
 export const APP_NAME = '课星球';
-export const BUILD_NUMBER = 52;
+export const BUILD_NUMBER = 54;
 export const RELEASE_DATE = '2026-11-04';
-export const RELEASE_NOTES = "1. center update modal and feedback modal on screen with dedicated center backdrop\n2. simplify tools menu items, remove card description subtitles, and streamline direct-to-github issue feedback\n3. use green monster cover icon, auto version bumping & changelog, expand nationwide schools database including CUMT\n4. add GitHub Releases update checker, feedback modal, and author attribution @黎俊灿\n5. add swipe-to-delete with entrance and collapse exit animations, and revamp voice recording to Feishu meeting style\n6. fix blank desktop widget caused by unsupported View tag in RemoteViews and enhance layout reliability";
+export const RELEASE_NOTES = "1. 常用工具精炼：移除卡片上方的冗余标题，界面视觉更清爽紧凑\n2. 问题反馈直达 GitHub：应用内直接免登录一键提交至 GitHub Issues 官方追踪\n3. 图标全面更新：主页、分享、二维码升级为精致现代风格\n4. 移除 QQ 外部联系方式，专注纯粹校园学习体验\n5. 版本升级至 v0.5.4，版本号自适应对齐";

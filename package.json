@@ -1,6 +1,6 @@
 {
   "name": "classmeate",
-  "version": "0.5.2",
+  "version": "0.5.4",
   "main": "index.ts",
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

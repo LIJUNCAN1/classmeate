@@ -25,6 +25,7 @@ import { APP_VERSION } from '../constants/version';
 import { fetchLatestGitHubRelease, GitHubReleaseInfo } from '../services/updateService';
 import { computeWidgetData, syncScheduleToNativeWidget, WidgetScheduleData } from '../services/widgetHelper';
 import { loadScheduleData, calculateCurrentWeekNumber } from '../services/scheduleStorage';
+import { submitFeedbackToGitHub } from '../services/feedbackService';
 
 // 导入课表预览示例课程数据（与课表页对齐）
 const IMPORTED_COURSES_SAMPLE = [
@@ -155,7 +156,7 @@ export const ToolsScreen: React.FC = () => {
     }
   };
 
-  // 应用内免登录直接提交反馈（无需跳转浏览器或登录 GitHub）
+  // 应用内免登录直接提交反馈到 GitHub Issues
   const handleFeedbackSubmit = async () => {
     const desc = feedbackContent.trim();
     if (!desc) {
@@ -163,6 +164,13 @@ export const ToolsScreen: React.FC = () => {
       setTimeout(() => setToastMessage(null), 2500);
       return;
     }
+
+    const categoryLabels: Record<string, string> = {
+      bug: '缺陷报错',
+      suggestion: '功能建议',
+      ui: '视觉体验',
+      other: '日常吐槽',
+    };
 
     setFeedbackSubmitting(true);
     try {
@@ -180,15 +188,25 @@ export const ToolsScreen: React.FC = () => {
       list.unshift(newRecord);
       await AsyncStorage.setItem('@classmeate_feedbacks', JSON.stringify(list.slice(0, 50)));
 
-      // 模拟 500ms 提交过程
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // 2. 真实提交至 GitHub Issues 官方仓库追踪
+      const res = await submitFeedbackToGitHub({
+        category: feedbackCategory,
+        categoryLabel: categoryLabels[feedbackCategory] || '反馈',
+        content: desc,
+        contact: feedbackContact.trim(),
+      });
 
       setFeedbackSubmitting(false);
       setFeedbackModalVisible(false);
       setFeedbackContent('');
       setFeedbackContact('');
-      setToastMessage('反馈已成功提交，非常感谢您的宝贵建议！');
-      setTimeout(() => setToastMessage(null), 3000);
+
+      if (res.success) {
+        setToastMessage('反馈已成功提交至 GitHub Issues！');
+      } else {
+        setToastMessage('反馈已在本地记录保存，感谢您的建议！');
+      }
+      setTimeout(() => setToastMessage(null), 3500);
     } catch (e) {
       setFeedbackSubmitting(false);
       setFeedbackModalVisible(false);
@@ -1397,17 +1415,6 @@ export const ToolsScreen: React.FC = () => {
 
               <View style={styles.feedbackDirectContactRow}>
                 <Text style={styles.feedbackDirectHint}>直接联系开发者：</Text>
-                <TouchableOpacity
-                  style={styles.feedbackDirectPill}
-                  activeOpacity={0.75}
-                  onPress={() => {
-                    setToastMessage('已复制开发者 QQ：495472952');
-                    setTimeout(() => setToastMessage(null), 2500);
-                  }}
-                >
-                  <Ionicons name="chatbubbles-outline" size={13} color="#2563EB" style={{ marginRight: 4 }} />
-                  <Text style={styles.feedbackDirectPillText}>QQ: 495472952</Text>
-                </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.feedbackDirectPill}
                   activeOpacity={0.75}
