@@ -34,213 +34,9 @@ interface ImportModalProps {
   semesterName?: string;
 }
 
-// 认证系统预设
-export interface AuthSystemOption {
-  id: string;
-  name: string;
-  level: string;
-  url: string;
-  desc: string;
-}
-
-// 学校条目定义
-export interface SchoolItem {
-  id: string;
-  name: string;
-  shortName: string;
-  region: string;
-  badge: string;
-  systems: AuthSystemOption[];
-}
-
-export const SCHOOL_DATABASE: SchoolItem[] = [
-  {
-    id: 'ccsu',
-    name: '长沙学院',
-    shortName: 'CCSU',
-    region: '湖南 · 长沙',
-    badge: '3个通道',
-    systems: [
-      {
-        id: 'cas_sso',
-        name: '统一身份认证',
-        level: '本科/专科',
-        url: 'https://cas.ccsu.cn/authserver/login?service=https%3A%2F%2Fjwxt.ccsu.cn%2Fsso%2Flyiotlogin',
-        desc: '官方金智统一身份认证平台 SSO 直连通道（推荐）',
-      },
-      {
-        id: 'jwxt_direct',
-        name: '教学管理信息服务平台',
-        level: '本科/专科',
-        url: 'https://jwxt.ccsu.cn/',
-        desc: '长沙学院教务管理信息系统直连入口',
-      },
-      {
-        id: 'webvpn',
-        name: 'WEBVPN',
-        level: '本科/专科',
-        url: 'https://cas.ccsu.cn/authserver/login?service=https%3A%2F%2Fvpn.ccsu.cn%3A443%2Fpassport%2Fv1%2Fauth%2Fcas%3FsfDomain%3Dcas58282',
-        desc: '深信服 WebVPN 校外隧道通道',
-      },
-    ],
-  },
-  {
-    id: 'csu',
-    name: '中南大学',
-    shortName: 'CSU',
-    region: '湖南 · 长沙',
-    badge: '985 · 双一流',
-    systems: [
-      {
-        id: 'csu_cas',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://ca.csu.edu.cn/authserver/login',
-        desc: '中南大学统一身份认证教务入口',
-      },
-      {
-        id: 'csu_jw',
-        name: '本科教务管理系统',
-        level: '本科',
-        url: 'https://csujwc.its.csu.edu.cn/',
-        desc: '中南大学强智教务管理系统',
-      },
-    ],
-  },
-  {
-    id: 'hnu',
-    name: '湖南大学',
-    shortName: 'HNU',
-    region: '湖南 · 长沙',
-    badge: '985 · 双一流',
-    systems: [
-      {
-        id: 'hnu_cas',
-        name: '统一身份认证 / 个人工作台',
-        level: '全日制',
-        url: 'https://cas.hnu.edu.cn/authserver/login',
-        desc: '湖南大学信息化综合服务门户',
-      },
-      {
-        id: 'hnu_jw',
-        name: '综合教务管理系统',
-        level: '本科',
-        url: 'http://jw.hnu.edu.cn/',
-        desc: '湖南大学本科教务系统',
-      },
-    ],
-  },
-  {
-    id: 'hunnu',
-    name: '湖南师范大学',
-    shortName: 'HUNNU',
-    region: '湖南 · 长沙',
-    badge: '211 · 双一流',
-    systems: [
-      {
-        id: 'hunnu_cas',
-        name: '数字校园统一身份认证',
-        level: '本科/研究生',
-        url: 'https://cas.hunnu.edu.cn/authserver/login',
-        desc: '湖南师范大学智慧教务平台通道',
-      },
-      {
-        id: 'hunnu_jw',
-        name: '师大教务管理系统',
-        level: '本科',
-        url: 'https://jwgl.hunnu.edu.cn/',
-        desc: '湖南师范大学青果/强智教务系统',
-      },
-    ],
-  },
-  {
-    id: 'csust',
-    name: '长沙理工大学',
-    shortName: 'CSUST',
-    region: '湖南 · 长沙',
-    badge: '省重点',
-    systems: [
-      {
-        id: 'csust_cas',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://cas.csust.edu.cn/authserver/login',
-        desc: '长沙理工大学统一认证服务',
-      },
-      {
-        id: 'csust_jw',
-        name: '综合教务管理系统',
-        level: '本科',
-        url: 'http://xk.csust.edu.cn/',
-        desc: '长沙理工大学强智教务选课系统',
-      },
-    ],
-  },
-  {
-    id: 'hunau',
-    name: '湖南农业大学',
-    shortName: 'HUNAU',
-    region: '湖南 · 长沙',
-    badge: '省重点',
-    systems: [
-      {
-        id: 'hunau_cas',
-        name: '智慧农大统一认证',
-        level: '本科/研究生',
-        url: 'https://cas.hunau.edu.cn/authserver/login',
-        desc: '湖南农大一站式服务门户',
-      },
-    ],
-  },
-  {
-    id: 'csuft',
-    name: '中南林业科技大学',
-    shortName: 'CSUFT',
-    region: '湖南 · 长沙',
-    badge: '省重点',
-    systems: [
-      {
-        id: 'csuft_cas',
-        name: '统一身份认证系统',
-        level: '本科/研究生',
-        url: 'https://cas.csuft.edu.cn/authserver/login',
-        desc: '中南林业科技大学教务直连通道',
-      },
-    ],
-  },
-  {
-    id: 'xtu',
-    name: '湘潭大学',
-    shortName: 'XTU',
-    region: '湖南 · 湘潭',
-    badge: '双一流',
-    systems: [
-      {
-        id: 'xtu_cas',
-        name: '湘大统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://cas.xtu.edu.cn/authserver/login',
-        desc: '湘潭大学数字校园及教务服务',
-      },
-    ],
-  },
-  {
-    id: 'custom_general',
-    name: '通用高校教务系统 (自定义网址)',
-    shortName: '通用',
-    region: '全国高校',
-    badge: '自定义',
-    systems: [
-      {
-        id: 'custom_input',
-        name: '自定义教务系统网址',
-        level: '正方/强智/青果',
-        url: 'https://cas.ccsu.cn/authserver/login',
-        desc: '输入您学校的教务登录网址或选课页面',
-      },
-    ],
-  },
-];
+import { SCHOOL_DATABASE, SchoolItem, AuthSystemOption } from '../constants/schools';
+export type { SchoolItem, AuthSystemOption };
+export { SCHOOL_DATABASE };
 
 export const ImportModal: React.FC<ImportModalProps> = ({
   visible,
@@ -662,33 +458,43 @@ export const ImportModal: React.FC<ImportModalProps> = ({
 
           {/* 常用热门高校快速标签 */}
           <View style={styles.quickTagsRow}>
-            {['长沙学院', '中南大学', '湖南大学', '湖南师大', '长沙理工'].map((name) => (
-              <TouchableOpacity
-                key={name}
-                style={[
-                  styles.quickTagPill,
-                  selectedSchool.name.includes(name) && styles.quickTagPillActive,
-                ]}
-                onPress={() => {
-                  const target = SCHOOL_DATABASE.find((s) => s.name.includes(name));
-                  if (target) handlePickSchool(target);
-                }}
-              >
-                <Text
+            {['中国矿大', '中南大学', '湖南大学', '清华大学', '浙江大学', '武汉大学', '四川大学', '长沙学院'].map((name) => {
+              const isMatch =
+                schoolSearchQuery === name ||
+                selectedSchool.name.includes(name) ||
+                selectedSchool.shortName.includes(name);
+              return (
+                <TouchableOpacity
+                  key={name}
                   style={[
-                    styles.quickTagPillText,
-                    selectedSchool.name.includes(name) && styles.quickTagPillTextActive,
+                    styles.quickTagPill,
+                    isMatch && styles.quickTagPillActive,
                   ]}
+                  onPress={() => {
+                    setSchoolSearchQuery(name);
+                  }}
                 >
-                  {name}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.quickTagPillText,
+                      isMatch && styles.quickTagPillTextActive,
+                    ]}
+                  >
+                    {name}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           {/* 学校列表 */}
           <ScrollView style={styles.schoolListScroll} showsVerticalScrollIndicator={false}>
-            <Text style={styles.schoolListSectionTitle}>支持教务系统的高校列表</Text>
+            <Text style={styles.schoolListSectionTitle}>
+              {schoolSearchQuery.trim()
+                ? `搜索结果 (${filteredSchools.length})`
+                : '全国重点高校及支持教务系统列表'}
+            </Text>
+
             {filteredSchools.map((school) => {
               const isSelected = school.id === selectedSchool.id;
               return (
@@ -720,6 +526,83 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                 </TouchableOpacity>
               );
             })}
+
+            {/* 当搜索结果为空时，绝不留白，智能提供通用导入 */}
+            {filteredSchools.length === 0 && (
+              <View style={styles.emptySchoolContainer}>
+                <View style={styles.emptySchoolIconCircle}>
+                  <Ionicons name="school-outline" size={36} color="#3B82F6" />
+                </View>
+                <Text style={styles.emptySchoolTitle}>
+                  未直接预设「{schoolSearchQuery}」专属通道
+                </Text>
+                <Text style={styles.emptySchoolSubtitle}>
+                  课星球已支持全国所有高校的教务系统。点击下方按钮即可为「{schoolSearchQuery}」开启通用导入：
+                </Text>
+
+                <TouchableOpacity
+                  style={styles.emptySchoolActionBtn}
+                  activeOpacity={0.85}
+                  onPress={() => {
+                    const customSchool: SchoolItem = {
+                      id: `custom_${Date.now()}`,
+                      name: schoolSearchQuery.trim() || '通用高校教务系统',
+                      shortName: '通用',
+                      region: '全国高校',
+                      badge: '智能适配',
+                      systems: [
+                        {
+                          id: 'custom_url',
+                          name: '教务系统直连 / WebVPN',
+                          level: '全校通用',
+                          url: 'https://',
+                          desc: `输入${schoolSearchQuery}教务系统或统一认证网址，登录后一键提取`,
+                        },
+                      ],
+                    };
+                    handlePickSchool(customSchool);
+                  }}
+                >
+                  <Ionicons name="flash" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+                  <Text style={styles.emptySchoolActionText}>
+                    为「{schoolSearchQuery}」开启通用教务通道
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* 搜索有结果时也在底部提供自定义入口 */}
+            {schoolSearchQuery.trim().length > 0 && filteredSchools.length > 0 && (
+              <TouchableOpacity
+                style={styles.customSchoolBottomPill}
+                activeOpacity={0.8}
+                onPress={() => {
+                  const customSchool: SchoolItem = {
+                    id: `custom_${Date.now()}`,
+                    name: schoolSearchQuery.trim(),
+                    shortName: '自定义',
+                    region: '全国高校',
+                    badge: '智能匹配',
+                    systems: [
+                      {
+                        id: 'custom_url',
+                        name: '教务系统直连 / WebVPN',
+                        level: '全校通用',
+                        url: 'https://',
+                        desc: `输入${schoolSearchQuery}教务网址或WebVPN，登录后一键提取`,
+                      },
+                    ],
+                  };
+                  handlePickSchool(customSchool);
+                }}
+              >
+                <Ionicons name="add-circle-outline" size={18} color="#2563EB" style={{ marginRight: 6 }} />
+                <Text style={styles.customSchoolBottomText}>
+                  找不到对应校区？直接为「{schoolSearchQuery}」新建通道
+                </Text>
+              </TouchableOpacity>
+            )}
+
             <View style={{ height: 32 }} />
           </ScrollView>
         </View>
@@ -1263,6 +1146,77 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#64748B',
     marginTop: 3,
+  },
+
+  // 搜索空状态与通用入口
+  emptySchoolContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    padding: 24,
+    alignItems: 'center',
+    marginVertical: 14,
+  },
+  emptySchoolIconCircle: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 14,
+  },
+  emptySchoolTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptySchoolSubtitle: {
+    fontSize: 13,
+    color: '#64748B',
+    textAlign: 'center',
+    lineHeight: 19,
+    marginBottom: 18,
+  },
+  emptySchoolActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2563EB',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 14,
+    shadowColor: '#2563EB',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  emptySchoolActionText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  customSchoolBottomPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 6,
+  },
+  customSchoolBottomText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#2563EB',
   },
 
   // 认证方式选择页 (图 2)

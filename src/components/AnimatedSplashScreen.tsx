@@ -54,9 +54,9 @@ export const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({ onFi
     });
   }, [fadeAnim, scaleAnim, floatAnim, onFinish]);
 
-  // 计算小怪兽居中展示的最佳比例尺寸（原图宽高比 1024 x 809）
-  const monsterWidth = Math.min(width * 0.72, 300);
-  const monsterHeight = monsterWidth * (809 / 1024);
+  // 计算可爱耳机怪兽开屏展示的最佳比例尺寸（正方形 1:1）
+  const monsterWidth = Math.min(width * 0.62, 240);
+  const monsterHeight = monsterWidth;
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
