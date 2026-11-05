@@ -764,6 +764,36 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     ],
   },
   {
+    id: 'jmsu',
+    name: '佳木斯大学',
+    shortName: 'JMSU / 佳大',
+    region: '黑龙江 · 佳木斯',
+    badge: '青果 · 喜鹊儿',
+    systems: [
+      {
+        id: 'jmsu_jw',
+        name: '教务管理信息系统 (青果)',
+        level: '本科/专科/研究生',
+        url: 'http://jwc.jmsu.edu.cn/',
+        desc: '佳木斯大学青果教务系统（喜鹊儿移动端官方后台）',
+      },
+      {
+        id: 'jmsu_xiqueer',
+        name: '喜鹊儿移动教务直通平台',
+        level: '全校师生',
+        url: 'http://app.xiqueer.com/',
+        desc: '青果软件喜鹊儿掌上校园移动课表同步入口',
+      },
+      {
+        id: 'jmsu_portal',
+        name: '智慧佳大数字校园门户',
+        level: '全校师生',
+        url: 'https://www.jmsu.edu.cn/',
+        desc: '佳木斯大学官方数字校园统一门户',
+      },
+    ],
+  },
+  {
     id: 'jlu',
     name: '吉林大学',
     shortName: 'JLU / 吉大',

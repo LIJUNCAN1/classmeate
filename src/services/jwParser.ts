@@ -78,6 +78,14 @@ export const UNIVERSITY_PRESETS: UniversityPreset[] = [
     description: '支持强智教务系统矩阵课表网格与学生个人课表自动抓取',
   },
   {
+    id: 'qg_generic',
+    name: '青果教务管理系统 / 喜鹊儿 (全国高校通用)',
+    category: '通用系统',
+    systemType: 'qingguo',
+    defaultUrl: 'http://app.xiqueer.com',
+    description: '支持青果 KINGOSOFT 教学综合服务平台与喜鹊儿掌上校园课表智能识别',
+  },
+  {
     id: 'custom',
     name: '自定义高校与教务系统网址',
     category: '自定义',
