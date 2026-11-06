@@ -26,25 +26,11 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "badge": "211 · 双一流",
     "systems": [
       {
-        "id": "cumt_cas",
-        "name": "统一身份认证平台 (SSO)",
-        "level": "本科/研究生",
-        "url": "http://authserver.cumt.edu.cn/authserver/login",
-        "desc": "中国矿业大学官方统一身份认证登录通道"
-      },
-      {
         "id": "cumt_jw",
-        "name": "本科教学管理信息系统",
-        "level": "本科",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.cumt.edu.cn/",
-        "desc": "矿大现代教务管理信息系统通道"
-      },
-      {
-        "id": "cumt_webvpn",
-        "name": "WebVPN 校外直连通道",
-        "level": "全校师生",
-        "url": "https://webvpn.cumt.edu.cn/",
-        "desc": "校外访问专用免客户端 WebVPN 隧道"
+        "desc": "中国矿业大学官方教务管理系统登录"
       }
     ]
   },
@@ -57,18 +43,11 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "badge": "211 · 双一流",
     "systems": [
       {
-        "id": "cumtb_cas",
-        "name": "统一身份认证平台",
-        "level": "本科/研究生",
-        "url": "https://authserver.cumtb.edu.cn/authserver/login",
-        "desc": "中国矿业大学(北京)统一身份认证服务"
-      },
-      {
         "id": "cumtb_jw",
-        "name": "综合教务管理系统",
-        "level": "本科",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://jwxt.cumtb.edu.cn/",
-        "desc": "综合教务系统课表直连入口"
+        "desc": "中国矿业大学(北京)官方教务系统登录"
       }
     ]
   },
@@ -82,24 +61,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jmsu_jw",
-        "name": "教务管理信息系统 (青果)",
-        "level": "本科/专科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwc.jmsu.edu.cn/",
-        "desc": "佳木斯大学青果教务系统（喜鹊儿移动端官方后台）"
-      },
-      {
-        "id": "jmsu_xiqueer",
-        "name": "喜鹊儿移动教务直通平台",
-        "level": "全校师生",
-        "url": "http://app.xiqueer.com/",
-        "desc": "青果软件喜鹊儿掌上校园移动课表同步入口"
-      },
-      {
-        "id": "jmsu_portal",
-        "name": "智慧佳大数字校园门户",
-        "level": "全校师生",
-        "url": "https://www.jmsu.edu.cn/",
-        "desc": "佳木斯大学官方数字校园统一门户"
+        "desc": "佳木斯大学青果教务系统登录"
       }
     ]
   },
@@ -112,25 +77,11 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "badge": "强智系统",
     "systems": [
       {
-        "id": "ccsu_sso",
-        "name": "智慧校园统一认证门户",
-        "level": "本科",
-        "url": "https://sso.ccsu.cn/login",
-        "desc": "长沙学院统一身份认证，登录后直通强智教务"
-      },
-      {
         "id": "ccsu_jw",
-        "name": "强智教务管理系统",
-        "level": "本科",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.ccsu.cn/jsxsd/",
-        "desc": "湖南强智教务系统，直连课表及成绩查询"
-      },
-      {
-        "id": "ccsu_vpn",
-        "name": "WebVPN 访问通道",
-        "level": "全校师生",
-        "url": "https://webvpn.ccsu.cn/",
-        "desc": "校外快速直连入口"
+        "desc": "长沙学院强智教务管理系统登录"
       }
     ]
   },
@@ -144,17 +95,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "pku_jw",
-        "name": "北京大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://elective.pku.edu.cn/",
-        "desc": "北京大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "pku_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.pku.edu.cn/",
-        "desc": "北京大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -168,17 +112,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "thu_jw",
-        "name": "清华大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://academic.tsinghua.edu.cn/",
-        "desc": "清华大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "thu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.thu.edu.cn/",
-        "desc": "清华大学官方智慧校园一网通办认证与校外直连"
+        "desc": "清华大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -192,17 +129,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ruc_jw",
-        "name": "中国人民大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ruc.edu.cn/",
-        "desc": "中国人民大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ruc_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ruc.edu.cn/",
-        "desc": "中国人民大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中国人民大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -216,17 +146,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "buaa_jw",
-        "name": "北京航空航天大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.buaa.edu.cn/",
-        "desc": "北京航空航天大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "buaa_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.buaa.edu.cn/",
-        "desc": "北京航空航天大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京航空航天大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -240,17 +163,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "bit_jw",
-        "name": "北京理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwms.bit.edu.cn/",
-        "desc": "北京理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "bit_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.bit.edu.cn/",
-        "desc": "北京理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -264,17 +180,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "bupt_jw",
-        "name": "北京邮电大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.bupt.edu.cn/",
-        "desc": "北京邮电大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "bupt_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.bupt.edu.cn/",
-        "desc": "北京邮电大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京邮电大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -288,17 +197,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "bnu_jw",
-        "name": "北京师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.bnu.edu.cn/",
-        "desc": "北京师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "bnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.bnu.edu.cn/",
-        "desc": "北京师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -312,17 +214,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "bjtu_jw",
-        "name": "北京交通大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://bjjw.bjtu.edu.cn/",
-        "desc": "北京交通大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "bjtu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.bjtu.edu.cn/",
-        "desc": "北京交通大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京交通大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -336,17 +231,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ustb_jw",
-        "name": "北京科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.ustb.edu.cn/",
-        "desc": "北京科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ustb_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ustb.edu.cn/",
-        "desc": "北京科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -360,17 +248,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cau_jw",
-        "name": "中国农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.cau.edu.cn/",
-        "desc": "中国农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cau.edu.cn/",
-        "desc": "中国农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中国农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -384,17 +265,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cuc_jw",
-        "name": "中国传媒大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.cuc.edu.cn/",
-        "desc": "中国传媒大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cuc_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cuc.edu.cn/",
-        "desc": "中国传媒大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中国传媒大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -408,17 +282,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cupl_jw",
-        "name": "中国政法大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.cupl.edu.cn/",
-        "desc": "中国政法大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cupl_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cupl.edu.cn/",
-        "desc": "中国政法大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中国政法大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -432,17 +299,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "uibe_jw",
-        "name": "对外经济贸易大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.uibe.edu.cn/",
-        "desc": "对外经济贸易大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "uibe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.uibe.edu.cn/",
-        "desc": "对外经济贸易大学官方智慧校园一网通办认证与校外直连"
+        "desc": "对外经济贸易大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -456,17 +316,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cufe_jw",
-        "name": "中央财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.cufe.edu.cn/",
-        "desc": "中央财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cufe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cufe.edu.cn/",
-        "desc": "中央财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中央财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -480,17 +333,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "bjut_jw",
-        "name": "北京工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.bjut.edu.cn/",
-        "desc": "北京工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "bjut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.bjut.edu.cn/",
-        "desc": "北京工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -504,17 +350,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "bfu_jw",
-        "name": "北京林业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.bjfu.edu.cn/",
-        "desc": "北京林业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "bfu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.bfu.edu.cn/",
-        "desc": "北京林业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京林业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -528,17 +367,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "bucm_jw",
-        "name": "北京中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.bucm.edu.cn/",
-        "desc": "北京中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "bucm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.bucm.edu.cn/",
-        "desc": "北京中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -552,17 +384,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "buct_jw",
-        "name": "北京化工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.buct.edu.cn/",
-        "desc": "北京化工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "buct_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.buct.edu.cn/",
-        "desc": "北京化工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京化工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -576,17 +401,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "bfsu_jw",
-        "name": "北京外国语大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.bfsu.edu.cn/",
-        "desc": "北京外国语大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "bfsu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.bfsu.edu.cn/",
-        "desc": "北京外国语大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京外国语大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -600,17 +418,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ncepu_jw",
-        "name": "华北电力大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.ncepu.edu.cn/",
-        "desc": "华北电力大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ncepu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ncepu.edu.cn/",
-        "desc": "华北电力大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华北电力大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -624,17 +435,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cugb_jw",
-        "name": "中国地质大学(北京)教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cugb.edu.cn/",
-        "desc": "中国地质大学(北京)教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cugb_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cugb.edu.cn/",
-        "desc": "中国地质大学(北京)官方智慧校园一网通办认证与校外直连"
+        "desc": "中国地质大学(北京)官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -648,17 +452,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cupb_jw",
-        "name": "中国石油大学(北京)教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cup.edu.cn/",
-        "desc": "中国石油大学(北京)教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cupb_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cupb.edu.cn/",
-        "desc": "中国石油大学(北京)官方智慧校园一网通办认证与校外直连"
+        "desc": "中国石油大学(北京)官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -672,17 +469,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "muc_jw",
-        "name": "中央民族大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.muc.edu.cn/",
-        "desc": "中央民族大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "muc_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.muc.edu.cn/",
-        "desc": "中央民族大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中央民族大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -696,17 +486,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cnu_jw",
-        "name": "首都师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cnu.edu.cn/",
-        "desc": "首都师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cnu.edu.cn/",
-        "desc": "首都师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "首都师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -720,17 +503,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cueb_jw",
-        "name": "首都经济贸易大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.cueb.edu.cn/",
-        "desc": "首都经济贸易大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cueb_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cueb.edu.cn/",
-        "desc": "首都经济贸易大学官方智慧校园一网通办认证与校外直连"
+        "desc": "首都经济贸易大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -744,17 +520,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "btbu_jw",
-        "name": "北京工商大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.btbu.edu.cn/",
-        "desc": "北京工商大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "btbu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.btbu.edu.cn/",
-        "desc": "北京工商大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京工商大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -768,17 +537,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "bistu_jw",
-        "name": "北京信息科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.bistu.edu.cn/",
-        "desc": "北京信息科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "bistu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.bistu.edu.cn/",
-        "desc": "北京信息科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京信息科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -792,17 +554,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "bucea_jw",
-        "name": "北京建筑大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.bucea.edu.cn/",
-        "desc": "北京建筑大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "bucea_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.bucea.edu.cn/",
-        "desc": "北京建筑大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京建筑大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -816,17 +571,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ncut_jw",
-        "name": "北方工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.ncut.edu.cn/",
-        "desc": "北方工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ncut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ncut.edu.cn/",
-        "desc": "北方工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北方工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -840,17 +588,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "buu_jw",
-        "name": "北京联合大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.buu.edu.cn/",
-        "desc": "北京联合大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "buu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.buu.edu.cn/",
-        "desc": "北京联合大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北京联合大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -864,17 +605,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ccmu_jw",
-        "name": "首都医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ccmu.edu.cn/",
-        "desc": "首都医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ccmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ccmu.edu.cn/",
-        "desc": "首都医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "首都医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -888,17 +622,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "tju_jw",
-        "name": "天津大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jxgl.tju.edu.cn/",
-        "desc": "天津大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "tju_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.tju.edu.cn/",
-        "desc": "天津大学官方智慧校园一网通办认证与校外直连"
+        "desc": "天津大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -912,17 +639,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nku_jw",
-        "name": "南开大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://eamis.nankai.edu.cn/",
-        "desc": "南开大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nku_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nku.edu.cn/",
-        "desc": "南开大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南开大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -936,17 +656,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "tjpu_jw",
-        "name": "天津工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.tiangong.edu.cn/",
-        "desc": "天津工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "tjpu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.tjpu.edu.cn/",
-        "desc": "天津工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "天津工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -960,17 +673,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "tut_jw",
-        "name": "天津理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.tjut.edu.cn/",
-        "desc": "天津理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "tut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.tut.edu.cn/",
-        "desc": "天津理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "天津理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -984,17 +690,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "tjnu_jw",
-        "name": "天津师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.tjnu.edu.cn/",
-        "desc": "天津师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "tjnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.tjnu.edu.cn/",
-        "desc": "天津师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "天津师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1008,17 +707,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "tust_jw",
-        "name": "天津科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.tust.edu.cn/",
-        "desc": "天津科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "tust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.tust.edu.cn/",
-        "desc": "天津科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "天津科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1032,17 +724,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "tufe_jw",
-        "name": "天津财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.tjufe.edu.cn/",
-        "desc": "天津财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "tufe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.tufe.edu.cn/",
-        "desc": "天津财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "天津财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1056,17 +741,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "tjtcm_jw",
-        "name": "天津中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.tjutcm.edu.cn/",
-        "desc": "天津中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "tjtcm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.tjtcm.edu.cn/",
-        "desc": "天津中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "天津中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1080,17 +758,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cauc_jw",
-        "name": "中国民航大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.cauc.edu.cn/",
-        "desc": "中国民航大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cauc_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cauc.edu.cn/",
-        "desc": "中国民航大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中国民航大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1104,17 +775,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ysu_jw",
-        "name": "燕山大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.ysu.edu.cn/",
-        "desc": "燕山大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ysu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ysu.edu.cn/",
-        "desc": "燕山大学官方智慧校园一网通办认证与校外直连"
+        "desc": "燕山大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1128,17 +792,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hbu_jw",
-        "name": "河北大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hbu.cn/",
-        "desc": "河北大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hbu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hbu.edu.cn/",
-        "desc": "河北大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河北大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1152,17 +809,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hebut_jw",
-        "name": "河北工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.hebut.edu.cn/",
-        "desc": "河北工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hebut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hebut.edu.cn/",
-        "desc": "河北工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河北工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1176,17 +826,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hebnu_jw",
-        "name": "河北师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hebtu.edu.cn/",
-        "desc": "河北师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hebnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hebnu.edu.cn/",
-        "desc": "河北师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河北师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1200,17 +843,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "stdu_jw",
-        "name": "石家庄铁道大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.stdu.edu.cn/",
-        "desc": "石家庄铁道大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "stdu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.stdu.edu.cn/",
-        "desc": "石家庄铁道大学官方智慧校园一网通办认证与校外直连"
+        "desc": "石家庄铁道大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1224,17 +860,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ncst_jw",
-        "name": "华北理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.ncst.edu.cn/",
-        "desc": "华北理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ncst_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ncst.edu.cn/",
-        "desc": "华北理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华北理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1248,17 +877,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hebust_jw",
-        "name": "河北科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hebust.edu.cn/",
-        "desc": "河北科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hebust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hebust.edu.cn/",
-        "desc": "河北科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河北科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1272,17 +894,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hebmu_jw",
-        "name": "河北医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hebmu.edu.cn/",
-        "desc": "河北医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hebmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hebmu.edu.cn/",
-        "desc": "河北医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河北医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1296,17 +911,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hebau_jw",
-        "name": "河北农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hebau.edu.cn/",
-        "desc": "河北农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hebau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hebau.edu.cn/",
-        "desc": "河北农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河北农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1320,17 +928,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hueb_jw",
-        "name": "河北经贸大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.heuet.edu.cn/",
-        "desc": "河北经贸大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hueb_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hueb.edu.cn/",
-        "desc": "河北经贸大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河北经贸大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1344,17 +945,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hgu_jw",
-        "name": "河北地质大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hgu.edu.cn/",
-        "desc": "河北地质大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hgu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hgu.edu.cn/",
-        "desc": "河北地质大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河北地质大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1368,17 +962,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "tyut_jw",
-        "name": "太原理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jxgl.tyut.edu.cn/",
-        "desc": "太原理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "tyut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.tyut.edu.cn/",
-        "desc": "太原理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "太原理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1392,17 +979,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sxu_jw",
-        "name": "山西大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sxu.edu.cn/",
-        "desc": "山西大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sxu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sxu.edu.cn/",
-        "desc": "山西大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山西大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1416,17 +996,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nuc_jw",
-        "name": "中北大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.nuc.edu.cn/",
-        "desc": "中北大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nuc_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nuc.edu.cn/",
-        "desc": "中北大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中北大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1440,17 +1013,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "tyust_jw",
-        "name": "太原科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.tyust.edu.cn/",
-        "desc": "太原科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "tyust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.tyust.edu.cn/",
-        "desc": "太原科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "太原科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1464,17 +1030,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sxnu_jw",
-        "name": "山西师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sxnu.edu.cn/",
-        "desc": "山西师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sxnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sxnu.edu.cn/",
-        "desc": "山西师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山西师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1488,17 +1047,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sxufe_jw",
-        "name": "山西财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sxufe.edu.cn/",
-        "desc": "山西财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sxufe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sxufe.edu.cn/",
-        "desc": "山西财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山西财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1512,17 +1064,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sxmu_jw",
-        "name": "山西医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sxmu.edu.cn/",
-        "desc": "山西医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sxmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sxmu.edu.cn/",
-        "desc": "山西医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山西医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1536,17 +1081,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sxau_jw",
-        "name": "山西农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sxau.edu.cn/",
-        "desc": "山西农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sxau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sxau.edu.cn/",
-        "desc": "山西农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山西农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1560,17 +1098,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jzxy_jw",
-        "name": "晋中学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.jzxy.edu.cn/",
-        "desc": "晋中学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jzxy_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jzxy.edu.cn/",
-        "desc": "晋中学院官方智慧校园一网通办认证与校外直连"
+        "desc": "晋中学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1584,17 +1115,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sxdtdx_jw",
-        "name": "山西大同大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sxdtdx.edu.cn/",
-        "desc": "山西大同大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sxdtdx_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sxdtdx.edu.cn/",
-        "desc": "山西大同大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山西大同大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1608,17 +1132,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "imu_jw",
-        "name": "内蒙古大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.imu.edu.cn/",
-        "desc": "内蒙古大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "imu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.imu.edu.cn/",
-        "desc": "内蒙古大学官方智慧校园一网通办认证与校外直连"
+        "desc": "内蒙古大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1632,17 +1149,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "imut_jw",
-        "name": "内蒙古工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.imut.edu.cn/",
-        "desc": "内蒙古工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "imut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.imut.edu.cn/",
-        "desc": "内蒙古工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "内蒙古工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1656,17 +1166,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "imau_jw",
-        "name": "内蒙古农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.imau.edu.cn/",
-        "desc": "内蒙古农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "imau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.imau.edu.cn/",
-        "desc": "内蒙古农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "内蒙古农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1680,17 +1183,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "imnu_jw",
-        "name": "内蒙古师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.imnu.edu.cn/",
-        "desc": "内蒙古师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "imnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.imnu.edu.cn/",
-        "desc": "内蒙古师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "内蒙古师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1704,17 +1200,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "imun_jw",
-        "name": "内蒙古民族大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.imun.edu.cn/",
-        "desc": "内蒙古民族大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "imun_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.imun.edu.cn/",
-        "desc": "内蒙古民族大学官方智慧校园一网通办认证与校外直连"
+        "desc": "内蒙古民族大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1728,17 +1217,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "imust_jw",
-        "name": "内蒙古科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.imust.edu.cn/",
-        "desc": "内蒙古科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "imust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.imust.edu.cn/",
-        "desc": "内蒙古科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "内蒙古科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1752,17 +1234,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "dlut_jw",
-        "name": "大连理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jxgl.dlut.edu.cn/",
-        "desc": "大连理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "dlut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.dlut.edu.cn/",
-        "desc": "大连理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "大连理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1776,17 +1251,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "neu_jw",
-        "name": "东北大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://219.216.96.4/",
-        "desc": "东北大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "neu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.neu.edu.cn/",
-        "desc": "东北大学官方智慧校园一网通办认证与校外直连"
+        "desc": "东北大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1800,17 +1268,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "lnu_jw",
-        "name": "辽宁大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.lnu.edu.cn/",
-        "desc": "辽宁大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "lnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.lnu.edu.cn/",
-        "desc": "辽宁大学官方智慧校园一网通办认证与校外直连"
+        "desc": "辽宁大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1824,17 +1285,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "dmu_jw",
-        "name": "大连海事大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.dlmu.edu.cn/",
-        "desc": "大连海事大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "dmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.dmu.edu.cn/",
-        "desc": "大连海事大学官方智慧校园一网通办认证与校外直连"
+        "desc": "大连海事大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1848,17 +1302,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sau_jw",
-        "name": "沈阳航空航天大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.sau.edu.cn/",
-        "desc": "沈阳航空航天大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sau.edu.cn/",
-        "desc": "沈阳航空航天大学官方智慧校园一网通办认证与校外直连"
+        "desc": "沈阳航空航天大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1872,17 +1319,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sylu_jw",
-        "name": "沈阳理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.sylu.edu.cn/",
-        "desc": "沈阳理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sylu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sylu.edu.cn/",
-        "desc": "沈阳理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "沈阳理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1896,17 +1336,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sut_jw",
-        "name": "沈阳工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sut.edu.cn/",
-        "desc": "沈阳工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sut.edu.cn/",
-        "desc": "沈阳工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "沈阳工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1920,17 +1353,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "lntu_jw",
-        "name": "辽宁工程技术大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.lntu.edu.cn/",
-        "desc": "辽宁工程技术大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "lntu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.lntu.edu.cn/",
-        "desc": "辽宁工程技术大学官方智慧校园一网通办认证与校外直连"
+        "desc": "辽宁工程技术大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1944,17 +1370,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "lnpu_jw",
-        "name": "辽宁石油化工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.lnpu.edu.cn/",
-        "desc": "辽宁石油化工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "lnpu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.lnpu.edu.cn/",
-        "desc": "辽宁石油化工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "辽宁石油化工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1968,17 +1387,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "dlju_jw",
-        "name": "大连交通大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.djtu.edu.cn/",
-        "desc": "大连交通大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "dlju_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.dlju.edu.cn/",
-        "desc": "大连交通大学官方智慧校园一网通办认证与校外直连"
+        "desc": "大连交通大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -1992,17 +1404,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sjzu_jw",
-        "name": "沈阳建筑大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sjzu.edu.cn/",
-        "desc": "沈阳建筑大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sjzu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sjzu.edu.cn/",
-        "desc": "沈阳建筑大学官方智慧校园一网通办认证与校外直连"
+        "desc": "沈阳建筑大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2016,17 +1421,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "dlpu_jw",
-        "name": "大连工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.dlpu.edu.cn/",
-        "desc": "大连工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "dlpu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.dlpu.edu.cn/",
-        "desc": "大连工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "大连工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2040,17 +1438,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "syau_jw",
-        "name": "沈阳农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.syau.edu.cn/",
-        "desc": "沈阳农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "syau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.syau.edu.cn/",
-        "desc": "沈阳农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "沈阳农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2064,17 +1455,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cmu_ln_jw",
-        "name": "中国医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.cmu.edu.cn/",
-        "desc": "中国医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cmu_ln_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cmu_ln.edu.cn/",
-        "desc": "中国医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中国医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2088,17 +1472,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "dmu_med_jw",
-        "name": "大连医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.dmu.edu.cn/",
-        "desc": "大连医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "dmu_med_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.dmu_med.edu.cn/",
-        "desc": "大连医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "大连医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2112,17 +1489,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "lnnu_jw",
-        "name": "辽宁师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.lnnu.edu.cn/",
-        "desc": "辽宁师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "lnnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.lnnu.edu.cn/",
-        "desc": "辽宁师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "辽宁师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2136,17 +1506,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "synu_jw",
-        "name": "沈阳师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.synu.edu.cn/",
-        "desc": "沈阳师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "synu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.synu.edu.cn/",
-        "desc": "沈阳师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "沈阳师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2160,17 +1523,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "dufe_jw",
-        "name": "东北财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.dufe.edu.cn/",
-        "desc": "东北财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "dufe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.dufe.edu.cn/",
-        "desc": "东北财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "东北财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2184,17 +1540,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "syu_jw",
-        "name": "沈阳大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.syu.edu.cn/",
-        "desc": "沈阳大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "syu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.syu.edu.cn/",
-        "desc": "沈阳大学官方智慧校园一网通办认证与校外直连"
+        "desc": "沈阳大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2208,17 +1557,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "asnu_jw",
-        "name": "鞍山师范学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.asnc.edu.cn/",
-        "desc": "鞍山师范学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "asnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.asnu.edu.cn/",
-        "desc": "鞍山师范学院官方智慧校园一网通办认证与校外直连"
+        "desc": "鞍山师范学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2232,17 +1574,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jlu_jw",
-        "name": "吉林大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://uims.jlu.edu.cn/",
-        "desc": "吉林大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jlu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jlu.edu.cn/",
-        "desc": "吉林大学官方智慧校园一网通办认证与校外直连"
+        "desc": "吉林大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2256,17 +1591,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nenu_jw",
-        "name": "东北师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.nenu.edu.cn/",
-        "desc": "东北师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nenu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nenu.edu.cn/",
-        "desc": "东北师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "东北师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2280,17 +1608,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ybu_jw",
-        "name": "延边大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ybu.edu.cn/",
-        "desc": "延边大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ybu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ybu.edu.cn/",
-        "desc": "延边大学官方智慧校园一网通办认证与校外直连"
+        "desc": "延边大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2304,17 +1625,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cust_jw",
-        "name": "长春理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.cust.edu.cn/",
-        "desc": "长春理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cust.edu.cn/",
-        "desc": "长春理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "长春理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2328,17 +1642,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jlau_jw",
-        "name": "吉林农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.jlau.edu.cn/",
-        "desc": "吉林农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jlau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jlau.edu.cn/",
-        "desc": "吉林农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "吉林农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2352,17 +1659,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ccucm_jw",
-        "name": "长春中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ccucm.edu.cn/",
-        "desc": "长春中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ccucm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ccucm.edu.cn/",
-        "desc": "长春中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "长春中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2376,17 +1676,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "neepu_jw",
-        "name": "东北电力大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.neepu.edu.cn/",
-        "desc": "东北电力大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "neepu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.neepu.edu.cn/",
-        "desc": "东北电力大学官方智慧校园一网通办认证与校外直连"
+        "desc": "东北电力大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2400,17 +1693,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ccit_jw",
-        "name": "长春工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ccut.edu.cn/",
-        "desc": "长春工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ccit_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ccit.edu.cn/",
-        "desc": "长春工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "长春工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2424,17 +1710,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jlufe_jw",
-        "name": "吉林财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.jlufe.edu.cn/",
-        "desc": "吉林财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jlufe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jlufe.edu.cn/",
-        "desc": "吉林财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "吉林财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2448,17 +1727,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "beihua_jw",
-        "name": "北华大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.beihua.edu.cn/",
-        "desc": "北华大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "beihua_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.beihua.edu.cn/",
-        "desc": "北华大学官方智慧校园一网通办认证与校外直连"
+        "desc": "北华大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2472,17 +1744,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "thnu_jw",
-        "name": "通化师范学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.thnu.edu.cn/",
-        "desc": "通化师范学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "thnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.thnu.edu.cn/",
-        "desc": "通化师范学院官方智慧校园一网通办认证与校外直连"
+        "desc": "通化师范学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2496,17 +1761,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hit_jw",
-        "name": "哈尔滨工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hit.edu.cn/",
-        "desc": "哈尔滨工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hit_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hit.edu.cn/",
-        "desc": "哈尔滨工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "哈尔滨工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2520,17 +1778,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "heu_jw",
-        "name": "哈尔滨工程大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://cas.hrbeu.edu.cn/",
-        "desc": "哈尔滨工程大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "heu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.heu.edu.cn/",
-        "desc": "哈尔滨工程大学官方智慧校园一网通办认证与校外直连"
+        "desc": "哈尔滨工程大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2544,17 +1795,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hlju_jw",
-        "name": "黑龙江大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.hlju.edu.cn/",
-        "desc": "黑龙江大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hlju_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hlju.edu.cn/",
-        "desc": "黑龙江大学官方智慧校园一网通办认证与校外直连"
+        "desc": "黑龙江大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2568,17 +1812,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nefu_jw",
-        "name": "东北林业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwc.nefu.edu.cn/",
-        "desc": "东北林业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nefu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nefu.edu.cn/",
-        "desc": "东北林业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "东北林业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2592,17 +1829,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "neau_jw",
-        "name": "东北农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.neau.edu.cn/",
-        "desc": "东北农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "neau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.neau.edu.cn/",
-        "desc": "东北农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "东北农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2616,17 +1846,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hrbust_jw",
-        "name": "哈尔滨理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwzx.hrbust.edu.cn/",
-        "desc": "哈尔滨理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hrbust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hrbust.edu.cn/",
-        "desc": "哈尔滨理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "哈尔滨理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2640,17 +1863,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hrbmu_jw",
-        "name": "哈尔滨医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hrbmu.edu.cn/",
-        "desc": "哈尔滨医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hrbmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hrbmu.edu.cn/",
-        "desc": "哈尔滨医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "哈尔滨医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2664,17 +1880,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hrbnu_jw",
-        "name": "哈尔滨师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hrbnu.edu.cn/",
-        "desc": "哈尔滨师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hrbnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hrbnu.edu.cn/",
-        "desc": "哈尔滨师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "哈尔滨师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2688,17 +1897,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "qqu_jw",
-        "name": "齐齐哈尔大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.qqhru.edu.cn/",
-        "desc": "齐齐哈尔大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "qqu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.qqu.edu.cn/",
-        "desc": "齐齐哈尔大学官方智慧校园一网通办认证与校外直连"
+        "desc": "齐齐哈尔大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2712,17 +1914,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nepu_jw",
-        "name": "东北石油大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.nepu.edu.cn/",
-        "desc": "东北石油大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nepu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nepu.edu.cn/",
-        "desc": "东北石油大学官方智慧校园一网通办认证与校外直连"
+        "desc": "东北石油大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2736,17 +1931,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "mdjnu_jw",
-        "name": "牡丹江师范学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.mdjnu.edu.cn/",
-        "desc": "牡丹江师范学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "mdjnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.mdjnu.edu.cn/",
-        "desc": "牡丹江师范学院官方智慧校园一网通办认证与校外直连"
+        "desc": "牡丹江师范学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2760,17 +1948,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "mdjmu_jw",
-        "name": "牡丹江医学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.mdjmu.edu.cn/",
-        "desc": "牡丹江医学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "mdjmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.mdjmu.edu.cn/",
-        "desc": "牡丹江医学院官方智慧校园一网通办认证与校外直连"
+        "desc": "牡丹江医学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2784,17 +1965,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hrbcu_jw",
-        "name": "哈尔滨商业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hrbcu.edu.cn/",
-        "desc": "哈尔滨商业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hrbcu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hrbcu.edu.cn/",
-        "desc": "哈尔滨商业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "哈尔滨商业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2808,17 +1982,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hljucm_jw",
-        "name": "黑龙江中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hljucm.net/",
-        "desc": "黑龙江中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hljucm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hljucm.edu.cn/",
-        "desc": "黑龙江中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "黑龙江中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2832,17 +1999,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hljit_jw",
-        "name": "黑龙江工程学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hljit.edu.cn/",
-        "desc": "黑龙江工程学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hljit_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hljit.edu.cn/",
-        "desc": "黑龙江工程学院官方智慧校园一网通办认证与校外直连"
+        "desc": "黑龙江工程学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2856,17 +2016,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "shuihua_jw",
-        "name": "绥化学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.shxy.edu.cn/",
-        "desc": "绥化学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "shuihua_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.shuihua.edu.cn/",
-        "desc": "绥化学院官方智慧校园一网通办认证与校外直连"
+        "desc": "绥化学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2880,17 +2033,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "fdu_jw",
-        "name": "复旦大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwfw.fudan.edu.cn/eams/",
-        "desc": "复旦大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "fdu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.fdu.edu.cn/",
-        "desc": "复旦大学官方智慧校园一网通办认证与校外直连"
+        "desc": "复旦大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2904,17 +2050,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sjtu_jw",
-        "name": "上海交通大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://i.sjtu.edu.cn/",
-        "desc": "上海交通大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sjtu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sjtu.edu.cn/",
-        "desc": "上海交通大学官方智慧校园一网通办认证与校外直连"
+        "desc": "上海交通大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2928,17 +2067,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "tongji_jw",
-        "name": "同济大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://1.tongji.edu.cn/",
-        "desc": "同济大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "tongji_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.tongji.edu.cn/",
-        "desc": "同济大学官方智慧校园一网通办认证与校外直连"
+        "desc": "同济大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2952,17 +2084,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ecnu_jw",
-        "name": "华东师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxx.ecnu.edu.cn/",
-        "desc": "华东师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ecnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ecnu.edu.cn/",
-        "desc": "华东师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华东师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -2976,17 +2101,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ecust_jw",
-        "name": "华东理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://eams.ecust.edu.cn/",
-        "desc": "华东理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ecust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ecust.edu.cn/",
-        "desc": "华东理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华东理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3000,17 +2118,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "shu_jw",
-        "name": "上海大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://cj.shu.edu.cn/",
-        "desc": "上海大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "shu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.shu.edu.cn/",
-        "desc": "上海大学官方智慧校园一网通办认证与校外直连"
+        "desc": "上海大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3024,17 +2135,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sufe_jw",
-        "name": "上海财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://eams.sufe.edu.cn/",
-        "desc": "上海财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sufe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sufe.edu.cn/",
-        "desc": "上海财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "上海财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3048,17 +2152,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "dhu_jw",
-        "name": "东华大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.dhu.edu.cn/",
-        "desc": "东华大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "dhu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.dhu.edu.cn/",
-        "desc": "东华大学官方智慧校园一网通办认证与校外直连"
+        "desc": "东华大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3072,17 +2169,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "usst_jw",
-        "name": "上海理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.usst.edu.cn/",
-        "desc": "上海理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "usst_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.usst.edu.cn/",
-        "desc": "上海理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "上海理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3096,17 +2186,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "shnu_jw",
-        "name": "上海师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.shnu.edu.cn/",
-        "desc": "上海师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "shnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.shnu.edu.cn/",
-        "desc": "上海师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "上海师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3120,17 +2203,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sisu_jw",
-        "name": "上海外国语大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.shisu.edu.cn/",
-        "desc": "上海外国语大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sisu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sisu.edu.cn/",
-        "desc": "上海外国语大学官方智慧校园一网通办认证与校外直连"
+        "desc": "上海外国语大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3144,17 +2220,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ecupl_jw",
-        "name": "华东政法大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ecupl.edu.cn/",
-        "desc": "华东政法大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ecupl_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ecupl.edu.cn/",
-        "desc": "华东政法大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华东政法大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3168,17 +2237,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "smu_sh_jw",
-        "name": "上海海事大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.shmtu.edu.cn/",
-        "desc": "上海海事大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "smu_sh_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.smu_sh.edu.cn/",
-        "desc": "上海海事大学官方智慧校园一网通办认证与校外直连"
+        "desc": "上海海事大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3192,17 +2254,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "shou_jw",
-        "name": "上海海洋大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.shou.edu.cn/",
-        "desc": "上海海洋大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "shou_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.shou.edu.cn/",
-        "desc": "上海海洋大学官方智慧校园一网通办认证与校外直连"
+        "desc": "上海海洋大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3216,17 +2271,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "shutcm_jw",
-        "name": "上海中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.shutcm.edu.cn/",
-        "desc": "上海中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "shutcm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.shutcm.edu.cn/",
-        "desc": "上海中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "上海中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3240,17 +2288,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sues_jw",
-        "name": "上海工程技术大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sues.edu.cn/",
-        "desc": "上海工程技术大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sues_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sues.edu.cn/",
-        "desc": "上海工程技术大学官方智慧校园一网通办认证与校外直连"
+        "desc": "上海工程技术大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3264,17 +2305,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sit_jw",
-        "name": "上海应用技术大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sit.edu.cn/",
-        "desc": "上海应用技术大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sit_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sit.edu.cn/",
-        "desc": "上海应用技术大学官方智慧校园一网通办认证与校外直连"
+        "desc": "上海应用技术大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3288,17 +2322,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "suep_jw",
-        "name": "上海电力大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.shiep.edu.cn/",
-        "desc": "上海电力大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "suep_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.suep.edu.cn/",
-        "desc": "上海电力大学官方智慧校园一网通办认证与校外直连"
+        "desc": "上海电力大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3312,17 +2339,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "lixin_jw",
-        "name": "上海立信会计金融学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.lixin.edu.cn/",
-        "desc": "上海立信会计金融学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "lixin_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.lixin.edu.cn/",
-        "desc": "上海立信会计金融学院官方智慧校园一网通办认证与校外直连"
+        "desc": "上海立信会计金融学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3336,17 +2356,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nju_jw",
-        "name": "南京大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.nju.edu.cn/",
-        "desc": "南京大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nju_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nju.edu.cn/",
-        "desc": "南京大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南京大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3360,17 +2373,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "seu_jw",
-        "name": "东南大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.seu.edu.cn/",
-        "desc": "东南大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "seu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.seu.edu.cn/",
-        "desc": "东南大学官方智慧校园一网通办认证与校外直连"
+        "desc": "东南大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3384,17 +2390,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nuaa_jw",
-        "name": "南京航空航天大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.nuaa.edu.cn/",
-        "desc": "南京航空航天大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nuaa_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nuaa.edu.cn/",
-        "desc": "南京航空航天大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南京航空航天大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3408,17 +2407,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nust_jw",
-        "name": "南京理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.njust.edu.cn/",
-        "desc": "南京理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nust.edu.cn/",
-        "desc": "南京理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南京理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3432,17 +2424,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "suda_jw",
-        "name": "苏州大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://xk.suda.edu.cn/",
-        "desc": "苏州大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "suda_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.suda.edu.cn/",
-        "desc": "苏州大学官方智慧校园一网通办认证与校外直连"
+        "desc": "苏州大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3456,17 +2441,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hhu_jw",
-        "name": "河海大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.hhu.edu.cn/",
-        "desc": "河海大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hhu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hhu.edu.cn/",
-        "desc": "河海大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河海大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3480,17 +2458,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jiangnan_jw",
-        "name": "江南大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.jiangnan.edu.cn/",
-        "desc": "江南大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jiangnan_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jiangnan.edu.cn/",
-        "desc": "江南大学官方智慧校园一网通办认证与校外直连"
+        "desc": "江南大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3504,17 +2475,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "njnu_jw",
-        "name": "南京师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.njnu.edu.cn/",
-        "desc": "南京师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "njnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.njnu.edu.cn/",
-        "desc": "南京师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南京师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3528,17 +2492,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ujs_jw",
-        "name": "江苏大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ujs.edu.cn/",
-        "desc": "江苏大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ujs_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ujs.edu.cn/",
-        "desc": "江苏大学官方智慧校园一网通办认证与校外直连"
+        "desc": "江苏大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3552,17 +2509,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "yzu_jw",
-        "name": "扬州大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.yzu.edu.cn/",
-        "desc": "扬州大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "yzu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.yzu.edu.cn/",
-        "desc": "扬州大学官方智慧校园一网通办认证与校外直连"
+        "desc": "扬州大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3576,17 +2526,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "njupt_jw",
-        "name": "南京邮电大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.njupt.edu.cn/",
-        "desc": "南京邮电大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "njupt_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.njupt.edu.cn/",
-        "desc": "南京邮电大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南京邮电大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3600,17 +2543,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nuist_jw",
-        "name": "南京信息工程大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.nuist.edu.cn/",
-        "desc": "南京信息工程大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nuist_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nuist.edu.cn/",
-        "desc": "南京信息工程大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南京信息工程大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3624,17 +2560,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "njtech_jw",
-        "name": "南京工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.njtech.edu.cn/",
-        "desc": "南京工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "njtech_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.njtech.edu.cn/",
-        "desc": "南京工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南京工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3648,17 +2577,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nau_jw",
-        "name": "南京审计大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.nau.edu.cn/",
-        "desc": "南京审计大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nau.edu.cn/",
-        "desc": "南京审计大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南京审计大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3672,17 +2594,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cczu_jw",
-        "name": "常州大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cczu.edu.cn/",
-        "desc": "常州大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cczu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cczu.edu.cn/",
-        "desc": "常州大学官方智慧校园一网通办认证与校外直连"
+        "desc": "常州大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3696,17 +2611,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nfu_jw",
-        "name": "南京林业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.njfu.edu.cn/",
-        "desc": "南京林业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nfu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nfu.edu.cn/",
-        "desc": "南京林业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南京林业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3720,17 +2628,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "just_jw",
-        "name": "江苏科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.just.edu.cn/",
-        "desc": "江苏科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "just_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.just.edu.cn/",
-        "desc": "江苏科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "江苏科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3744,17 +2645,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ntu_jw",
-        "name": "南通大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ntu.edu.cn/",
-        "desc": "南通大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ntu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ntu.edu.cn/",
-        "desc": "南通大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南通大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3768,17 +2662,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xzmu_jw",
-        "name": "徐州医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xzhmu.edu.cn/",
-        "desc": "徐州医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xzmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xzmu.edu.cn/",
-        "desc": "徐州医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "徐州医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3792,17 +2679,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "njucm_jw",
-        "name": "南京中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.njucm.edu.cn/",
-        "desc": "南京中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "njucm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.njucm.edu.cn/",
-        "desc": "南京中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南京中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3816,17 +2696,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "njmu_jw",
-        "name": "南京医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.njmu.edu.cn/",
-        "desc": "南京医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "njmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.njmu.edu.cn/",
-        "desc": "南京医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南京医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3840,17 +2713,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nufe_jw",
-        "name": "南京财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.nufe.edu.cn/",
-        "desc": "南京财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nufe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nufe.edu.cn/",
-        "desc": "南京财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南京财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3864,17 +2730,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "usts_jw",
-        "name": "苏州科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.usts.edu.cn/",
-        "desc": "苏州科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "usts_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.usts.edu.cn/",
-        "desc": "苏州科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "苏州科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3888,17 +2747,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xjtlu_jw",
-        "name": "西交利物浦大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://e-bridge.xjtlu.edu.cn/",
-        "desc": "西交利物浦大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xjtlu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xjtlu.edu.cn/",
-        "desc": "西交利物浦大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西交利物浦大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3912,17 +2764,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "yctu_jw",
-        "name": "盐城工学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ycit.edu.cn/",
-        "desc": "盐城工学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "yctu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.yctu.edu.cn/",
-        "desc": "盐城工学院官方智慧校园一网通办认证与校外直连"
+        "desc": "盐城工学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3936,17 +2781,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hyit_jw",
-        "name": "淮阴工学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hyit.edu.cn/",
-        "desc": "淮阴工学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hyit_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hyit.edu.cn/",
-        "desc": "淮阴工学院官方智慧校园一网通办认证与校外直连"
+        "desc": "淮阴工学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3960,17 +2798,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cslg_jw",
-        "name": "常熟理工学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cslg.edu.cn/",
-        "desc": "常熟理工学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cslg_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cslg.edu.cn/",
-        "desc": "常熟理工学院官方智慧校园一网通办认证与校外直连"
+        "desc": "常熟理工学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -3984,17 +2815,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "zju_jw",
-        "name": "浙江大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwbinfosys.zju.edu.cn/",
-        "desc": "浙江大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "zju_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.zju.edu.cn/",
-        "desc": "浙江大学官方智慧校园一网通办认证与校外直连"
+        "desc": "浙江大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4008,17 +2832,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nbu_jw",
-        "name": "宁波大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.nbu.edu.cn/",
-        "desc": "宁波大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nbu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nbu.edu.cn/",
-        "desc": "宁波大学官方智慧校园一网通办认证与校外直连"
+        "desc": "宁波大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4032,17 +2849,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "zjut_jw",
-        "name": "浙江工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://www.gdjw.zjut.edu.cn/",
-        "desc": "浙江工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "zjut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.zjut.edu.cn/",
-        "desc": "浙江工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "浙江工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4056,17 +2866,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hdu_jw",
-        "name": "杭州电子科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.hdu.edu.cn/",
-        "desc": "杭州电子科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hdu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hdu.edu.cn/",
-        "desc": "杭州电子科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "杭州电子科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4080,17 +2883,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "zstu_jw",
-        "name": "浙江理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.zstu.edu.cn/",
-        "desc": "浙江理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "zstu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.zstu.edu.cn/",
-        "desc": "浙江理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "浙江理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4104,17 +2900,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "zafu_jw",
-        "name": "浙江农林大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.zafu.edu.cn/",
-        "desc": "浙江农林大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "zafu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.zafu.edu.cn/",
-        "desc": "浙江农林大学官方智慧校园一网通办认证与校外直连"
+        "desc": "浙江农林大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4128,17 +2917,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "zcmu_jw",
-        "name": "浙江中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.zcmu.edu.cn/",
-        "desc": "浙江中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "zcmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.zcmu.edu.cn/",
-        "desc": "浙江中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "浙江中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4152,17 +2934,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "zjnu_jw",
-        "name": "浙江师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.zjnu.edu.cn/",
-        "desc": "浙江师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "zjnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.zjnu.edu.cn/",
-        "desc": "浙江师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "浙江师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4176,17 +2951,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "wmu_jw",
-        "name": "温州医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.wmu.edu.cn/",
-        "desc": "温州医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "wmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.wmu.edu.cn/",
-        "desc": "温州医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "温州医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4200,17 +2968,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "wzu_jw",
-        "name": "温州大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.wzu.edu.cn/",
-        "desc": "温州大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "wzu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.wzu.edu.cn/",
-        "desc": "温州大学官方智慧校园一网通办认证与校外直连"
+        "desc": "温州大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4224,17 +2985,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hznu_jw",
-        "name": "杭州师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hznu.edu.cn/",
-        "desc": "杭州师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hznu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hznu.edu.cn/",
-        "desc": "杭州师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "杭州师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4248,17 +3002,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cjlu_jw",
-        "name": "中国计量大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cjlu.edu.cn/",
-        "desc": "中国计量大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cjlu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cjlu.edu.cn/",
-        "desc": "中国计量大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中国计量大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4272,17 +3019,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jxu_jw",
-        "name": "嘉兴大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.zjxu.edu.cn/",
-        "desc": "嘉兴大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jxu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jxu.edu.cn/",
-        "desc": "嘉兴大学官方智慧校园一网通办认证与校外直连"
+        "desc": "嘉兴大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4296,17 +3036,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "usx_jw",
-        "name": "绍兴文理学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.usx.edu.cn/",
-        "desc": "绍兴文理学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "usx_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.usx.edu.cn/",
-        "desc": "绍兴文理学院官方智慧校园一网通办认证与校外直连"
+        "desc": "绍兴文理学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4320,17 +3053,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ustc_jw",
-        "name": "中国科学技术大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://jw.ustc.edu.cn/",
-        "desc": "中国科学技术大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ustc_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ustc.edu.cn/",
-        "desc": "中国科学技术大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中国科学技术大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4344,17 +3070,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hfut_jw",
-        "name": "合肥工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.hfut.edu.cn/",
-        "desc": "合肥工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hfut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hfut.edu.cn/",
-        "desc": "合肥工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "合肥工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4368,17 +3087,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ahu_jw",
-        "name": "安徽大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.ahu.edu.cn/",
-        "desc": "安徽大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ahu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ahu.edu.cn/",
-        "desc": "安徽大学官方智慧校园一网通办认证与校外直连"
+        "desc": "安徽大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4392,17 +3104,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ahut_jw",
-        "name": "安徽工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ahut.edu.cn/",
-        "desc": "安徽工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ahut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ahut.edu.cn/",
-        "desc": "安徽工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "安徽工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4416,17 +3121,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "aust_jw",
-        "name": "安徽理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.aust.edu.cn/",
-        "desc": "安徽理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "aust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.aust.edu.cn/",
-        "desc": "安徽理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "安徽理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4440,17 +3138,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "aau_jw",
-        "name": "安徽农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ahau.edu.cn/",
-        "desc": "安徽农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "aau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.aau.edu.cn/",
-        "desc": "安徽农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "安徽农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4464,17 +3155,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ahmu_jw",
-        "name": "安徽医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ahmu.edu.cn/",
-        "desc": "安徽医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ahmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ahmu.edu.cn/",
-        "desc": "安徽医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "安徽医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4488,17 +3172,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ahtcm_jw",
-        "name": "安徽中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ahtcm.edu.cn/",
-        "desc": "安徽中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ahtcm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ahtcm.edu.cn/",
-        "desc": "安徽中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "安徽中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4512,17 +3189,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ahnu_jw",
-        "name": "安徽师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ahnu.edu.cn/",
-        "desc": "安徽师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ahnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ahnu.edu.cn/",
-        "desc": "安徽师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "安徽师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4536,17 +3206,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "fynu_jw",
-        "name": "阜阳师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.fynu.edu.cn/",
-        "desc": "阜阳师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "fynu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.fynu.edu.cn/",
-        "desc": "阜阳师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "阜阳师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4560,17 +3223,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "aqnu_jw",
-        "name": "安庆师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.aqnu.edu.cn/",
-        "desc": "安庆师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "aqnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.aqnu.edu.cn/",
-        "desc": "安庆师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "安庆师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4584,17 +3240,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hbnu_ah_jw",
-        "name": "淮北师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hbnu.edu.cn/",
-        "desc": "淮北师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hbnu_ah_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hbnu_ah.edu.cn/",
-        "desc": "淮北师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "淮北师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4608,17 +3257,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ahjzu_jw",
-        "name": "安徽建筑大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ahjzu.edu.cn/",
-        "desc": "安徽建筑大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ahjzu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ahjzu.edu.cn/",
-        "desc": "安徽建筑大学官方智慧校园一网通办认证与校外直连"
+        "desc": "安徽建筑大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4632,17 +3274,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xmu_jw",
-        "name": "厦门大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xmu.edu.cn/",
-        "desc": "厦门大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xmu.edu.cn/",
-        "desc": "厦门大学官方智慧校园一网通办认证与校外直连"
+        "desc": "厦门大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4656,17 +3291,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "fzu_jw",
-        "name": "福州大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwch.fzu.edu.cn/",
-        "desc": "福州大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "fzu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.fzu.edu.cn/",
-        "desc": "福州大学官方智慧校园一网通办认证与校外直连"
+        "desc": "福州大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4680,17 +3308,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "fafu_jw",
-        "name": "福建农林大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.fafu.edu.cn/",
-        "desc": "福建农林大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "fafu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.fafu.edu.cn/",
-        "desc": "福建农林大学官方智慧校园一网通办认证与校外直连"
+        "desc": "福建农林大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4704,17 +3325,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "fjnu_jw",
-        "name": "福建师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.fjnu.edu.cn/",
-        "desc": "福建师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "fjnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.fjnu.edu.cn/",
-        "desc": "福建师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "福建师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4728,17 +3342,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hqu_jw",
-        "name": "华侨大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hqu.edu.cn/",
-        "desc": "华侨大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hqu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hqu.edu.cn/",
-        "desc": "华侨大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华侨大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4752,17 +3359,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "fjmu_jw",
-        "name": "福建医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.fjmu.edu.cn/",
-        "desc": "福建医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "fjmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.fjmu.edu.cn/",
-        "desc": "福建医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "福建医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4776,17 +3376,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "fjutcm_jw",
-        "name": "福建中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.fjtcm.edu.cn/",
-        "desc": "福建中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "fjutcm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.fjutcm.edu.cn/",
-        "desc": "福建中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "福建中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4800,17 +3393,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jmu_jw",
-        "name": "集美大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.jmu.edu.cn/",
-        "desc": "集美大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jmu.edu.cn/",
-        "desc": "集美大学官方智慧校园一网通办认证与校外直连"
+        "desc": "集美大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4824,17 +3410,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "mnnu_jw",
-        "name": "闽南师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.mnnu.edu.cn/",
-        "desc": "闽南师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "mnnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.mnnu.edu.cn/",
-        "desc": "闽南师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "闽南师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4848,17 +3427,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xmut_jw",
-        "name": "厦门理工学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xmut.edu.cn/",
-        "desc": "厦门理工学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xmut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xmut.edu.cn/",
-        "desc": "厦门理工学院官方智慧校园一网通办认证与校外直连"
+        "desc": "厦门理工学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4872,17 +3444,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "mju_jw",
-        "name": "闽江学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.mju.edu.cn/",
-        "desc": "闽江学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "mju_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.mju.edu.cn/",
-        "desc": "闽江学院官方智慧校园一网通办认证与校外直连"
+        "desc": "闽江学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4896,17 +3461,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ncu_jw",
-        "name": "南昌大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwc.ncu.edu.cn/",
-        "desc": "南昌大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ncu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ncu.edu.cn/",
-        "desc": "南昌大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南昌大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4920,17 +3478,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jxnu_jw",
-        "name": "江西师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwc.jxnu.edu.cn/",
-        "desc": "江西师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jxnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jxnu.edu.cn/",
-        "desc": "江西师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "江西师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4944,17 +3495,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jufe_jw",
-        "name": "江西财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.jxufe.edu.cn/",
-        "desc": "江西财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jufe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jufe.edu.cn/",
-        "desc": "江西财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "江西财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4968,17 +3512,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ecjtu_jw",
-        "name": "华东交通大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ecjtu.edu.cn/",
-        "desc": "华东交通大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ecjtu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ecjtu.edu.cn/",
-        "desc": "华东交通大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华东交通大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -4992,17 +3529,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nchu_jw",
-        "name": "南昌航空大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.nchu.edu.cn/",
-        "desc": "南昌航空大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nchu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nchu.edu.cn/",
-        "desc": "南昌航空大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南昌航空大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5016,17 +3546,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ecut_jw",
-        "name": "东华理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ecut.edu.cn/",
-        "desc": "东华理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ecut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ecut.edu.cn/",
-        "desc": "东华理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "东华理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5040,17 +3563,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jxust_jw",
-        "name": "江西理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.jxust.edu.cn/",
-        "desc": "江西理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jxust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jxust.edu.cn/",
-        "desc": "江西理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "江西理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5064,17 +3580,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jxau_jw",
-        "name": "江西农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.jxau.edu.cn/",
-        "desc": "江西农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jxau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jxau.edu.cn/",
-        "desc": "江西农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "江西农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5088,17 +3597,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jxutcm_jw",
-        "name": "江西中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.jxutcm.edu.cn/",
-        "desc": "江西中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jxutcm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jxutcm.edu.cn/",
-        "desc": "江西中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "江西中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5112,17 +3614,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jci_jw",
-        "name": "景德镇陶瓷大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.jci.edu.cn/",
-        "desc": "景德镇陶瓷大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jci_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jci.edu.cn/",
-        "desc": "景德镇陶瓷大学官方智慧校园一网通办认证与校外直连"
+        "desc": "景德镇陶瓷大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5136,17 +3631,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gnnu_jw",
-        "name": "赣南师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gnnu.edu.cn/",
-        "desc": "赣南师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gnnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gnnu.edu.cn/",
-        "desc": "赣南师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "赣南师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5160,17 +3648,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jju_jw",
-        "name": "九江学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.jju.edu.cn/",
-        "desc": "九江学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jju_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jju.edu.cn/",
-        "desc": "九江学院官方智慧校园一网通办认证与校外直连"
+        "desc": "九江学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5184,17 +3665,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ycu_jw",
-        "name": "宜春学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ycu.edu.cn/",
-        "desc": "宜春学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ycu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ycu.edu.cn/",
-        "desc": "宜春学院官方智慧校园一网通办认证与校外直连"
+        "desc": "宜春学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5208,17 +3682,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jgsu_jw",
-        "name": "井冈山大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.jgsu.edu.cn/",
-        "desc": "井冈山大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jgsu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jgsu.edu.cn/",
-        "desc": "井冈山大学官方智慧校园一网通办认证与校外直连"
+        "desc": "井冈山大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5232,17 +3699,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sdu_jw",
-        "name": "山东大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://bkjw.sdu.edu.cn/",
-        "desc": "山东大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sdu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sdu.edu.cn/",
-        "desc": "山东大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山东大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5256,17 +3716,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ouc_jw",
-        "name": "中国海洋大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.ouc.edu.cn/",
-        "desc": "中国海洋大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ouc_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ouc.edu.cn/",
-        "desc": "中国海洋大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中国海洋大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5280,17 +3733,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "upc_jw",
-        "name": "中国石油大学(华东)教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.upc.edu.cn/",
-        "desc": "中国石油大学(华东)教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "upc_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.upc.edu.cn/",
-        "desc": "中国石油大学(华东)官方智慧校园一网通办认证与校外直连"
+        "desc": "中国石油大学(华东)官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5304,17 +3750,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sdust_jw",
-        "name": "山东科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.sdust.edu.cn/",
-        "desc": "山东科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sdust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sdust.edu.cn/",
-        "desc": "山东科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山东科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5328,17 +3767,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "qust_jw",
-        "name": "青岛科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.qust.edu.cn/",
-        "desc": "青岛科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "qust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.qust.edu.cn/",
-        "desc": "青岛科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "青岛科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5352,17 +3784,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ujn_jw",
-        "name": "济南大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ujn.edu.cn/",
-        "desc": "济南大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ujn_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ujn.edu.cn/",
-        "desc": "济南大学官方智慧校园一网通办认证与校外直连"
+        "desc": "济南大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5376,17 +3801,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "qut_jw",
-        "name": "青岛理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.qut.edu.cn/",
-        "desc": "青岛理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "qut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.qut.edu.cn/",
-        "desc": "青岛理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "青岛理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5400,17 +3818,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sdjzu_jw",
-        "name": "山东建筑大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sdjzu.edu.cn/",
-        "desc": "山东建筑大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sdjzu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sdjzu.edu.cn/",
-        "desc": "山东建筑大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山东建筑大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5424,17 +3835,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "qlu_jw",
-        "name": "齐鲁工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.qlu.edu.cn/",
-        "desc": "齐鲁工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "qlu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.qlu.edu.cn/",
-        "desc": "齐鲁工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "齐鲁工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5448,17 +3852,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sdau_jw",
-        "name": "山东农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sdau.edu.cn/",
-        "desc": "山东农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sdau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sdau.edu.cn/",
-        "desc": "山东农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山东农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5472,17 +3869,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "qau_jw",
-        "name": "青岛农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.qau.edu.cn/",
-        "desc": "青岛农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "qau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.qau.edu.cn/",
-        "desc": "青岛农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "青岛农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5496,17 +3886,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sdmu_first_jw",
-        "name": "山东第一医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sdfmu.edu.cn/",
-        "desc": "山东第一医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sdmu_first_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sdmu_first.edu.cn/",
-        "desc": "山东第一医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山东第一医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5520,17 +3903,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sdutcm_jw",
-        "name": "山东中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sdutcm.edu.cn/",
-        "desc": "山东中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sdutcm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sdutcm.edu.cn/",
-        "desc": "山东中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山东中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5544,17 +3920,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sdnu_jw",
-        "name": "山东师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sdnu.edu.cn/",
-        "desc": "山东师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sdnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sdnu.edu.cn/",
-        "desc": "山东师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "山东师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5568,17 +3937,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "qfnu_jw",
-        "name": "曲阜师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.qfnu.edu.cn/",
-        "desc": "曲阜师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "qfnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.qfnu.edu.cn/",
-        "desc": "曲阜师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "曲阜师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5592,17 +3954,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "lcu_jw",
-        "name": "聊城大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.lcu.edu.cn/",
-        "desc": "聊城大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "lcu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.lcu.edu.cn/",
-        "desc": "聊城大学官方智慧校园一网通办认证与校外直连"
+        "desc": "聊城大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5616,17 +3971,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ldu_jw",
-        "name": "鲁东大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ldu.edu.cn/",
-        "desc": "鲁东大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ldu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ldu.edu.cn/",
-        "desc": "鲁东大学官方智慧校园一网通办认证与校外直连"
+        "desc": "鲁东大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5640,17 +3988,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "lyu_jw",
-        "name": "临沂大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.lyu.edu.cn/",
-        "desc": "临沂大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "lyu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.lyu.edu.cn/",
-        "desc": "临沂大学官方智慧校园一网通办认证与校外直连"
+        "desc": "临沂大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5664,17 +4005,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "qdu_jw",
-        "name": "青岛大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.qdu.edu.cn/",
-        "desc": "青岛大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "qdu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.qdu.edu.cn/",
-        "desc": "青岛大学官方智慧校园一网通办认证与校外直连"
+        "desc": "青岛大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5688,17 +4022,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ytu_jw",
-        "name": "烟台大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ytu.edu.cn/",
-        "desc": "烟台大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ytu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ytu.edu.cn/",
-        "desc": "烟台大学官方智慧校园一网通办认证与校外直连"
+        "desc": "烟台大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5712,17 +4039,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "wfu_jw",
-        "name": "潍坊学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.wfu.edu.cn/",
-        "desc": "潍坊学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "wfu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.wfu.edu.cn/",
-        "desc": "潍坊学院官方智慧校园一网通办认证与校外直连"
+        "desc": "潍坊学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5736,17 +4056,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "zzu_jw",
-        "name": "郑州大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.zzu.edu.cn/",
-        "desc": "郑州大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "zzu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.zzu.edu.cn/",
-        "desc": "郑州大学官方智慧校园一网通办认证与校外直连"
+        "desc": "郑州大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5760,17 +4073,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "henu_jw",
-        "name": "河南大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.henu.edu.cn/",
-        "desc": "河南大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "henu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.henu.edu.cn/",
-        "desc": "河南大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河南大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5784,17 +4090,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "henannu_jw",
-        "name": "河南师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.htu.edu.cn/",
-        "desc": "河南师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "henannu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.henannu.edu.cn/",
-        "desc": "河南师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河南师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5808,17 +4107,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hpu_jw",
-        "name": "河南理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.hpu.edu.cn/",
-        "desc": "河南理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hpu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hpu.edu.cn/",
-        "desc": "河南理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河南理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5832,17 +4124,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "haust_jw",
-        "name": "河南科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.haust.edu.cn/",
-        "desc": "河南科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "haust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.haust.edu.cn/",
-        "desc": "河南科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河南科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5856,17 +4141,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ncwu_jw",
-        "name": "华北水利水电大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ncwu.edu.cn/",
-        "desc": "华北水利水电大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ncwu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ncwu.edu.cn/",
-        "desc": "华北水利水电大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华北水利水电大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5880,17 +4158,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "zzuli_jw",
-        "name": "郑州轻工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.zzuli.edu.cn/",
-        "desc": "郑州轻工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "zzuli_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.zzuli.edu.cn/",
-        "desc": "郑州轻工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "郑州轻工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5904,17 +4175,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "henau_jw",
-        "name": "河南农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.henau.edu.cn/",
-        "desc": "河南农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "henau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.henau.edu.cn/",
-        "desc": "河南农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河南农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5928,17 +4192,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hactcm_jw",
-        "name": "河南中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hactcm.edu.cn/",
-        "desc": "河南中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hactcm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hactcm.edu.cn/",
-        "desc": "河南中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河南中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5952,17 +4209,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xynu_jw",
-        "name": "信阳师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xynu.edu.cn/",
-        "desc": "信阳师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xynu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xynu.edu.cn/",
-        "desc": "信阳师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "信阳师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -5976,17 +4226,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "zut_jw",
-        "name": "中原工学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.zut.edu.cn/",
-        "desc": "中原工学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "zut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.zut.edu.cn/",
-        "desc": "中原工学院官方智慧校园一网通办认证与校外直连"
+        "desc": "中原工学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6000,17 +4243,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "haut_jw",
-        "name": "河南工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.haut.edu.cn/",
-        "desc": "河南工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "haut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.haut.edu.cn/",
-        "desc": "河南工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "河南工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6024,17 +4260,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nlit_jw",
-        "name": "南阳理工学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.nyist.edu.cn/",
-        "desc": "南阳理工学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nlit_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nlit.edu.cn/",
-        "desc": "南阳理工学院官方智慧校园一网通办认证与校外直连"
+        "desc": "南阳理工学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6048,17 +4277,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xxmu_jw",
-        "name": "新乡医学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xxmu.edu.cn/",
-        "desc": "新乡医学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xxmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xxmu.edu.cn/",
-        "desc": "新乡医学院官方智慧校园一网通办认证与校外直连"
+        "desc": "新乡医学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6072,17 +4294,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "pdsxy_jw",
-        "name": "平顶山学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.pdsu.edu.cn/",
-        "desc": "平顶山学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "pdsxy_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.pdsxy.edu.cn/",
-        "desc": "平顶山学院官方智慧校园一网通办认证与校外直连"
+        "desc": "平顶山学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6096,17 +4311,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "whu_jw",
-        "name": "武汉大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://bkzs.whu.edu.cn/",
-        "desc": "武汉大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "whu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.whu.edu.cn/",
-        "desc": "武汉大学官方智慧校园一网通办认证与校外直连"
+        "desc": "武汉大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6120,17 +4328,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hust_jw",
-        "name": "华中科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://hub.m.hust.edu.cn/",
-        "desc": "华中科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hust.edu.cn/",
-        "desc": "华中科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华中科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6144,17 +4345,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "whut_jw",
-        "name": "武汉理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.whut.edu.cn/",
-        "desc": "武汉理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "whut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.whut.edu.cn/",
-        "desc": "武汉理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "武汉理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6168,17 +4362,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hzau_jw",
-        "name": "华中农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.hzau.edu.cn/",
-        "desc": "华中农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hzau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hzau.edu.cn/",
-        "desc": "华中农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华中农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6192,17 +4379,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ccnu_jw",
-        "name": "华中师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://xk.ccnu.edu.cn/",
-        "desc": "华中师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ccnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ccnu.edu.cn/",
-        "desc": "华中师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华中师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6216,17 +4396,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "zuel_jw",
-        "name": "中南财经政法大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.zuel.edu.cn/",
-        "desc": "中南财经政法大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "zuel_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.zuel.edu.cn/",
-        "desc": "中南财经政法大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中南财经政法大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6240,17 +4413,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cug_jw",
-        "name": "中国地质大学(武汉)教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.cug.edu.cn/",
-        "desc": "中国地质大学(武汉)教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cug_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cug.edu.cn/",
-        "desc": "中国地质大学(武汉)官方智慧校园一网通办认证与校外直连"
+        "desc": "中国地质大学(武汉)官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6264,17 +4430,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hubu_jw",
-        "name": "湖北大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.hubu.edu.cn/",
-        "desc": "湖北大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hubu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hubu.edu.cn/",
-        "desc": "湖北大学官方智慧校园一网通办认证与校外直连"
+        "desc": "湖北大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6288,17 +4447,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "wust_jw",
-        "name": "武汉科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.wust.edu.cn/",
-        "desc": "武汉科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "wust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.wust.edu.cn/",
-        "desc": "武汉科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "武汉科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6312,17 +4464,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "yangtzeu_jw",
-        "name": "长江大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.yangtzeu.edu.cn/",
-        "desc": "长江大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "yangtzeu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.yangtzeu.edu.cn/",
-        "desc": "长江大学官方智慧校园一网通办认证与校外直连"
+        "desc": "长江大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6336,17 +4481,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jhun_jw",
-        "name": "江汉大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.jhun.edu.cn/",
-        "desc": "江汉大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jhun_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jhun.edu.cn/",
-        "desc": "江汉大学官方智慧校园一网通办认证与校外直连"
+        "desc": "江汉大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6360,17 +4498,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ctgu_jw",
-        "name": "三峡大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ctgu.edu.cn/",
-        "desc": "三峡大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ctgu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ctgu.edu.cn/",
-        "desc": "三峡大学官方智慧校园一网通办认证与校外直连"
+        "desc": "三峡大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6384,17 +4515,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "wit_jw",
-        "name": "武汉工程大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.wit.edu.cn/",
-        "desc": "武汉工程大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "wit_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.wit.edu.cn/",
-        "desc": "武汉工程大学官方智慧校园一网通办认证与校外直连"
+        "desc": "武汉工程大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6408,17 +4532,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hbut_jw",
-        "name": "湖北工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hbut.edu.cn/",
-        "desc": "湖北工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hbut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hbut.edu.cn/",
-        "desc": "湖北工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "湖北工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6432,17 +4549,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "wtu_jw",
-        "name": "武汉纺织大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.wtu.edu.cn/",
-        "desc": "武汉纺织大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "wtu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.wtu.edu.cn/",
-        "desc": "武汉纺织大学官方智慧校园一网通办认证与校外直连"
+        "desc": "武汉纺织大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6456,17 +4566,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hbtcmu_jw",
-        "name": "湖北中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hbtcm.edu.cn/",
-        "desc": "湖北中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hbtcmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hbtcmu.edu.cn/",
-        "desc": "湖北中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "湖北中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6480,17 +4583,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hbnu_jw",
-        "name": "湖北师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hbnu.edu.cn/",
-        "desc": "湖北师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hbnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hbnu.edu.cn/",
-        "desc": "湖北师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "湖北师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6504,17 +4600,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "csu_jw",
-        "name": "中南大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://csujwc.its.csu.edu.cn/",
-        "desc": "中南大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "csu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.csu.edu.cn/",
-        "desc": "中南大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中南大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6528,17 +4617,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hnu_jw",
-        "name": "湖南大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hnu.edu.cn/",
-        "desc": "湖南大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hnu.edu.cn/",
-        "desc": "湖南大学官方智慧校园一网通办认证与校外直连"
+        "desc": "湖南大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6552,17 +4634,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hunnu_jw",
-        "name": "湖南师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://jw.hunnu.edu.cn/",
-        "desc": "湖南师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hunnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hunnu.edu.cn/",
-        "desc": "湖南师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "湖南师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6576,17 +4651,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "csust_jw",
-        "name": "长沙理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://xk.csust.edu.cn/",
-        "desc": "长沙理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "csust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.csust.edu.cn/",
-        "desc": "长沙理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "长沙理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6600,17 +4668,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hunau_jw",
-        "name": "湖南农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.hunau.edu.cn/",
-        "desc": "湖南农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hunau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hunau.edu.cn/",
-        "desc": "湖南农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "湖南农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6624,17 +4685,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "csuft_jw",
-        "name": "中南林业科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.csuft.edu.cn/",
-        "desc": "中南林业科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "csuft_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.csuft.edu.cn/",
-        "desc": "中南林业科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中南林业科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6648,17 +4702,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xtu_jw",
-        "name": "湘潭大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.xtu.edu.cn/",
-        "desc": "湘潭大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xtu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xtu.edu.cn/",
-        "desc": "湘潭大学官方智慧校园一网通办认证与校外直连"
+        "desc": "湘潭大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6672,17 +4719,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hnust_jw",
-        "name": "湖南科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://kdjw.hnust.edu.cn/",
-        "desc": "湖南科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hnust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hnust.edu.cn/",
-        "desc": "湖南科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "湖南科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6696,17 +4736,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "usc_jw",
-        "name": "南华大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.usc.edu.cn/",
-        "desc": "南华大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "usc_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.usc.edu.cn/",
-        "desc": "南华大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南华大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6720,17 +4753,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jsu_hn_jw",
-        "name": "吉首大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.jsu.edu.cn/",
-        "desc": "吉首大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jsu_hn_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jsu_hn.edu.cn/",
-        "desc": "吉首大学官方智慧校园一网通办认证与校外直连"
+        "desc": "吉首大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6744,17 +4770,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hut_jw",
-        "name": "湖南工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.hut.edu.cn/",
-        "desc": "湖南工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hut.edu.cn/",
-        "desc": "湖南工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "湖南工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6768,17 +4787,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hnfirstnu_jw",
-        "name": "湖南第一师范学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.hnfnu.edu.cn/",
-        "desc": "湖南第一师范学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hnfirstnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hnfirstnu.edu.cn/",
-        "desc": "湖南第一师范学院官方智慧校园一网通办认证与校外直连"
+        "desc": "湖南第一师范学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6792,17 +4804,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hnu_med_jw",
-        "name": "湖南中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.hnucm.edu.cn/",
-        "desc": "湖南中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hnu_med_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hnu_med.edu.cn/",
-        "desc": "湖南中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "湖南中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6816,17 +4821,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "syu_hn_jw",
-        "name": "邵阳学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hnsyu.edu.cn/",
-        "desc": "邵阳学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "syu_hn_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.syu_hn.edu.cn/",
-        "desc": "邵阳学院官方智慧校园一网通办认证与校外直连"
+        "desc": "邵阳学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6840,17 +4838,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hhu_hn_jw",
-        "name": "怀化学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hhtc.edu.cn/",
-        "desc": "怀化学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hhu_hn_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hhu_hn.edu.cn/",
-        "desc": "怀化学院官方智慧校园一网通办认证与校外直连"
+        "desc": "怀化学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6864,17 +4855,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xnu_hn_jw",
-        "name": "湘南学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xnu.edu.cn/",
-        "desc": "湘南学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xnu_hn_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xnu_hn.edu.cn/",
-        "desc": "湘南学院官方智慧校园一网通办认证与校外直连"
+        "desc": "湘南学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6888,17 +4872,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "huas_jw",
-        "name": "湖南文理学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.huas.edu.cn/",
-        "desc": "湖南文理学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "huas_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.huas.edu.cn/",
-        "desc": "湖南文理学院官方智慧校园一网通办认证与校外直连"
+        "desc": "湖南文理学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6912,17 +4889,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "huel_jw",
-        "name": "湖南人文科技学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.huhst.edu.cn/",
-        "desc": "湖南人文科技学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "huel_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.huel.edu.cn/",
-        "desc": "湖南人文科技学院官方智慧校园一网通办认证与校外直连"
+        "desc": "湖南人文科技学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6936,17 +4906,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hnie_jw",
-        "name": "湖南工程学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hnie.edu.cn/",
-        "desc": "湖南工程学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hnie_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hnie.edu.cn/",
-        "desc": "湖南工程学院官方智慧校园一网通办认证与校外直连"
+        "desc": "湖南工程学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6960,17 +4923,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hynu_jw",
-        "name": "衡阳师范学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hynu.edu.cn/",
-        "desc": "衡阳师范学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hynu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hynu.edu.cn/",
-        "desc": "衡阳师范学院官方智慧校园一网通办认证与校外直连"
+        "desc": "衡阳师范学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -6984,17 +4940,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hncu_jw",
-        "name": "湖南城市学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hncu.edu.cn/",
-        "desc": "湖南城市学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hncu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hncu.edu.cn/",
-        "desc": "湖南城市学院官方智慧校园一网通办认证与校外直连"
+        "desc": "湖南城市学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7008,17 +4957,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hnit_jw",
-        "name": "湖南工学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hnit.edu.cn/",
-        "desc": "湖南工学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hnit_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hnit.edu.cn/",
-        "desc": "湖南工学院官方智慧校园一网通办认证与校外直连"
+        "desc": "湖南工学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7032,17 +4974,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sysu_jw",
-        "name": "中山大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://jwxt.sysu.edu.cn/jwxt/",
-        "desc": "中山大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sysu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sysu.edu.cn/",
-        "desc": "中山大学官方智慧校园一网通办认证与校外直连"
+        "desc": "中山大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7056,17 +4991,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "scut_jw",
-        "name": "华南理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.scut.edu.cn/",
-        "desc": "华南理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "scut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.scut.edu.cn/",
-        "desc": "华南理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华南理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7080,17 +5008,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "jnu_jw",
-        "name": "暨南大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://jw2017.jnu.edu.cn/",
-        "desc": "暨南大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "jnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.jnu.edu.cn/",
-        "desc": "暨南大学官方智慧校园一网通办认证与校外直连"
+        "desc": "暨南大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7104,17 +5025,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "szu_jw",
-        "name": "深圳大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://ehall.szu.edu.cn/jwapp/sys/homeapp/home/index.html",
-        "desc": "深圳大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "szu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.szu.edu.cn/",
-        "desc": "深圳大学官方智慧校园一网通办认证与校外直连"
+        "desc": "深圳大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7128,17 +5042,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sustech_jw",
-        "name": "南方科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://jwxt.sustech.edu.cn/",
-        "desc": "南方科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sustech_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sustech.edu.cn/",
-        "desc": "南方科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南方科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7152,17 +5059,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gdut_jw",
-        "name": "广东工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jxfw.gdut.edu.cn/",
-        "desc": "广东工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gdut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gdut.edu.cn/",
-        "desc": "广东工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "广东工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7176,17 +5076,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "scau_jw",
-        "name": "华南农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.scau.edu.cn/",
-        "desc": "华南农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "scau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.scau.edu.cn/",
-        "desc": "华南农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华南农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7200,17 +5093,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "scnu_jw",
-        "name": "华南师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://jwxt.scnu.edu.cn/",
-        "desc": "华南师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "scnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.scnu.edu.cn/",
-        "desc": "华南师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "华南师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7224,17 +5110,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gdufs_jw",
-        "name": "广东外语外贸大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gdufs.edu.cn/",
-        "desc": "广东外语外贸大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gdufs_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gdufs.edu.cn/",
-        "desc": "广东外语外贸大学官方智慧校园一网通办认证与校外直连"
+        "desc": "广东外语外贸大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7248,17 +5127,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gzhu_jw",
-        "name": "广州大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.gzhu.edu.cn/",
-        "desc": "广州大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gzhu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gzhu.edu.cn/",
-        "desc": "广州大学官方智慧校园一网通办认证与校外直连"
+        "desc": "广州大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7272,17 +5144,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "stu_jw",
-        "name": "汕头大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://credit.stu.edu.cn/",
-        "desc": "汕头大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "stu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.stu.edu.cn/",
-        "desc": "汕头大学官方智慧校园一网通办认证与校外直连"
+        "desc": "汕头大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7296,17 +5161,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gdmu_jw",
-        "name": "广东医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gdmu.edu.cn/",
-        "desc": "广东医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gdmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gdmu.edu.cn/",
-        "desc": "广东医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "广东医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7320,17 +5178,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gdpu_jw",
-        "name": "广东药科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gdpu.edu.cn/",
-        "desc": "广东药科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gdpu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gdpu.edu.cn/",
-        "desc": "广东药科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "广东药科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7344,17 +5195,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gzhmu_jw",
-        "name": "广州医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gzhmu.edu.cn/",
-        "desc": "广州医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gzhmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gzhmu.edu.cn/",
-        "desc": "广州医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "广州医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7368,17 +5212,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gzucm_jw",
-        "name": "广州中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gzucm.edu.cn/",
-        "desc": "广州中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gzucm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gzucm.edu.cn/",
-        "desc": "广州中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "广州中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7392,17 +5229,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gdou_jw",
-        "name": "广东海洋大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gdou.edu.cn/",
-        "desc": "广东海洋大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gdou_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gdou.edu.cn/",
-        "desc": "广东海洋大学官方智慧校园一网通办认证与校外直连"
+        "desc": "广东海洋大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7416,17 +5246,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "dgut_jw",
-        "name": "东莞理工学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.dgut.edu.cn/",
-        "desc": "东莞理工学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "dgut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.dgut.edu.cn/",
-        "desc": "东莞理工学院官方智慧校园一网通办认证与校外直连"
+        "desc": "东莞理工学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7440,17 +5263,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sztu_jw",
-        "name": "深圳技术大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sztu.edu.cn/",
-        "desc": "深圳技术大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sztu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sztu.edu.cn/",
-        "desc": "深圳技术大学官方智慧校园一网通办认证与校外直连"
+        "desc": "深圳技术大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7464,17 +5280,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gxu_jw",
-        "name": "广西大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gxu.edu.cn/",
-        "desc": "广西大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gxu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gxu.edu.cn/",
-        "desc": "广西大学官方智慧校园一网通办认证与校外直连"
+        "desc": "广西大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7488,17 +5297,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "guet_jw",
-        "name": "桂林电子科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.guet.edu.cn/",
-        "desc": "桂林电子科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "guet_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.guet.edu.cn/",
-        "desc": "桂林电子科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "桂林电子科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7512,17 +5314,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gut_jw",
-        "name": "桂林理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.glut.edu.cn/",
-        "desc": "桂林理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gut.edu.cn/",
-        "desc": "桂林理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "桂林理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7536,17 +5331,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gxnu_jw",
-        "name": "广西师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gxnu.edu.cn/",
-        "desc": "广西师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gxnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gxnu.edu.cn/",
-        "desc": "广西师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "广西师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7560,17 +5348,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gxmu_jw",
-        "name": "广西医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gxmu.edu.cn/",
-        "desc": "广西医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gxmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gxmu.edu.cn/",
-        "desc": "广西医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "广西医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7584,17 +5365,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gxun_jw",
-        "name": "广西民族大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gxun.edu.cn/",
-        "desc": "广西民族大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gxun_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gxun.edu.cn/",
-        "desc": "广西民族大学官方智慧校园一网通办认证与校外直连"
+        "desc": "广西民族大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7608,17 +5382,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nnnu_jw",
-        "name": "南宁师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.nnnu.edu.cn/",
-        "desc": "南宁师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nnnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nnnu.edu.cn/",
-        "desc": "南宁师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "南宁师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7632,17 +5399,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hainanu_jw",
-        "name": "海南大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.hainanu.edu.cn/",
-        "desc": "海南大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hainanu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hainanu.edu.cn/",
-        "desc": "海南大学官方智慧校园一网通办认证与校外直连"
+        "desc": "海南大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7656,17 +5416,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "hnnu_hain_jw",
-        "name": "海南师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hainnu.edu.cn/",
-        "desc": "海南师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "hnnu_hain_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.hnnu_hain.edu.cn/",
-        "desc": "海南师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "海南师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7680,17 +5433,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "mu_hn_jw",
-        "name": "海南医学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.hainmc.edu.cn/",
-        "desc": "海南医学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "mu_hn_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.mu_hn.edu.cn/",
-        "desc": "海南医学院官方智慧校园一网通办认证与校外直连"
+        "desc": "海南医学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7704,17 +5450,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cqu_jw",
-        "name": "重庆大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.cqu.edu.cn/",
-        "desc": "重庆大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cqu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cqu.edu.cn/",
-        "desc": "重庆大学官方智慧校园一网通办认证与校外直连"
+        "desc": "重庆大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7728,17 +5467,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "swu_jw",
-        "name": "西南大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.swu.edu.cn/",
-        "desc": "西南大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "swu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.swu.edu.cn/",
-        "desc": "西南大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西南大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7752,17 +5484,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cqupt_jw",
-        "name": "重庆邮电大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.cqupt.edu.cn/",
-        "desc": "重庆邮电大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cqupt_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cqupt.edu.cn/",
-        "desc": "重庆邮电大学官方智慧校园一网通办认证与校外直连"
+        "desc": "重庆邮电大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7776,17 +5501,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cqjtu_jw",
-        "name": "重庆交通大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cqjtu.edu.cn/",
-        "desc": "重庆交通大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cqjtu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cqjtu.edu.cn/",
-        "desc": "重庆交通大学官方智慧校园一网通办认证与校外直连"
+        "desc": "重庆交通大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7800,17 +5518,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cqmu_jw",
-        "name": "重庆医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cqmu.edu.cn/",
-        "desc": "重庆医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cqmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cqmu.edu.cn/",
-        "desc": "重庆医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "重庆医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7824,17 +5535,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cqnu_jw",
-        "name": "重庆师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cqnu.edu.cn/",
-        "desc": "重庆师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cqnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cqnu.edu.cn/",
-        "desc": "重庆师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "重庆师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7848,17 +5552,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ctbu_jw",
-        "name": "重庆工商大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ctbu.edu.cn/",
-        "desc": "重庆工商大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ctbu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ctbu.edu.cn/",
-        "desc": "重庆工商大学官方智慧校园一网通办认证与校外直连"
+        "desc": "重庆工商大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7872,17 +5569,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cqut_jw",
-        "name": "重庆理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cqut.edu.cn/",
-        "desc": "重庆理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cqut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cqut.edu.cn/",
-        "desc": "重庆理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "重庆理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7896,17 +5586,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sisu_cq_jw",
-        "name": "四川外国语大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sisu.edu.cn/",
-        "desc": "四川外国语大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sisu_cq_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sisu_cq.edu.cn/",
-        "desc": "四川外国语大学官方智慧校园一网通办认证与校外直连"
+        "desc": "四川外国语大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7920,17 +5603,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "scu_jw",
-        "name": "四川大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://zhjw.scu.edu.cn/",
-        "desc": "四川大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "scu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.scu.edu.cn/",
-        "desc": "四川大学官方智慧校园一网通办认证与校外直连"
+        "desc": "四川大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7944,17 +5620,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "uestc_jw",
-        "name": "电子科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://eams.uestc.edu.cn/eams/",
-        "desc": "电子科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "uestc_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.uestc.edu.cn/",
-        "desc": "电子科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "电子科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7968,17 +5637,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "swjtu_jw",
-        "name": "西南交通大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwc.swjtu.edu.cn/",
-        "desc": "西南交通大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "swjtu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.swjtu.edu.cn/",
-        "desc": "西南交通大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西南交通大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -7992,17 +5654,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "swufe_jw",
-        "name": "西南财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.swufe.edu.cn/",
-        "desc": "西南财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "swufe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.swufe.edu.cn/",
-        "desc": "西南财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西南财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8016,17 +5671,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sicau_jw",
-        "name": "四川农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jiaowu.sicau.edu.cn/",
-        "desc": "四川农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sicau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sicau.edu.cn/",
-        "desc": "四川农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "四川农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8040,17 +5688,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cdut_jw",
-        "name": "成都理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cdut.edu.cn/",
-        "desc": "成都理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cdut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cdut.edu.cn/",
-        "desc": "成都理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "成都理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8064,17 +5705,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "swpu_jw",
-        "name": "西南石油大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.swpu.edu.cn/",
-        "desc": "西南石油大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "swpu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.swpu.edu.cn/",
-        "desc": "西南石油大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西南石油大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8088,17 +5722,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "swust_jw",
-        "name": "西南科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.swust.edu.cn/",
-        "desc": "西南科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "swust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.swust.edu.cn/",
-        "desc": "西南科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西南科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8112,17 +5739,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cdutcm_jw",
-        "name": "成都中医药大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cdutcm.edu.cn/",
-        "desc": "成都中医药大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cdutcm_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cdutcm.edu.cn/",
-        "desc": "成都中医药大学官方智慧校园一网通办认证与校外直连"
+        "desc": "成都中医药大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8136,17 +5756,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sicnu_jw",
-        "name": "四川师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sicnu.edu.cn/",
-        "desc": "四川师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sicnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sicnu.edu.cn/",
-        "desc": "四川师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "四川师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8160,17 +5773,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xhu_jw",
-        "name": "西华大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xhu.edu.cn/",
-        "desc": "西华大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xhu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xhu.edu.cn/",
-        "desc": "西华大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西华大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8184,17 +5790,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cwnu_jw",
-        "name": "西华师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cwnu.edu.cn/",
-        "desc": "西华师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cwnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cwnu.edu.cn/",
-        "desc": "西华师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西华师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8208,17 +5807,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cuit_jw",
-        "name": "成都信息工程大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cuit.edu.cn/",
-        "desc": "成都信息工程大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cuit_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cuit.edu.cn/",
-        "desc": "成都信息工程大学官方智慧校园一网通办认证与校外直连"
+        "desc": "成都信息工程大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8232,17 +5824,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "cdu_jw",
-        "name": "成都大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.cdu.edu.cn/",
-        "desc": "成都大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "cdu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.cdu.edu.cn/",
-        "desc": "成都大学官方智慧校园一网通办认证与校外直连"
+        "desc": "成都大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8256,17 +5841,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gzu_jw",
-        "name": "贵州大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwgl.gzu.edu.cn/",
-        "desc": "贵州大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gzu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gzu.edu.cn/",
-        "desc": "贵州大学官方智慧校园一网通办认证与校外直连"
+        "desc": "贵州大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8280,17 +5858,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gzmu_jw",
-        "name": "贵州医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gmc.edu.cn/",
-        "desc": "贵州医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gzmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gzmu.edu.cn/",
-        "desc": "贵州医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "贵州医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8304,17 +5875,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "zmu_jw",
-        "name": "遵义医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.zmu.edu.cn/",
-        "desc": "遵义医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "zmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.zmu.edu.cn/",
-        "desc": "遵义医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "遵义医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8328,17 +5892,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gznu_jw",
-        "name": "贵州师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gznu.edu.cn/",
-        "desc": "贵州师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gznu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gznu.edu.cn/",
-        "desc": "贵州师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "贵州师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8352,17 +5909,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gzfe_jw",
-        "name": "贵州财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gufe.edu.cn/",
-        "desc": "贵州财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gzfe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gzfe.edu.cn/",
-        "desc": "贵州财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "贵州财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8376,17 +5926,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ynu_jw",
-        "name": "云南大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ynu.edu.cn/",
-        "desc": "云南大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ynu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ynu.edu.cn/",
-        "desc": "云南大学官方智慧校园一网通办认证与校外直连"
+        "desc": "云南大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8400,17 +5943,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "kust_jw",
-        "name": "昆明理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.kust.edu.cn/",
-        "desc": "昆明理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "kust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.kust.edu.cn/",
-        "desc": "昆明理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "昆明理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8424,17 +5960,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ynau_jw",
-        "name": "云南农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ynau.edu.cn/",
-        "desc": "云南农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ynau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ynau.edu.cn/",
-        "desc": "云南农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "云南农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8448,17 +5977,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "swfu_jw",
-        "name": "西南林业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.swfu.edu.cn/",
-        "desc": "西南林业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "swfu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.swfu.edu.cn/",
-        "desc": "西南林业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西南林业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8472,17 +5994,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "kmu_jw",
-        "name": "昆明医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.kmu.edu.cn/",
-        "desc": "昆明医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "kmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.kmu.edu.cn/",
-        "desc": "昆明医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "昆明医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8496,17 +6011,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ynnu_jw",
-        "name": "云南师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ynnu.edu.cn/",
-        "desc": "云南师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ynnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ynnu.edu.cn/",
-        "desc": "云南师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "云南师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8520,17 +6028,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ynfe_jw",
-        "name": "云南财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ynufe.edu.cn/",
-        "desc": "云南财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ynfe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ynfe.edu.cn/",
-        "desc": "云南财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "云南财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8544,17 +6045,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "dali_jw",
-        "name": "大理大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.dlu.edu.cn/",
-        "desc": "大理大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "dali_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.dali.edu.cn/",
-        "desc": "大理大学官方智慧校园一网通办认证与校外直连"
+        "desc": "大理大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8568,17 +6062,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "utibet_jw",
-        "name": "西藏大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.utibet.edu.cn/",
-        "desc": "西藏大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "utibet_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.utibet.edu.cn/",
-        "desc": "西藏大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西藏大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8592,17 +6079,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "tibet_au_jw",
-        "name": "西藏农牧学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xza.edu.cn/",
-        "desc": "西藏农牧学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "tibet_au_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.tibet_au.edu.cn/",
-        "desc": "西藏农牧学院官方智慧校园一网通办认证与校外直连"
+        "desc": "西藏农牧学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8616,17 +6096,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xjtu_jw",
-        "name": "西安交通大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.xjtu.edu.cn/",
-        "desc": "西安交通大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xjtu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xjtu.edu.cn/",
-        "desc": "西安交通大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西安交通大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8640,17 +6113,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nwpu_jw",
-        "name": "西北工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.nwpu.edu.cn/",
-        "desc": "西北工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nwpu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nwpu.edu.cn/",
-        "desc": "西北工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西北工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8664,17 +6130,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xidian_jw",
-        "name": "西安电子科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.xidian.edu.cn/",
-        "desc": "西安电子科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xidian_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xidian.edu.cn/",
-        "desc": "西安电子科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西安电子科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8688,17 +6147,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nwu_jw",
-        "name": "西北大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.nwu.edu.cn/",
-        "desc": "西北大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nwu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nwu.edu.cn/",
-        "desc": "西北大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西北大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8712,17 +6164,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "chd_jw",
-        "name": "长安大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.chd.edu.cn/",
-        "desc": "长安大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "chd_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.chd.edu.cn/",
-        "desc": "长安大学官方智慧校园一网通办认证与校外直连"
+        "desc": "长安大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8736,17 +6181,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "snnu_jw",
-        "name": "陕西师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.snnu.edu.cn/",
-        "desc": "陕西师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "snnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.snnu.edu.cn/",
-        "desc": "陕西师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "陕西师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8760,17 +6198,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xaut_jw",
-        "name": "西安理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xaut.edu.cn/",
-        "desc": "西安理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xaut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xaut.edu.cn/",
-        "desc": "西安理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西安理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8784,17 +6215,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xatu_jw",
-        "name": "西安工业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xatu.edu.cn/",
-        "desc": "西安工业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xatu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xatu.edu.cn/",
-        "desc": "西安工业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西安工业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8808,17 +6232,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xauat_jw",
-        "name": "西安建筑科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xauat.edu.cn/",
-        "desc": "西安建筑科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xauat_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xauat.edu.cn/",
-        "desc": "西安建筑科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西安建筑科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8832,17 +6249,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xust_jw",
-        "name": "西安科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xust.edu.cn/",
-        "desc": "西安科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xust.edu.cn/",
-        "desc": "西安科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西安科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8856,17 +6266,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xupt_oil_jw",
-        "name": "西安石油大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xsyu.edu.cn/",
-        "desc": "西安石油大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xupt_oil_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xupt_oil.edu.cn/",
-        "desc": "西安石油大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西安石油大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8880,17 +6283,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "sust_jw",
-        "name": "陕西科技大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.sust.edu.cn/",
-        "desc": "陕西科技大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "sust_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.sust.edu.cn/",
-        "desc": "陕西科技大学官方智慧校园一网通办认证与校外直连"
+        "desc": "陕西科技大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8904,17 +6300,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "yau_jw",
-        "name": "延安大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.yau.edu.cn/",
-        "desc": "延安大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "yau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.yau.edu.cn/",
-        "desc": "延安大学官方智慧校园一网通办认证与校外直连"
+        "desc": "延安大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8928,17 +6317,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xupt_jw",
-        "name": "西安邮电大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.xupt.edu.cn/",
-        "desc": "西安邮电大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xupt_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xupt.edu.cn/",
-        "desc": "西安邮电大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西安邮电大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8952,17 +6334,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "lzu_jw",
-        "name": "兰州大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.lzu.edu.cn/",
-        "desc": "兰州大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "lzu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.lzu.edu.cn/",
-        "desc": "兰州大学官方智慧校园一网通办认证与校外直连"
+        "desc": "兰州大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -8976,17 +6351,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "lut_jw",
-        "name": "兰州理工大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.lut.edu.cn/",
-        "desc": "兰州理工大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "lut_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.lut.edu.cn/",
-        "desc": "兰州理工大学官方智慧校园一网通办认证与校外直连"
+        "desc": "兰州理工大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9000,17 +6368,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "lzjtu_jw",
-        "name": "兰州交通大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.lzjtu.edu.cn/",
-        "desc": "兰州交通大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "lzjtu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.lzjtu.edu.cn/",
-        "desc": "兰州交通大学官方智慧校园一网通办认证与校外直连"
+        "desc": "兰州交通大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9024,17 +6385,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "gsau_jw",
-        "name": "甘肃农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.gsau.edu.cn/",
-        "desc": "甘肃农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "gsau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.gsau.edu.cn/",
-        "desc": "甘肃农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "甘肃农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9048,17 +6402,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nwnu_jw",
-        "name": "西北师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.nwnu.edu.cn/",
-        "desc": "西北师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nwnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nwnu.edu.cn/",
-        "desc": "西北师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "西北师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9072,17 +6419,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "lzufe_jw",
-        "name": "兰州财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.lzufe.edu.cn/",
-        "desc": "兰州财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "lzufe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.lzufe.edu.cn/",
-        "desc": "兰州财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "兰州财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9096,17 +6436,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "qhu_jw",
-        "name": "青海大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.qhu.edu.cn/",
-        "desc": "青海大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "qhu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.qhu.edu.cn/",
-        "desc": "青海大学官方智慧校园一网通办认证与校外直连"
+        "desc": "青海大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9120,17 +6453,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "qhnu_jw",
-        "name": "青海师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.qhnu.edu.cn/",
-        "desc": "青海师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "qhnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.qhnu.edu.cn/",
-        "desc": "青海师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "青海师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9144,17 +6470,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "qhmu_jw",
-        "name": "青海民族大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.qhmu.edu.cn/",
-        "desc": "青海民族大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "qhmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.qhmu.edu.cn/",
-        "desc": "青海民族大学官方智慧校园一网通办认证与校外直连"
+        "desc": "青海民族大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9168,17 +6487,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nxu_jw",
-        "name": "宁夏大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.nxu.edu.cn/",
-        "desc": "宁夏大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nxu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nxu.edu.cn/",
-        "desc": "宁夏大学官方智慧校园一网通办认证与校外直连"
+        "desc": "宁夏大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9192,17 +6504,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nxmu_jw",
-        "name": "宁夏医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.nxmu.edu.cn/",
-        "desc": "宁夏医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nxmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nxmu.edu.cn/",
-        "desc": "宁夏医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "宁夏医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9216,17 +6521,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "nxnu_jw",
-        "name": "宁夏师范学院教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.nxtc.edu.cn/",
-        "desc": "宁夏师范学院教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "nxnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.nxnu.edu.cn/",
-        "desc": "宁夏师范学院官方智慧校园一网通办认证与校外直连"
+        "desc": "宁夏师范学院官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9240,17 +6538,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xju_jw",
-        "name": "新疆大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.xju.edu.cn/",
-        "desc": "新疆大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xju_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xju.edu.cn/",
-        "desc": "新疆大学官方智慧校园一网通办认证与校外直连"
+        "desc": "新疆大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9264,17 +6555,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "shzu_jw",
-        "name": "石河子大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jwxt.shzu.edu.cn/",
-        "desc": "石河子大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "shzu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.shzu.edu.cn/",
-        "desc": "石河子大学官方智慧校园一网通办认证与校外直连"
+        "desc": "石河子大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9288,17 +6572,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "taru_jw",
-        "name": "塔里木大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.taru.edu.cn/",
-        "desc": "塔里木大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "taru_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.taru.edu.cn/",
-        "desc": "塔里木大学官方智慧校园一网通办认证与校外直连"
+        "desc": "塔里木大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9312,17 +6589,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xjau_jw",
-        "name": "新疆农业大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xjau.edu.cn/",
-        "desc": "新疆农业大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xjau_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xjau.edu.cn/",
-        "desc": "新疆农业大学官方智慧校园一网通办认证与校外直连"
+        "desc": "新疆农业大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9336,17 +6606,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xjmu_jw",
-        "name": "新疆医科大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xjmu.edu.cn/",
-        "desc": "新疆医科大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xjmu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xjmu.edu.cn/",
-        "desc": "新疆医科大学官方智慧校园一网通办认证与校外直连"
+        "desc": "新疆医科大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9360,17 +6623,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xjnu_jw",
-        "name": "新疆师范大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xjnu.edu.cn/",
-        "desc": "新疆师范大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xjnu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xjnu.edu.cn/",
-        "desc": "新疆师范大学官方智慧校园一网通办认证与校外直连"
+        "desc": "新疆师范大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9384,17 +6640,10 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "xjufe_jw",
-        "name": "新疆财经大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.xjufe.edu.cn/",
-        "desc": "新疆财经大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "xjufe_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.xjufe.edu.cn/",
-        "desc": "新疆财经大学官方智慧校园一网通办认证与校外直连"
+        "desc": "新疆财经大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
@@ -9408,34 +6657,27 @@ export const SCHOOL_DATABASE: SchoolItem[] = [
     "systems": [
       {
         "id": "ksu_jw",
-        "name": "喀什大学教务管理系统",
-        "level": "本科/研究生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "http://jw.ksu.edu.cn/",
-        "desc": "喀什大学教务综合服务平台，课表查询与导入"
-      },
-      {
-        "id": "ksu_portal",
-        "name": "数字校园统一身份认证 / WebVPN",
-        "level": "全校师生",
-        "url": "https://cas.ksu.edu.cn/",
-        "desc": "喀什大学官方智慧校园一网通办认证与校外直连"
+        "desc": "喀什大学官方教务系统登录入口，登录后一键提取课表"
       }
     ]
   },
   {
     "id": "custom_general",
     "name": "全国高校通用通道 (支持任何大学)",
-    "shortName": "自定义教务 / WebVPN",
+    "shortName": "自定义教务系统",
     "pinyin": "quanguogaoxiaotongyong quanguo zidingyi tongyong ranyi ranyidaxue",
     "region": "全国 · 任意高校",
     "badge": "万能导入",
     "systems": [
       {
         "id": "generic_direct",
-        "name": "通用教务直连 / WebVPN",
-        "level": "全国师生",
+        "name": "教务系统登录",
+        "level": "全校师生通用",
         "url": "https://",
-        "desc": "支持全国 3000+ 高校，手动输入任意高校教务登录网址或校外 WebVPN 直连"
+        "desc": "支持全国 3000+ 高校，输入教务系统网址登录后一键提取"
       }
     ]
   }

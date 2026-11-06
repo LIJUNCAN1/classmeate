@@ -526,7 +526,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                       )}
                     </View>
                     <Text style={styles.schoolItemDesc}>
-                      {school.region} · {school.systems.length} 个通道
+                      {school.region} · 教务系统登录
                     </Text>
                   </View>
 
@@ -561,10 +561,10 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                       systems: [
                         {
                           id: 'custom_url',
-                          name: '教务系统直连 / WebVPN',
+                          name: '教务系统登录',
                           level: '全校通用',
                           url: 'https://',
-                          desc: `输入${schoolSearchQuery}教务系统或统一认证网址，登录后一键提取`,
+                          desc: `输入${schoolSearchQuery}教务系统网址，登录后一键提取`,
                         },
                       ],
                     };
@@ -573,7 +573,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                 >
                   <Ionicons name="flash" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
                   <Text style={styles.emptySchoolActionText}>
-                    为「{schoolSearchQuery}」开启通用教务通道
+                    为「{schoolSearchQuery}」开启教务系统登录
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -594,10 +594,10 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                     systems: [
                       {
                         id: 'custom_url',
-                        name: '教务系统直连 / WebVPN',
+                        name: '教务系统登录',
                         level: '全校通用',
                         url: 'https://',
-                        desc: `输入${schoolSearchQuery}教务网址或WebVPN，登录后一键提取`,
+                        desc: `输入${schoolSearchQuery}教务网址，登录后一键提取`,
                       },
                     ],
                   };
@@ -606,7 +606,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
               >
                 <Ionicons name="add-circle-outline" size={18} color="#2563EB" style={{ marginRight: 6 }} />
                 <Text style={styles.customSchoolBottomText}>
-                  找不到对应校区？直接为「{schoolSearchQuery}」新建通道
+                  找不到对应校区？直接为「{schoolSearchQuery}」新建教务入口
                 </Text>
               </TouchableOpacity>
             )}
@@ -657,20 +657,10 @@ export const ImportModal: React.FC<ImportModalProps> = ({
             </View>
 
             {/* 主标题 */}
-            <Text style={styles.authSectionTitle}>请选择可 [查询课表] 的系统</Text>
+            <Text style={styles.authSectionTitle}>【{selectedSchool.name}】教务系统登录</Text>
             <Text style={styles.authSectionSub}>
-              如下，因【{selectedSchool.name}】存在多个「查询课表」的系统，请选择后，再点击 [进入]。
+              统一采用官方教务系统网页登录。登录进入课表页面后，点击底部「识别导课」即可一键导入。
             </Text>
-
-            {/* 蓝色帮助条 */}
-            <TouchableOpacity
-              style={styles.helpBanner}
-              activeOpacity={0.7}
-              onPress={() => setHelpModalVisible(true)}
-            >
-              <Text style={styles.helpBannerText}>不知道选择哪个系统可以查询 [课程表]，请点击这里</Text>
-              <Ionicons name="chevron-forward" size={14} color="#3B82F6" />
-            </TouchableOpacity>
 
             {/* 自定义网址输入（当选中自定义高校时） */}
             {isEditingCustomUrl && (
@@ -732,7 +722,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
               onPress={handleEnterBrowser}
               activeOpacity={0.8}
             >
-              <Text style={styles.enterActionBtnText}>进入</Text>
+              <Text style={styles.enterActionBtnText}>进入教务系统登录</Text>
             </TouchableOpacity>
           </View>
         </View>

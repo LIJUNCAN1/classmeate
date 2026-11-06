@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
-// 辅助函数：根据名称自动补齐拼音和系统配置
+// 辅助函数：根据名称自动补齐拼音和系统配置（统一为教务系统登录）
 function makeSchool(id, name, shortName, pinyinExtra, province, city, badge, customUrl, customDesc, jwType) {
   const pinyin = ((pinyinExtra || '') + (jwType ? ` ${jwType}` : '')).toLowerCase();
   const url = customUrl || `http://jw.${id}.edu.cn/`;
-  const desc = customDesc || `${name}教务综合服务平台，课表查询与导入${jwType ? `（${jwType}系统）` : ''}`;
+  const desc = customDesc || `${name}官方教务系统登录入口，登录后一键提取课表`;
   return {
     id,
     name,
@@ -16,17 +16,10 @@ function makeSchool(id, name, shortName, pinyinExtra, province, city, badge, cus
     systems: [
       {
         id: `${id}_jw`,
-        name: `${name}教务管理系统`,
-        level: '本科/研究生',
+        name: '教务系统登录',
+        level: '全校师生通用',
         url: url,
         desc: desc,
-      },
-      {
-        id: `${id}_portal`,
-        name: '数字校园统一身份认证 / WebVPN',
-        level: '全校师生',
-        url: `https://cas.${id}.edu.cn/`,
-        desc: `${name}官方智慧校园一网通办认证与校外直连`,
       }
     ]
   };
@@ -42,9 +35,7 @@ const list = [
     region: '江苏 · 徐州',
     badge: '211 · 双一流',
     systems: [
-      { id: 'cumt_cas', name: '统一身份认证平台 (SSO)', level: '本科/研究生', url: 'http://authserver.cumt.edu.cn/authserver/login', desc: '中国矿业大学官方统一身份认证登录通道' },
-      { id: 'cumt_jw', name: '本科教学管理信息系统', level: '本科', url: 'http://jwxt.cumt.edu.cn/', desc: '矿大现代教务管理信息系统通道' },
-      { id: 'cumt_webvpn', name: 'WebVPN 校外直连通道', level: '全校师生', url: 'https://webvpn.cumt.edu.cn/', desc: '校外访问专用免客户端 WebVPN 隧道' },
+      { id: 'cumt_jw', name: '教务系统登录', level: '全校师生通用', url: 'http://jwxt.cumt.edu.cn/', desc: '中国矿业大学官方教务管理系统登录' },
     ]
   },
   {
@@ -55,8 +46,7 @@ const list = [
     region: '北京 · 海淀',
     badge: '211 · 双一流',
     systems: [
-      { id: 'cumtb_cas', name: '统一身份认证平台', level: '本科/研究生', url: 'https://authserver.cumtb.edu.cn/authserver/login', desc: '中国矿业大学(北京)统一身份认证服务' },
-      { id: 'cumtb_jw', name: '综合教务管理系统', level: '本科', url: 'https://jwxt.cumtb.edu.cn/', desc: '综合教务系统课表直连入口' },
+      { id: 'cumtb_jw', name: '教务系统登录', level: '全校师生通用', url: 'https://jwxt.cumtb.edu.cn/', desc: '中国矿业大学(北京)官方教务系统登录' },
     ]
   },
   {
@@ -67,9 +57,7 @@ const list = [
     region: '黑龙江 · 佳木斯',
     badge: '青果 · 喜鹊儿',
     systems: [
-      { id: 'jmsu_jw', name: '教务管理信息系统 (青果)', level: '本科/专科/研究生', url: 'http://jwc.jmsu.edu.cn/', desc: '佳木斯大学青果教务系统（喜鹊儿移动端官方后台）' },
-      { id: 'jmsu_xiqueer', name: '喜鹊儿移动教务直通平台', level: '全校师生', url: 'http://app.xiqueer.com/', desc: '青果软件喜鹊儿掌上校园移动课表同步入口' },
-      { id: 'jmsu_portal', name: '智慧佳大数字校园门户', level: '全校师生', url: 'https://www.jmsu.edu.cn/', desc: '佳木斯大学官方数字校园统一门户' },
+      { id: 'jmsu_jw', name: '教务系统登录', level: '全校师生通用', url: 'http://jwc.jmsu.edu.cn/', desc: '佳木斯大学青果教务系统登录' },
     ]
   },
   {
@@ -80,9 +68,7 @@ const list = [
     region: '湖南 · 长沙',
     badge: '强智系统',
     systems: [
-      { id: 'ccsu_sso', name: '智慧校园统一认证门户', level: '本科', url: 'https://sso.ccsu.cn/login', desc: '长沙学院统一身份认证，登录后直通强智教务' },
-      { id: 'ccsu_jw', name: '强智教务管理系统', level: '本科', url: 'http://jwxt.ccsu.cn/jsxsd/', desc: '湖南强智教务系统，直连课表及成绩查询' },
-      { id: 'ccsu_vpn', name: 'WebVPN 访问通道', level: '全校师生', url: 'https://webvpn.ccsu.cn/', desc: '校外快速直连入口' },
+      { id: 'ccsu_jw', name: '教务系统登录', level: '全校师生通用', url: 'http://jwxt.ccsu.cn/jsxsd/', desc: '长沙学院强智教务管理系统登录' },
     ]
   },
 
@@ -539,17 +525,17 @@ const list = [
   {
     id: 'custom_general',
     name: '全国高校通用通道 (支持任何大学)',
-    shortName: '自定义教务 / WebVPN',
+    shortName: '自定义教务系统',
     pinyin: 'quanguogaoxiaotongyong quanguo zidingyi tongyong ranyi ranyidaxue',
     region: '全国 · 任意高校',
     badge: '万能导入',
     systems: [
       {
         id: 'generic_direct',
-        name: '通用教务直连 / WebVPN',
-        level: '全国师生',
+        name: '教务系统登录',
+        level: '全校师生通用',
         url: 'https://',
-        desc: '支持全国 3000+ 高校，手动输入任意高校教务登录网址或校外 WebVPN 直连'
+        desc: '支持全国 3000+ 高校，输入教务系统网址登录后一键提取'
       }
     ]
   }

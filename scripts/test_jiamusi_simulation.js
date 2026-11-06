@@ -44,9 +44,9 @@ for (const kw of searchKeywords) {
 }
 
 // ----------------------------------------------------
-// 步骤 2：测试佳木斯大学系统配置与直达通道
+// 步骤 2：测试佳木斯大学系统配置与直达通道（统一为单一教务系统登录）
 // ----------------------------------------------------
-console.log('\n>>> [步骤 2] 校验佳木斯大学配置通道...');
+console.log('\n>>> [步骤 2] 校验佳木斯大学配置通道（统一教务系统登录）...');
 const jmsu = SCHOOL_DATABASE.find(s => s.id === 'jmsu');
 if (!jmsu) {
   throw new Error('未找到佳木斯大学配置！');
@@ -56,9 +56,11 @@ console.log(`  高校简称: ${jmsu.shortName}`);
 console.log(`  所属地区: ${jmsu.region}`);
 console.log(`  系统标签: ${jmsu.badge}`);
 console.log(`  系统通道数: ${jmsu.systems.length}`);
-jmsu.systems.forEach((sys, i) => {
-  console.log(`    通道 [${i + 1}] ${sys.name} -> 目标: ${sys.url} (${sys.level})`);
-});
+if (jmsu.systems.length !== 1 || jmsu.systems[0].name !== '教务系统登录') {
+  console.error(`  ❌ 登录通道未统一为单一「教务系统登录」:`, jmsu.systems);
+} else {
+  console.log(`  ✅ 登录方式已成功统一为单一【${jmsu.systems[0].name}】(${jmsu.systems[0].url})`);
+}
 
 // ----------------------------------------------------
 // 步骤 3：模拟青果教务系统 (Kingosoft / 喜鹊儿后台) 真实课表 HTML 解析
