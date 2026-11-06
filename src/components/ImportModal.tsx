@@ -524,7 +524,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                 : `高校列表 (${filteredSchools.length})`}
             </Text>
 
-            {filteredSchools.map((school) => {
+            {filteredSchools.slice(0, 100).map((school) => {
               const isSelected = school.id === selectedSchool.id;
               return (
                 <TouchableOpacity
@@ -555,6 +555,14 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                 </TouchableOpacity>
               );
             })}
+
+            {filteredSchools.length > 100 && (
+              <View style={{ paddingVertical: 14, alignItems: 'center' }}>
+                <Text style={{ fontSize: 12, color: '#94A3B8' }}>
+                  已展示前 100 所高校（共 {filteredSchools.length} 所），输入校名或地区即可精确直达
+                </Text>
+              </View>
+            )}
 
             {/* 当搜索结果为空时，绝不留白，智能提供通用导入 */}
             {filteredSchools.length === 0 && (
