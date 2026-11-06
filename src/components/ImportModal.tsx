@@ -341,7 +341,15 @@ export const ImportModal: React.FC<ImportModalProps> = ({
     return (
       s.name.toLowerCase().includes(q) ||
       s.shortName.toLowerCase().includes(q) ||
-      s.region.toLowerCase().includes(q)
+      s.region.toLowerCase().includes(q) ||
+      (s.badge && s.badge.toLowerCase().includes(q)) ||
+      (s.pinyin && s.pinyin.toLowerCase().includes(q)) ||
+      s.systems.some(
+        (sys) =>
+          sys.name.toLowerCase().includes(q) ||
+          sys.desc.toLowerCase().includes(q) ||
+          sys.url.toLowerCase().includes(q)
+      )
     );
   });
 

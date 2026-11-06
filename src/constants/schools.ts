@@ -12,947 +12,9431 @@ export interface SchoolItem {
   shortName: string;
   region: string;
   badge: string;
+  pinyin?: string;
   systems: AuthSystemOption[];
 }
 
 export const SCHOOL_DATABASE: SchoolItem[] = [
-  // ================= 矿业大学系列 (用户重点指定) =================
   {
-    id: 'cumt',
-    name: '中国矿业大学',
-    shortName: 'CUMT / 矿大',
-    region: '江苏 · 徐州',
-    badge: '211 · 双一流',
-    systems: [
+    "id": "cumt",
+    "name": "中国矿业大学",
+    "shortName": "CUMT / 矿大",
+    "pinyin": "zhongguokuangyedaxue cumt kd zgkydx kuangda",
+    "region": "江苏 · 徐州",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'cumt_cas',
-        name: '统一身份认证平台 (SSO)',
-        level: '本科/研究生',
-        url: 'http://authserver.cumt.edu.cn/authserver/login',
-        desc: '中国矿业大学官方统一身份认证登录通道',
+        "id": "cumt_cas",
+        "name": "统一身份认证平台 (SSO)",
+        "level": "本科/研究生",
+        "url": "http://authserver.cumt.edu.cn/authserver/login",
+        "desc": "中国矿业大学官方统一身份认证登录通道"
       },
       {
-        id: 'cumt_jw',
-        name: '本科教学管理信息系统',
-        level: '本科',
-        url: 'http://jwxt.cumt.edu.cn/',
-        desc: '矿大现代教务管理信息系统通道',
+        "id": "cumt_jw",
+        "name": "本科教学管理信息系统",
+        "level": "本科",
+        "url": "http://jwxt.cumt.edu.cn/",
+        "desc": "矿大现代教务管理信息系统通道"
       },
       {
-        id: 'cumt_webvpn',
-        name: 'WebVPN 校外直连通道',
-        level: '全校师生',
-        url: 'https://webvpn.cumt.edu.cn/',
-        desc: '校外访问专用免客户端 WebVPN 隧道',
-      },
-    ],
+        "id": "cumt_webvpn",
+        "name": "WebVPN 校外直连通道",
+        "level": "全校师生",
+        "url": "https://webvpn.cumt.edu.cn/",
+        "desc": "校外访问专用免客户端 WebVPN 隧道"
+      }
+    ]
   },
   {
-    id: 'cumtb',
-    name: '中国矿业大学(北京)',
-    shortName: 'CUMTB / 矿大北京',
-    region: '北京 · 海淀',
-    badge: '211 · 双一流',
-    systems: [
+    "id": "cumtb",
+    "name": "中国矿业大学(北京)",
+    "shortName": "CUMTB / 矿大北京",
+    "pinyin": "zhongguokuangyedaxuebeijing cumtb kdbj",
+    "region": "北京 · 海淀",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'cumtb_cas',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://authserver.cumtb.edu.cn/authserver/login',
-        desc: '中国矿业大学(北京)统一身份认证服务',
+        "id": "cumtb_cas",
+        "name": "统一身份认证平台",
+        "level": "本科/研究生",
+        "url": "https://authserver.cumtb.edu.cn/authserver/login",
+        "desc": "中国矿业大学(北京)统一身份认证服务"
       },
       {
-        id: 'cumtb_jw',
-        name: '综合教务管理系统',
-        level: '本科',
-        url: 'https://jwxt.cumtb.edu.cn/',
-        desc: '综合教务系统课表直连入口',
-      },
-    ],
-  },
-
-  // ================= 湖南地区高校 =================
-  {
-    id: 'ccsu',
-    name: '长沙学院',
-    shortName: 'CCSU / 长大',
-    region: '湖南 · 长沙',
-    badge: '3个通道',
-    systems: [
-      {
-        id: 'cas_sso',
-        name: '统一身份认证',
-        level: '本科/专科',
-        url: 'https://cas.ccsu.cn/authserver/login?service=https%3A%2F%2Fjwxt.ccsu.cn%2Fsso%2Flyiotlogin',
-        desc: '官方金智统一身份认证平台 SSO 直连通道（推荐）',
-      },
-      {
-        id: 'jwxt_direct',
-        name: '教学管理信息服务平台',
-        level: '本科/专科',
-        url: 'https://jwxt.ccsu.cn/',
-        desc: '长沙学院教务管理信息系统直连入口',
-      },
-      {
-        id: 'webvpn',
-        name: 'WEBVPN',
-        level: '本科/专科',
-        url: 'https://cas.ccsu.cn/authserver/login?service=https%3A%2F%2Fvpn.ccsu.cn%3A443%2Fpassport%2Fv1%2Fauth%2Fcas%3FsfDomain%3Dcas58282',
-        desc: '深信服 WebVPN 校外隧道通道',
-      },
-    ],
+        "id": "cumtb_jw",
+        "name": "综合教务管理系统",
+        "level": "本科",
+        "url": "https://jwxt.cumtb.edu.cn/",
+        "desc": "综合教务系统课表直连入口"
+      }
+    ]
   },
   {
-    id: 'csu',
-    name: '中南大学',
-    shortName: 'CSU / 中南',
-    region: '湖南 · 长沙',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "jmsu",
+    "name": "佳木斯大学",
+    "shortName": "JMSU / 佳大",
+    "pinyin": "jiamusidaxue jmsu jd jmsdx jiada xiqueer qingguo",
+    "region": "黑龙江 · 佳木斯",
+    "badge": "青果 · 喜鹊儿",
+    "systems": [
       {
-        id: 'csu_cas',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://ca.csu.edu.cn/authserver/login',
-        desc: '中南大学统一身份认证教务入口',
+        "id": "jmsu_jw",
+        "name": "教务管理信息系统 (青果)",
+        "level": "本科/专科/研究生",
+        "url": "http://jwc.jmsu.edu.cn/",
+        "desc": "佳木斯大学青果教务系统（喜鹊儿移动端官方后台）"
       },
       {
-        id: 'csu_jw',
-        name: '本科教务管理系统',
-        level: '本科',
-        url: 'https://csujwc.its.csu.edu.cn/',
-        desc: '中南大学强智教务管理系统',
+        "id": "jmsu_xiqueer",
+        "name": "喜鹊儿移动教务直通平台",
+        "level": "全校师生",
+        "url": "http://app.xiqueer.com/",
+        "desc": "青果软件喜鹊儿掌上校园移动课表同步入口"
       },
-    ],
+      {
+        "id": "jmsu_portal",
+        "name": "智慧佳大数字校园门户",
+        "level": "全校师生",
+        "url": "https://www.jmsu.edu.cn/",
+        "desc": "佳木斯大学官方数字校园统一门户"
+      }
+    ]
   },
   {
-    id: 'hnu',
-    name: '湖南大学',
-    shortName: 'HNU / 湖大',
-    region: '湖南 · 长沙',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "ccsu",
+    "name": "长沙学院",
+    "shortName": "CCSU / 长大",
+    "pinyin": "changshaxueyuan ccsu cd csxy changda qiangzhi",
+    "region": "湖南 · 长沙",
+    "badge": "强智系统",
+    "systems": [
       {
-        id: 'hnu_cas',
-        name: '统一身份认证 / 个人工作台',
-        level: '全日制',
-        url: 'https://cas.hnu.edu.cn/authserver/login',
-        desc: '湖南大学信息化综合服务门户',
+        "id": "ccsu_sso",
+        "name": "智慧校园统一认证门户",
+        "level": "本科",
+        "url": "https://sso.ccsu.cn/login",
+        "desc": "长沙学院统一身份认证，登录后直通强智教务"
       },
       {
-        id: 'hnu_jw',
-        name: '综合教务管理系统',
-        level: '本科',
-        url: 'http://jw.hnu.edu.cn/',
-        desc: '湖南大学本科教务系统',
+        "id": "ccsu_jw",
+        "name": "强智教务管理系统",
+        "level": "本科",
+        "url": "http://jwxt.ccsu.cn/jsxsd/",
+        "desc": "湖南强智教务系统，直连课表及成绩查询"
       },
-    ],
+      {
+        "id": "ccsu_vpn",
+        "name": "WebVPN 访问通道",
+        "level": "全校师生",
+        "url": "https://webvpn.ccsu.cn/",
+        "desc": "校外快速直连入口"
+      }
+    ]
   },
   {
-    id: 'hunnu',
-    name: '湖南师范大学',
-    shortName: 'HUNNU / 湖师大',
-    region: '湖南 · 长沙',
-    badge: '211 · 双一流',
-    systems: [
+    "id": "pku",
+    "name": "北京大学",
+    "shortName": "PKU / 北大",
+    "pinyin": "beijingdaxue pku bd beida",
+    "region": "北京 · 海淀",
+    "badge": "C9 · 985 · 双一流",
+    "systems": [
       {
-        id: 'hunnu_cas',
-        name: '数字校园统一身份认证',
-        level: '本科/研究生',
-        url: 'https://cas.hunnu.edu.cn/authserver/login',
-        desc: '湖南师范大学智慧教务平台通道',
+        "id": "pku_jw",
+        "name": "北京大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "https://elective.pku.edu.cn/",
+        "desc": "北京大学教务综合服务平台，课表查询与导入"
       },
       {
-        id: 'hunnu_jw',
-        name: '师大教务管理系统',
-        level: '本科',
-        url: 'https://jwgl.hunnu.edu.cn/',
-        desc: '湖南师范大学青果/强智教务系统',
-      },
-    ],
+        "id": "pku_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.pku.edu.cn/",
+        "desc": "北京大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'csust',
-    name: '长沙理工大学',
-    shortName: 'CSUST / 长理',
-    region: '湖南 · 长沙',
-    badge: '省重点',
-    systems: [
+    "id": "thu",
+    "name": "清华大学",
+    "shortName": "THU / 清华",
+    "pinyin": "qinghuadaxue thu qh qinghua",
+    "region": "北京 · 海淀",
+    "badge": "C9 · 985 · 双一流",
+    "systems": [
       {
-        id: 'csust_cas',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://cas.csust.edu.cn/authserver/login',
-        desc: '长沙理工大学统一认证服务',
+        "id": "thu_jw",
+        "name": "清华大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "https://academic.tsinghua.edu.cn/",
+        "desc": "清华大学教务综合服务平台，课表查询与导入"
       },
       {
-        id: 'csust_jw',
-        name: '综合教务管理系统',
-        level: '本科',
-        url: 'http://xk.csust.edu.cn/',
-        desc: '长沙理工大学强智教务选课系统',
-      },
-    ],
+        "id": "thu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.thu.edu.cn/",
+        "desc": "清华大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'hunau',
-    name: '湖南农业大学',
-    shortName: 'HUNAU / 湖南农大',
-    region: '湖南 · 长沙',
-    badge: '省重点',
-    systems: [
+    "id": "ruc",
+    "name": "中国人民大学",
+    "shortName": "RUC / 人大",
+    "pinyin": "zhongguorenmindaxue ruc rd renda",
+    "region": "北京 · 海淀",
+    "badge": "985 · 双一流",
+    "systems": [
       {
-        id: 'hunau_cas',
-        name: '智慧农大统一认证',
-        level: '本科/研究生',
-        url: 'https://cas.hunau.edu.cn/authserver/login',
-        desc: '湖南农大一站式服务门户',
+        "id": "ruc_jw",
+        "name": "中国人民大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ruc.edu.cn/",
+        "desc": "中国人民大学教务综合服务平台，课表查询与导入"
       },
       {
-        id: 'hunau_jw',
-        name: '教务管理信息系统',
-        level: '本科',
-        url: 'https://jwgl.hunau.edu.cn/',
-        desc: '湖南农大本科教务系统',
-      },
-    ],
+        "id": "ruc_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ruc.edu.cn/",
+        "desc": "中国人民大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'csuft',
-    name: '中南林业科技大学',
-    shortName: 'CSUFT / 中南林',
-    region: '湖南 · 长沙',
-    badge: '省重点',
-    systems: [
+    "id": "buaa",
+    "name": "北京航空航天大学",
+    "shortName": "BUAA / 北航",
+    "pinyin": "beijinghangkonghangtiandaxue buaa bh behang",
+    "region": "北京 · 海淀",
+    "badge": "985 · 双一流",
+    "systems": [
       {
-        id: 'csuft_cas',
-        name: '统一身份认证系统',
-        level: '本科/研究生',
-        url: 'https://cas.csuft.edu.cn/authserver/login',
-        desc: '中南林业科技大学教务直连通道',
+        "id": "buaa_jw",
+        "name": "北京航空航天大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.buaa.edu.cn/",
+        "desc": "北京航空航天大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "buaa_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.buaa.edu.cn/",
+        "desc": "北京航空航天大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'xtu',
-    name: '湘潭大学',
-    shortName: 'XTU / 湘大',
-    region: '湖南 · 湘潭',
-    badge: '双一流',
-    systems: [
+    "id": "bit",
+    "name": "北京理工大学",
+    "shortName": "BIT / 北理工",
+    "pinyin": "beijingligongdaxue bit blg beiligong",
+    "region": "北京 · 海淀",
+    "badge": "985 · 双一流",
+    "systems": [
       {
-        id: 'xtu_cas',
-        name: '湘大统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://cas.xtu.edu.cn/authserver/login',
-        desc: '湘潭大学数字校园及教务服务',
+        "id": "bit_jw",
+        "name": "北京理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwms.bit.edu.cn/",
+        "desc": "北京理工大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "bit_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.bit.edu.cn/",
+        "desc": "北京理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'hnust',
-    name: '湖南科技大学',
-    shortName: 'HNUST / 湖南科大',
-    region: '湖南 · 湘潭',
-    badge: '省重点',
-    systems: [
+    "id": "bupt",
+    "name": "北京邮电大学",
+    "shortName": "BUPT / 北邮",
+    "pinyin": "beijingyoudiandaxue bupt by beiyou",
+    "region": "北京 · 海淀",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'hnust_cas',
-        name: '统一身份认证',
-        level: '本科/研究生',
-        url: 'https://cas.hnust.edu.cn/authserver/login',
-        desc: '湖南科技大学智慧校园统一登录',
+        "id": "bupt_jw",
+        "name": "北京邮电大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.bupt.edu.cn/",
+        "desc": "北京邮电大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "bupt_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.bupt.edu.cn/",
+        "desc": "北京邮电大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'usc',
-    name: '南华大学',
-    shortName: 'USC',
-    region: '湖南 · 衡阳',
-    badge: '省部共建',
-    systems: [
+    "id": "bnu",
+    "name": "北京师范大学",
+    "shortName": "BNU / 北师大",
+    "pinyin": "beijingshifandaxue bnu bsd beishida",
+    "region": "北京 · 海淀",
+    "badge": "985 · 双一流",
+    "systems": [
       {
-        id: 'usc_cas',
-        name: '统一身份认证系统',
-        level: '本科/研究生',
-        url: 'https://cas.usc.edu.cn/authserver/login',
-        desc: '南华大学统一认证门户',
+        "id": "bnu_jw",
+        "name": "北京师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.bnu.edu.cn/",
+        "desc": "北京师范大学教务综合服务平台，课表查询与导入"
       },
-    ],
-  },
-
-  // ================= 全国 985 / 211 / 双一流名校 =================
-  {
-    id: 'pku',
-    name: '北京大学',
-    shortName: 'PKU / 北大',
-    region: '北京 · 海淀',
-    badge: '985 · 双一流',
-    systems: [
       {
-        id: 'pku_portal',
-        name: '北京大学综合信息服务 (门户)',
-        level: '全校',
-        url: 'https://portal.pku.edu.cn/',
-        desc: '校内统一门户身份登录与课表查看',
-      },
-    ],
+        "id": "bnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.bnu.edu.cn/",
+        "desc": "北京师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'thu',
-    name: '清华大学',
-    shortName: 'THU / 清华',
-    region: '北京 · 海淀',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "bjtu",
+    "name": "北京交通大学",
+    "shortName": "BJTU / 北交大",
+    "pinyin": "beijingjiaotongdaxue bjtu bjd beijiaoda",
+    "region": "北京 · 海淀",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'thu_info',
-        name: '清华大学网络学堂 / 综合教务',
-        level: '本科/研究生',
-        url: 'https://info.tsinghua.edu.cn/',
-        desc: '清华大学信息化综合工作门户',
+        "id": "bjtu_jw",
+        "name": "北京交通大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "https://bjjw.bjtu.edu.cn/",
+        "desc": "北京交通大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "bjtu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.bjtu.edu.cn/",
+        "desc": "北京交通大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'ruc',
-    name: '中国人民大学',
-    shortName: 'RUC / 人大',
-    region: '北京 · 海淀',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "ustb",
+    "name": "北京科技大学",
+    "shortName": "USTB / 北科大",
+    "pinyin": "beijingkejidaxue ustb bkd beikeda",
+    "region": "北京 · 海淀",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'ruc_cas',
-        name: '微人大 / 统一身份认证',
-        level: '全日制',
-        url: 'https://v.ruc.edu.cn/',
-        desc: '中国人民大学微人大服务门户',
+        "id": "ustb_jw",
+        "name": "北京科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.ustb.edu.cn/",
+        "desc": "北京科技大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "ustb_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ustb.edu.cn/",
+        "desc": "北京科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'buaa',
-    name: '北京航空航天大学',
-    shortName: 'BUAA / 北航',
-    region: '北京 · 海淀',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "cau",
+    "name": "中国农业大学",
+    "shortName": "CAU / 中农",
+    "pinyin": "zhongguonongyedaxue cau zn zhongnong",
+    "region": "北京 · 海淀",
+    "badge": "985 · 双一流",
+    "systems": [
       {
-        id: 'buaa_cas',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://sso.buaa.edu.cn/login',
-        desc: '北航统一身份认证与教务选课系统',
+        "id": "cau_jw",
+        "name": "中国农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.cau.edu.cn/",
+        "desc": "中国农业大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "cau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cau.edu.cn/",
+        "desc": "中国农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'bit',
-    name: '北京理工大学',
-    shortName: 'BIT / 北理工',
-    region: '北京 · 海淀',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "cuc",
+    "name": "中国传媒大学",
+    "shortName": "CUC / 中传",
+    "pinyin": "zhongguochuanmeidaxue cuc zc zhongchuan",
+    "region": "北京 · 朝阳",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'bit_cas',
-        name: '延河课堂 / 统一身份认证',
-        level: '本科/研究生',
-        url: 'https://login.bit.edu.cn/',
-        desc: '北京理工大学统一登录认证',
+        "id": "cuc_jw",
+        "name": "中国传媒大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.cuc.edu.cn/",
+        "desc": "中国传媒大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "cuc_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cuc.edu.cn/",
+        "desc": "中国传媒大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'bupt',
-    name: '北京邮电大学',
-    shortName: 'BUPT / 北邮',
-    region: '北京 · 海淀',
-    badge: '211 · 双一流',
-    systems: [
+    "id": "cupl",
+    "name": "中国政法大学",
+    "shortName": "CUPL / 法大",
+    "pinyin": "zhongguozhengfadaxue cupl fd fada",
+    "region": "北京 · 昌平",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'bupt_cas',
-        name: '北邮统一认证平台',
-        level: '本科/研究生',
-        url: 'https://auth.bupt.edu.cn/authserver/login',
-        desc: '北京邮电大学智慧教务与信息平台',
+        "id": "cupl_jw",
+        "name": "中国政法大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.cupl.edu.cn/",
+        "desc": "中国政法大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "cupl_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cupl.edu.cn/",
+        "desc": "中国政法大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'zju',
-    name: '浙江大学',
-    shortName: 'ZJU / 浙大',
-    region: '浙江 · 杭州',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "uibe",
+    "name": "对外经济贸易大学",
+    "shortName": "UIBE / 贸大",
+    "pinyin": "duiwaijingjimaoyidaxue uibe md maoda",
+    "region": "北京 · 朝阳",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'zju_cas',
-        name: '统一身份认证',
-        level: '本科/研究生',
-        url: 'https://zjuam.zju.edu.cn/cas/login',
-        desc: '浙江大学本科教学管理与选课平台',
+        "id": "uibe_jw",
+        "name": "对外经济贸易大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.uibe.edu.cn/",
+        "desc": "对外经济贸易大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "uibe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.uibe.edu.cn/",
+        "desc": "对外经济贸易大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'sjtu',
-    name: '上海交通大学',
-    shortName: 'SJTU / 上海交大',
-    region: '上海 · 闵行',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "cufe",
+    "name": "中央财经大学",
+    "shortName": "CUFE / 央财",
+    "pinyin": "zhongyangcaijingdaxue cufe yc yangcai",
+    "region": "北京 · 海淀",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'sjtu_jaccount',
-        name: 'jAccount 统一认证',
-        level: '全校',
-        url: 'https://jaccount.sjtu.edu.cn/',
-        desc: '上海交通大学统一认证教务通道',
+        "id": "cufe_jw",
+        "name": "中央财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.cufe.edu.cn/",
+        "desc": "中央财经大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "cufe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cufe.edu.cn/",
+        "desc": "中央财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'fudan',
-    name: '复旦大学',
-    shortName: 'FUDAN / 复旦',
-    region: '上海 · 杨浦',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "bjut",
+    "name": "北京工业大学",
+    "shortName": "BJUT / 北工大",
+    "pinyin": "beijinggongyedaxue bjut bgd beigongda",
+    "region": "北京 · 朝阳",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'fudan_uis',
-        name: '复旦 UIS 统一身份认证',
-        level: '本科/研究生',
-        url: 'https://uis.fudan.edu.cn/authserver/login',
-        desc: '复旦大学本科教学管理系统直连',
+        "id": "bjut_jw",
+        "name": "北京工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.bjut.edu.cn/",
+        "desc": "北京工业大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "bjut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.bjut.edu.cn/",
+        "desc": "北京工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'tongji',
-    name: '同济大学',
-    shortName: 'TONGJI / 同济',
-    region: '上海 · 杨浦',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "bfu",
+    "name": "北京林业大学",
+    "shortName": "BFU / 北林",
+    "pinyin": "beijinglinyedaxue bfu bl beilin",
+    "region": "北京 · 海淀",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'tongji_cas',
-        name: '同济一网通办统一认证',
-        level: '本科/研究生',
-        url: 'https://ids.tongji.edu.cn:8443/nidp/saml2/sso',
-        desc: '同济大学本科教学服务综合管理系统',
+        "id": "bfu_jw",
+        "name": "北京林业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.bjfu.edu.cn/",
+        "desc": "北京林业大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "bfu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.bfu.edu.cn/",
+        "desc": "北京林业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'nju',
-    name: '南京大学',
-    shortName: 'NJU / 南大',
-    region: '江苏 · 南京',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "bucm",
+    "name": "北京中医药大学",
+    "shortName": "BUCM / 北中医",
+    "pinyin": "beijingzhongyiyaodaxue bucm bzy beizhongyi",
+    "region": "北京 · 朝阳",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'nju_auth',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://authserver.nju.edu.cn/authserver/login',
-        desc: '南京大学教务管理系统与在线服务',
+        "id": "bucm_jw",
+        "name": "北京中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.bucm.edu.cn/",
+        "desc": "北京中医药大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "bucm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.bucm.edu.cn/",
+        "desc": "北京中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'seu',
-    name: '东南大学',
-    shortName: 'SEU / 东大',
-    region: '江苏 · 南京',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "buct",
+    "name": "北京化工大学",
+    "shortName": "BUCT / 北化",
+    "pinyin": "beijinghuagongdaxue buct bh beihua",
+    "region": "北京 · 朝阳",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'seu_cas',
-        name: '东南大学统一身份认证',
-        level: '本科/研究生',
-        url: 'https://newcas.seu.edu.cn/authserver/login',
-        desc: '东南大学新教务综合系统',
+        "id": "buct_jw",
+        "name": "北京化工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.buct.edu.cn/",
+        "desc": "北京化工大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "buct_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.buct.edu.cn/",
+        "desc": "北京化工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'nuaa',
-    name: '南京航空航天大学',
-    shortName: 'NUAA / 南航',
-    region: '江苏 · 南京',
-    badge: '211 · 双一流',
-    systems: [
+    "id": "bfsu",
+    "name": "北京外国语大学",
+    "shortName": "BFSU / 北外",
+    "pinyin": "beijingwaiguoyudaxue bfsu bw beiwai",
+    "region": "北京 · 海淀",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'nuaa_cas',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://authserver.nuaa.edu.cn/authserver/login',
-        desc: '南京航空航天大学教务管理系统',
+        "id": "bfsu_jw",
+        "name": "北京外国语大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.bfsu.edu.cn/",
+        "desc": "北京外国语大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "bfsu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.bfsu.edu.cn/",
+        "desc": "北京外国语大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'suda',
-    name: '苏州大学',
-    shortName: 'SUDA / 苏大',
-    region: '江苏 · 苏州',
-    badge: '211 · 双一流',
-    systems: [
+    "id": "ncepu",
+    "name": "华北电力大学",
+    "shortName": "NCEPU / 华电",
+    "pinyin": "huabeidianlidaxue ncepu hd huadian",
+    "region": "北京 · 昌平",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'suda_cas',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://pass.suda.edu.cn/cas/login',
-        desc: '苏州大学综合教务服务系统',
+        "id": "ncepu_jw",
+        "name": "华北电力大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.ncepu.edu.cn/",
+        "desc": "华北电力大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "ncepu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ncepu.edu.cn/",
+        "desc": "华北电力大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'ustc',
-    name: '中国科学技术大学',
-    shortName: 'USTC / 中科大',
-    region: '安徽 · 合肥',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "cugb",
+    "name": "中国地质大学(北京)",
+    "shortName": "CUGB / 地大北京",
+    "pinyin": "zhongguodizhidaxuebeijing cugb ddbj dida",
+    "region": "北京 · 海淀",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'ustc_cas',
-        name: '中科大统一身份认证平台',
-        level: '全校',
-        url: 'https://passport.ustc.edu.cn/login',
-        desc: '中国科学技术大学本科教务系统',
+        "id": "cugb_jw",
+        "name": "中国地质大学(北京)教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cugb.edu.cn/",
+        "desc": "中国地质大学(北京)教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "cugb_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cugb.edu.cn/",
+        "desc": "中国地质大学(北京)官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'whu',
-    name: '武汉大学',
-    shortName: 'WHU / 武大',
-    region: '湖北 · 武汉',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "cupb",
+    "name": "中国石油大学(北京)",
+    "shortName": "CUPB / 石大北京",
+    "pinyin": "zhongguoshiyoudaxuebeijing cupb sdbj shida",
+    "region": "北京 · 昌平",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'whu_cas',
-        name: '智慧珞珈统一身份认证',
-        level: '本科/研究生',
-        url: 'https://cas.whu.edu.cn/authserver/login',
-        desc: '武汉大学教务综合信息管理系统',
+        "id": "cupb_jw",
+        "name": "中国石油大学(北京)教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cup.edu.cn/",
+        "desc": "中国石油大学(北京)教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "cupb_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cupb.edu.cn/",
+        "desc": "中国石油大学(北京)官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'hust',
-    name: '华中科技大学',
-    shortName: 'HUST / 华科',
-    region: '湖北 · 武汉',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "muc",
+    "name": "中央民族大学",
+    "shortName": "MUC / 民大",
+    "pinyin": "zhongyangminzudaxue muc md minda",
+    "region": "北京 · 海淀",
+    "badge": "985 · 双一流",
+    "systems": [
       {
-        id: 'hust_pass',
-        name: '华中大统一身份认证',
-        level: '全日制',
-        url: 'https://pass.hust.edu.cn/cas/login',
-        desc: '华中科技大学一体化教务与选课平台',
+        "id": "muc_jw",
+        "name": "中央民族大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.muc.edu.cn/",
+        "desc": "中央民族大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "muc_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.muc.edu.cn/",
+        "desc": "中央民族大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'wut',
-    name: '武汉理工大学',
-    shortName: 'WUT / 武汉理工',
-    region: '湖北 · 武汉',
-    badge: '211 · 双一流',
-    systems: [
+    "id": "cnu",
+    "name": "首都师范大学",
+    "shortName": "CNU / 首师大",
+    "pinyin": "shoudushifandaxue cnu ssd shoushida",
+    "region": "北京 · 海淀",
+    "badge": "双一流高校",
+    "systems": [
       {
-        id: 'wut_cas',
-        name: '智慧理工统一身份认证',
-        level: '本科/研究生',
-        url: 'https://authserver.whut.edu.cn/authserver/login',
-        desc: '武汉理工大学教务综合信息系统',
+        "id": "cnu_jw",
+        "name": "首都师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cnu.edu.cn/",
+        "desc": "首都师范大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "cnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cnu.edu.cn/",
+        "desc": "首都师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'sysu',
-    name: '中山大学',
-    shortName: 'SYSU / 中大',
-    region: '广东 · 广州',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "cueb",
+    "name": "首都经济贸易大学",
+    "shortName": "CUEB / 首经贸",
+    "pinyin": "shoudujingjimaoyidaxue cueb sjm shoujingmao",
+    "region": "北京 · 丰台",
+    "badge": "重点大学",
+    "systems": [
       {
-        id: 'sysu_cas',
-        name: '大学服务中心统一身份认证',
-        level: '本科/研究生',
-        url: 'https://cas.sysu.edu.cn/cas/login',
-        desc: '中山大学本科综合教务系统',
+        "id": "cueb_jw",
+        "name": "首都经济贸易大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.cueb.edu.cn/",
+        "desc": "首都经济贸易大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "cueb_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cueb.edu.cn/",
+        "desc": "首都经济贸易大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'scut',
-    name: '华南理工大学',
-    shortName: 'SCUT / 华工',
-    region: '广东 · 广州',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "btbu",
+    "name": "北京工商大学",
+    "shortName": "BTBU / 北工商",
+    "pinyin": "beijinggongshangdaxue btbu bgs beigongshang",
+    "region": "北京 · 海淀",
+    "badge": "重点大学",
+    "systems": [
       {
-        id: 'scut_cas',
-        name: '华工统一认证平台',
-        level: '本科/研究生',
-        url: 'https://sso.scut.edu.cn/cas/login',
-        desc: '华南理工大学教务管理系统',
+        "id": "btbu_jw",
+        "name": "北京工商大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.btbu.edu.cn/",
+        "desc": "北京工商大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "btbu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.btbu.edu.cn/",
+        "desc": "北京工商大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'jnu',
-    name: '暨南大学',
-    shortName: 'JNU / 暨大',
-    region: '广东 · 广州',
-    badge: '211 · 双一流',
-    systems: [
+    "id": "bistu",
+    "name": "北京信息科技大学",
+    "shortName": "BISTU / 北信科",
+    "pinyin": "beijingxinxikejidaxue bistu bxk beixinke",
+    "region": "北京 · 海淀",
+    "badge": "重点大学",
+    "systems": [
       {
-        id: 'jnu_cas',
-        name: '数字暨南统一身份认证',
-        level: '本科/研究生',
-        url: 'https://id.jnu.edu.cn/',
-        desc: '暨南大学综合教务信息管理系统',
+        "id": "bistu_jw",
+        "name": "北京信息科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.bistu.edu.cn/",
+        "desc": "北京信息科技大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "bistu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.bistu.edu.cn/",
+        "desc": "北京信息科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'szu',
-    name: '深圳大学',
-    shortName: 'SZU / 深大',
-    region: '广东 · 深圳',
-    badge: '高水平大学',
-    systems: [
+    "id": "bucea",
+    "name": "北京建筑大学",
+    "shortName": "BUCEA / 北建大",
+    "pinyin": "beijingjianzhadaxue bucea bjd beijianda",
+    "region": "北京 · 西城",
+    "badge": "重点大学",
+    "systems": [
       {
-        id: 'szu_cas',
-        name: '深大统一身份认证',
-        level: '本科/研究生',
-        url: 'https://authserver.szu.edu.cn/authserver/login',
-        desc: '深圳大学教学一体化平台',
+        "id": "bucea_jw",
+        "name": "北京建筑大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.bucea.edu.cn/",
+        "desc": "北京建筑大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "bucea_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.bucea.edu.cn/",
+        "desc": "北京建筑大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'scu',
-    name: '四川大学',
-    shortName: 'SCU / 川大',
-    region: '四川 · 成都',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "ncut",
+    "name": "北方工业大学",
+    "shortName": "NCUT / 北方工大",
+    "pinyin": "beifanggongyedaxue ncut bfgd beifanggongda",
+    "region": "北京 · 石景山",
+    "badge": "省属重点",
+    "systems": [
       {
-        id: 'scu_cas',
-        name: '微川大统一身份认证',
-        level: '本科/研究生',
-        url: 'https://zhjw.scu.edu.cn/',
-        desc: '四川大学综合教务系统',
+        "id": "ncut_jw",
+        "name": "北方工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.ncut.edu.cn/",
+        "desc": "北方工业大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "ncut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ncut.edu.cn/",
+        "desc": "北方工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'uestc',
-    name: '电子科技大学',
-    shortName: 'UESTC / 成电',
-    region: '四川 · 成都',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "buu",
+    "name": "北京联合大学",
+    "shortName": "BUU / 联大",
+    "pinyin": "beijinglianhedaxue buu ld lianda",
+    "region": "北京 · 朝阳",
+    "badge": "市属大学",
+    "systems": [
       {
-        id: 'uestc_cas',
-        name: '成电统一身份认证',
-        level: '本科/研究生',
-        url: 'https://idas.uestc.edu.cn/authserver/login',
-        desc: '电子科技大学教务管理服务系统',
+        "id": "buu_jw",
+        "name": "北京联合大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.buu.edu.cn/",
+        "desc": "北京联合大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "buu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.buu.edu.cn/",
+        "desc": "北京联合大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'cqu',
-    name: '重庆大学',
-    shortName: 'CQU / 重大',
-    region: '重庆 · 沙坪坝',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "ccmu",
+    "name": "首都医科大学",
+    "shortName": "CCMU / 首医",
+    "pinyin": "shouduyikedaxue ccmu sy shouyi",
+    "region": "北京 · 丰台",
+    "badge": "医科重点",
+    "systems": [
       {
-        id: 'cqu_cas',
-        name: '重庆大学统一认证平台',
-        level: '本科/研究生',
-        url: 'https://sso.cqu.edu.cn/login',
-        desc: '重庆大学现代教务管理信息系统',
+        "id": "ccmu_jw",
+        "name": "首都医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ccmu.edu.cn/",
+        "desc": "首都医科大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "ccmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ccmu.edu.cn/",
+        "desc": "首都医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'swu',
-    name: '西南大学',
-    shortName: 'SWU / 西大',
-    region: '重庆 · 北碚',
-    badge: '211 · 双一流',
-    systems: [
+    "id": "tju",
+    "name": "天津大学",
+    "shortName": "TJU / 天大",
+    "pinyin": "tianjindaxue tju td tianda",
+    "region": "天津 · 津南",
+    "badge": "985 · 双一流",
+    "systems": [
       {
-        id: 'swu_cas',
-        name: '智慧西大统一身份认证',
-        level: '本科/研究生',
-        url: 'https://ids.swu.edu.cn/authserver/login',
-        desc: '西南大学教务选课一体化系统',
+        "id": "tju_jw",
+        "name": "天津大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jxgl.tju.edu.cn/",
+        "desc": "天津大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "tju_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.tju.edu.cn/",
+        "desc": "天津大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'xjtu',
-    name: '西安交通大学',
-    shortName: 'XJTU / 西安交大',
-    region: '陕西 · 西安',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "nku",
+    "name": "南开大学",
+    "shortName": "NKU / 南开",
+    "pinyin": "nankaidaxue nku nk nankai",
+    "region": "天津 · 南开",
+    "badge": "985 · 双一流",
+    "systems": [
       {
-        id: 'xjtu_cas',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://org.xjtu.edu.cn/openplatform/login.html',
-        desc: '西安交通大学本科教学服务综合系统',
+        "id": "nku_jw",
+        "name": "南开大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://eamis.nankai.edu.cn/",
+        "desc": "南开大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "nku_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nku.edu.cn/",
+        "desc": "南开大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'nwpu',
-    name: '西北工业大学',
-    shortName: 'NPU / 西工大',
-    region: '陕西 · 西安',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "tjpu",
+    "name": "天津工业大学",
+    "shortName": "TJPU / 天工大",
+    "pinyin": "tianjingongyedaxue tjpu tgd tiangongda",
+    "region": "天津 · 西青",
+    "badge": "双一流高校",
+    "systems": [
       {
-        id: 'nwpu_cas',
-        name: '翱翔门户统一身份认证',
-        level: '本科/研究生',
-        url: 'https://uis.nwpu.edu.cn/cas/login',
-        desc: '西北工业大学本科教学管理系统',
+        "id": "tjpu_jw",
+        "name": "天津工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.tiangong.edu.cn/",
+        "desc": "天津工业大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "tjpu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.tjpu.edu.cn/",
+        "desc": "天津工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'xidian',
-    name: '西安电子科技大学',
-    shortName: 'XIDIAN / 西电',
-    region: '陕西 · 西安',
-    badge: '211 · 双一流',
-    systems: [
+    "id": "tut",
+    "name": "天津理工大学",
+    "shortName": "TUT / 天理工",
+    "pinyin": "tianjinligongdaxue tut tlg tianligong",
+    "region": "天津 · 西青",
+    "badge": "市属重点",
+    "systems": [
       {
-        id: 'xidian_cas',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://ids.xidian.edu.cn/authserver/login',
-        desc: '西安电子科技大学智慧教务系统',
+        "id": "tut_jw",
+        "name": "天津理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.tjut.edu.cn/",
+        "desc": "天津理工大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "tut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.tut.edu.cn/",
+        "desc": "天津理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'hit',
-    name: '哈尔滨工业大学',
-    shortName: 'HIT / 哈工大',
-    region: '黑龙江 · 哈尔滨',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "tjnu",
+    "name": "天津师范大学",
+    "shortName": "TJNU / 天师大",
+    "pinyin": "tianjinshifandaxue tjnu tsd tianshida",
+    "region": "天津 · 西青",
+    "badge": "重点师范",
+    "systems": [
       {
-        id: 'hit_cas',
-        name: '今日哈工大统一认证',
-        level: '全日制',
-        url: 'https://cas.hit.edu.cn/authserver/login',
-        desc: '哈尔滨工业大学教务与教学服务平台',
+        "id": "tjnu_jw",
+        "name": "天津师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.tjnu.edu.cn/",
+        "desc": "天津师范大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "tjnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.tjnu.edu.cn/",
+        "desc": "天津师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'jmsu',
-    name: '佳木斯大学',
-    shortName: 'JMSU / 佳大',
-    region: '黑龙江 · 佳木斯',
-    badge: '青果 · 喜鹊儿',
-    systems: [
+    "id": "tust",
+    "name": "天津科技大学",
+    "shortName": "TUST / 天科大",
+    "pinyin": "tianjinkejidaxue tust tkd tiankeda",
+    "region": "天津 · 河西",
+    "badge": "市属重点",
+    "systems": [
       {
-        id: 'jmsu_jw',
-        name: '教务管理信息系统 (青果)',
-        level: '本科/专科/研究生',
-        url: 'http://jwc.jmsu.edu.cn/',
-        desc: '佳木斯大学青果教务系统（喜鹊儿移动端官方后台）',
+        "id": "tust_jw",
+        "name": "天津科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.tust.edu.cn/",
+        "desc": "天津科技大学教务综合服务平台，课表查询与导入"
       },
       {
-        id: 'jmsu_xiqueer',
-        name: '喜鹊儿移动教务直通平台',
-        level: '全校师生',
-        url: 'http://app.xiqueer.com/',
-        desc: '青果软件喜鹊儿掌上校园移动课表同步入口',
-      },
-      {
-        id: 'jmsu_portal',
-        name: '智慧佳大数字校园门户',
-        level: '全校师生',
-        url: 'https://www.jmsu.edu.cn/',
-        desc: '佳木斯大学官方数字校园统一门户',
-      },
-    ],
+        "id": "tust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.tust.edu.cn/",
+        "desc": "天津科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'jlu',
-    name: '吉林大学',
-    shortName: 'JLU / 吉大',
-    region: '吉林 · 长春',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "tufe",
+    "name": "天津财经大学",
+    "shortName": "TUFE / 天财",
+    "pinyin": "tianjincaijingdaxue tufe tc tiancai",
+    "region": "天津 · 河西",
+    "badge": "财经重点",
+    "systems": [
       {
-        id: 'jlu_cas',
-        name: '吉大综合服务认证平台',
-        level: '本科/研究生',
-        url: 'https://sso.jlu.edu.cn/cas/login',
-        desc: '吉林大学本科综合教务管理系统',
+        "id": "tufe_jw",
+        "name": "天津财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.tjufe.edu.cn/",
+        "desc": "天津财经大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "tufe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.tufe.edu.cn/",
+        "desc": "天津财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'neu',
-    name: '东北大学',
-    shortName: 'NEU / 东大',
-    region: '辽宁 · 沈阳',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "tjtcm",
+    "name": "天津中医药大学",
+    "shortName": "TUTCM / 天中医",
+    "pinyin": "tianjinzhongyiyaodaxue tutcm tzy tianzhongyi",
+    "region": "天津 · 静海",
+    "badge": "双一流高校",
+    "systems": [
       {
-        id: 'neu_cas',
-        name: '东大统一身份认证',
-        level: '本科/研究生',
-        url: 'https://pass.neu.edu.cn/tpass/login',
-        desc: '东北大学教务选课系统通道',
+        "id": "tjtcm_jw",
+        "name": "天津中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.tjutcm.edu.cn/",
+        "desc": "天津中医药大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "tjtcm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.tjtcm.edu.cn/",
+        "desc": "天津中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'tju',
-    name: '天津大学',
-    shortName: 'TJU / 天大',
-    region: '天津 · 南开',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "cauc",
+    "name": "中国民航大学",
+    "shortName": "CAUC / 中航大",
+    "pinyin": "zhongguominhangdaxue cauc zhd zhonghangda",
+    "region": "天津 · 东丽",
+    "badge": "民航特色",
+    "systems": [
       {
-        id: 'tju_cas',
-        name: '天大统一认证平台',
-        level: '本科/研究生',
-        url: 'https://sso.tju.edu.cn/cas/login',
-        desc: '天津大学本科教学管理系统',
+        "id": "cauc_jw",
+        "name": "中国民航大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.cauc.edu.cn/",
+        "desc": "中国民航大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "cauc_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cauc.edu.cn/",
+        "desc": "中国民航大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'nankai',
-    name: '南开大学',
-    shortName: 'NKU / 南开',
-    region: '天津 · 南开',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "ysu",
+    "name": "燕山大学",
+    "shortName": "YSU / 燕大",
+    "pinyin": "yanshandaxue ysu yd yanda",
+    "region": "河北 · 秦皇岛",
+    "badge": "省部共建重点",
+    "systems": [
       {
-        id: 'nankai_cas',
-        name: '飞书/统一身份认证',
-        level: '本科/研究生',
-        url: 'https://authserver.nankai.edu.cn/authserver/login',
-        desc: '南开大学综合教务信息系统',
+        "id": "ysu_jw",
+        "name": "燕山大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.ysu.edu.cn/",
+        "desc": "燕山大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "ysu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ysu.edu.cn/",
+        "desc": "燕山大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'sdu',
-    name: '山东大学',
-    shortName: 'SDU / 山大',
-    region: '山东 · 济南',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "hbu",
+    "name": "河北大学",
+    "shortName": "HBU / 河大",
+    "pinyin": "hebeidaxue hbu hd heda",
+    "region": "河北 · 保定",
+    "badge": "部省合建重点",
+    "systems": [
       {
-        id: 'sdu_cas',
-        name: '山大统一身份认证服务',
-        level: '本科/研究生',
-        url: 'https://pass.sdu.edu.cn/cas/login',
-        desc: '山东大学本科综合教务系统',
+        "id": "hbu_jw",
+        "name": "河北大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hbu.cn/",
+        "desc": "河北大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "hbu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hbu.edu.cn/",
+        "desc": "河北大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'zzu',
-    name: '郑州大学',
-    shortName: 'ZZU / 郑大',
-    region: '河南 · 郑州',
-    badge: '211 · 双一流',
-    systems: [
+    "id": "hebut",
+    "name": "河北工业大学",
+    "shortName": "HEBUT / 河工大",
+    "pinyin": "hebeigongyedaxue hebut hgd hegongda",
+    "region": "河北/天津 · 北辰",
+    "badge": "211 · 双一流",
+    "systems": [
       {
-        id: 'zzu_cas',
-        name: '郑大综合服务认证平台',
-        level: '本科/研究生',
-        url: 'https://cas.zzu.edu.cn/authserver/login',
-        desc: '郑州大学综合教务系统',
+        "id": "hebut_jw",
+        "name": "河北工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.hebut.edu.cn/",
+        "desc": "河北工业大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "hebut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hebut.edu.cn/",
+        "desc": "河北工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'xmu',
-    name: '厦门大学',
-    shortName: 'XMU / 厦大',
-    region: '福建 · 厦门',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "hebnu",
+    "name": "河北师范大学",
+    "shortName": "HEBNU / 河北师大",
+    "pinyin": "hebeishifandaxue hebnu hbsd hebeishida",
+    "region": "河北 · 石家庄",
+    "badge": "省属重点",
+    "systems": [
       {
-        id: 'xmu_cas',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://pass.xmu.edu.cn/cas/login',
-        desc: '厦门大学教务管理系统',
+        "id": "hebnu_jw",
+        "name": "河北师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hebtu.edu.cn/",
+        "desc": "河北师范大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "hebnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hebnu.edu.cn/",
+        "desc": "河北师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'ncu',
-    name: '南昌大学',
-    shortName: 'NCU / 昌大',
-    region: '江西 · 南昌',
-    badge: '211 · 双一流',
-    systems: [
+    "id": "stdu",
+    "name": "石家庄铁道大学",
+    "shortName": "STDU / 铁大",
+    "pinyin": "shijiazhuangtiedaodaxue stdu td tieda",
+    "region": "河北 · 石家庄",
+    "badge": "特色高水平",
+    "systems": [
       {
-        id: 'ncu_cas',
-        name: '统一身份认证平台',
-        level: '本科/研究生',
-        url: 'https://cas.ncu.edu.cn/authserver/login',
-        desc: '南昌大学教务管理系统',
+        "id": "stdu_jw",
+        "name": "石家庄铁道大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.stdu.edu.cn/",
+        "desc": "石家庄铁道大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "stdu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.stdu.edu.cn/",
+        "desc": "石家庄铁道大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
   {
-    id: 'lzu',
-    name: '兰州大学',
-    shortName: 'LZU / 兰大',
-    region: '甘肃 · 兰州',
-    badge: '985 · 双一流',
-    systems: [
+    "id": "ncst",
+    "name": "华北理工大学",
+    "shortName": "NCST / 华理工",
+    "pinyin": "huabeiligongdaxue ncst hblg huabeiligong",
+    "region": "河北 · 唐山",
+    "badge": "省部共建",
+    "systems": [
       {
-        id: 'lzu_cas',
-        name: '兰大个人工作台认证',
-        level: '全日制',
-        url: 'https://cas.lzu.edu.cn/authserver/login',
-        desc: '兰州大学教务系统直连',
+        "id": "ncst_jw",
+        "name": "华北理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.ncst.edu.cn/",
+        "desc": "华北理工大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "ncst_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ncst.edu.cn/",
+        "desc": "华北理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
-
-  // ================= 通用高校与自定义教务系统 =================
   {
-    id: 'custom_general',
-    name: '全国高校通用通道 (支持任何大学)',
-    shortName: '通用 / 全国高校',
-    region: '全国高校通用',
-    badge: '全网兼容',
-    systems: [
+    "id": "hebust",
+    "name": "河北科技大学",
+    "shortName": "HEBUST / 河科大",
+    "pinyin": "hebeikejidaxue hebust hkd hebeikeda",
+    "region": "河北 · 石家庄",
+    "badge": "省属重点",
+    "systems": [
       {
-        id: 'custom_general_input',
-        name: '通用教务直连 / WebVPN',
-        level: '正方/强智/青果/金智',
-        url: 'https://',
-        desc: '输入您学校的教务登录网址或校外 WebVPN，登录后自动提取课表',
+        "id": "hebust_jw",
+        "name": "河北科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hebust.edu.cn/",
+        "desc": "河北科技大学教务综合服务平台，课表查询与导入"
       },
-    ],
+      {
+        "id": "hebust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hebust.edu.cn/",
+        "desc": "河北科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
   },
+  {
+    "id": "hebmu",
+    "name": "河北医科大学",
+    "shortName": "HEBMU / 河北医大",
+    "pinyin": "hebeiyikedaxue hebmu hyd hebeiyida",
+    "region": "河北 · 石家庄",
+    "badge": "重点医科",
+    "systems": [
+      {
+        "id": "hebmu_jw",
+        "name": "河北医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hebmu.edu.cn/",
+        "desc": "河北医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hebmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hebmu.edu.cn/",
+        "desc": "河北医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hebau",
+    "name": "河北农业大学",
+    "shortName": "HEBAU / 河北农大",
+    "pinyin": "hebeinongyedaxue hebau hnd hebeinongda",
+    "region": "河北 · 保定",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "hebau_jw",
+        "name": "河北农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hebau.edu.cn/",
+        "desc": "河北农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hebau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hebau.edu.cn/",
+        "desc": "河北农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hueb",
+    "name": "河北经贸大学",
+    "shortName": "HUEB / 河经贸",
+    "pinyin": "hebeijingmaodaxue hueb hjm hebeijingmao",
+    "region": "河北 · 石家庄",
+    "badge": "财经重点",
+    "systems": [
+      {
+        "id": "hueb_jw",
+        "name": "河北经贸大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.heuet.edu.cn/",
+        "desc": "河北经贸大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hueb_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hueb.edu.cn/",
+        "desc": "河北经贸大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hgu",
+    "name": "河北地质大学",
+    "shortName": "HGU / 河地大",
+    "pinyin": "hebeidizhidaxue hgu hdd hebeidida",
+    "region": "河北 · 石家庄",
+    "badge": "特色高校",
+    "systems": [
+      {
+        "id": "hgu_jw",
+        "name": "河北地质大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hgu.edu.cn/",
+        "desc": "河北地质大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hgu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hgu.edu.cn/",
+        "desc": "河北地质大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "tyut",
+    "name": "太原理工大学",
+    "shortName": "TYUT / 太原理工",
+    "pinyin": "taiyuanligongdaxue tyut tylg taiyuanligong",
+    "region": "山西 · 太原",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "tyut_jw",
+        "name": "太原理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jxgl.tyut.edu.cn/",
+        "desc": "太原理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "tyut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.tyut.edu.cn/",
+        "desc": "太原理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sxu",
+    "name": "山西大学",
+    "shortName": "SXU / 山大",
+    "pinyin": "shanxidaxue sxu sd shanda shanxidaxue",
+    "region": "山西 · 太原",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "sxu_jw",
+        "name": "山西大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sxu.edu.cn/",
+        "desc": "山西大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sxu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sxu.edu.cn/",
+        "desc": "山西大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nuc",
+    "name": "中北大学",
+    "shortName": "NUC / 中北",
+    "pinyin": "zhongbeidaxue nuc zb zhongbei",
+    "region": "山西 · 太原",
+    "badge": "省部共建",
+    "systems": [
+      {
+        "id": "nuc_jw",
+        "name": "中北大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.nuc.edu.cn/",
+        "desc": "中北大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nuc_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nuc.edu.cn/",
+        "desc": "中北大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "tyust",
+    "name": "太原科技大学",
+    "shortName": "TYUST / 太科大",
+    "pinyin": "taiyuankejidaxue tyust tkd taiyuankeda",
+    "region": "山西 · 太原",
+    "badge": "省属高校",
+    "systems": [
+      {
+        "id": "tyust_jw",
+        "name": "太原科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.tyust.edu.cn/",
+        "desc": "太原科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "tyust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.tyust.edu.cn/",
+        "desc": "太原科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sxnu",
+    "name": "山西师范大学",
+    "shortName": "SXNU / 山西师大",
+    "pinyin": "shanxishifandaxue sxnu sxsd shanxishida",
+    "region": "山西 · 太原",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "sxnu_jw",
+        "name": "山西师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sxnu.edu.cn/",
+        "desc": "山西师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sxnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sxnu.edu.cn/",
+        "desc": "山西师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sxufe",
+    "name": "山西财经大学",
+    "shortName": "SXUFE / 山财",
+    "pinyin": "shanxicaijingdaxue sxufe sc shancai",
+    "region": "山西 · 太原",
+    "badge": "财经重点",
+    "systems": [
+      {
+        "id": "sxufe_jw",
+        "name": "山西财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sxufe.edu.cn/",
+        "desc": "山西财经大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sxufe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sxufe.edu.cn/",
+        "desc": "山西财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sxmu",
+    "name": "山西医科大学",
+    "shortName": "SXMU / 山医大",
+    "pinyin": "shanxiyikedaxue sxmu syd shanyida",
+    "region": "山西 · 太原",
+    "badge": "医学重点",
+    "systems": [
+      {
+        "id": "sxmu_jw",
+        "name": "山西医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sxmu.edu.cn/",
+        "desc": "山西医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sxmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sxmu.edu.cn/",
+        "desc": "山西医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sxau",
+    "name": "山西农业大学",
+    "shortName": "SXAU / 山西农大",
+    "pinyin": "shanxinongyedaxue sxau snd shanxinongda",
+    "region": "山西 · 晋中",
+    "badge": "重点高校",
+    "systems": [
+      {
+        "id": "sxau_jw",
+        "name": "山西农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sxau.edu.cn/",
+        "desc": "山西农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sxau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sxau.edu.cn/",
+        "desc": "山西农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jzxy",
+    "name": "晋中学院",
+    "shortName": "JZU / 晋中",
+    "pinyin": "jinzhongxueyuan jzu jzxy jinzhong",
+    "region": "山西 · 晋中",
+    "badge": "公办本科",
+    "systems": [
+      {
+        "id": "jzxy_jw",
+        "name": "晋中学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.jzxy.edu.cn/",
+        "desc": "晋中学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jzxy_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jzxy.edu.cn/",
+        "desc": "晋中学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sxdtdx",
+    "name": "山西大同大学",
+    "shortName": "SDU / 大同大学",
+    "pinyin": "shanxidatongdaxue sdu dtdx datong",
+    "region": "山西 · 大同",
+    "badge": "公办综合",
+    "systems": [
+      {
+        "id": "sxdtdx_jw",
+        "name": "山西大同大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sxdtdx.edu.cn/",
+        "desc": "山西大同大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sxdtdx_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sxdtdx.edu.cn/",
+        "desc": "山西大同大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "imu",
+    "name": "内蒙古大学",
+    "shortName": "IMU / 内大",
+    "pinyin": "neimenggudaxue imu nd neida",
+    "region": "内蒙古 · 呼和浩特",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "imu_jw",
+        "name": "内蒙古大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.imu.edu.cn/",
+        "desc": "内蒙古大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "imu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.imu.edu.cn/",
+        "desc": "内蒙古大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "imut",
+    "name": "内蒙古工业大学",
+    "shortName": "IMUT / 内工大",
+    "pinyin": "neimenggugongyedaxue imut ngd neigongda",
+    "region": "内蒙古 · 呼和浩特",
+    "badge": "自治区重点",
+    "systems": [
+      {
+        "id": "imut_jw",
+        "name": "内蒙古工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.imut.edu.cn/",
+        "desc": "内蒙古工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "imut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.imut.edu.cn/",
+        "desc": "内蒙古工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "imau",
+    "name": "内蒙古农业大学",
+    "shortName": "IMAU / 内农大",
+    "pinyin": "neimenggunongyedaxue imau nnd neinongda",
+    "region": "内蒙古 · 呼和浩特",
+    "badge": "特色重点",
+    "systems": [
+      {
+        "id": "imau_jw",
+        "name": "内蒙古农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.imau.edu.cn/",
+        "desc": "内蒙古农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "imau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.imau.edu.cn/",
+        "desc": "内蒙古农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "imnu",
+    "name": "内蒙古师范大学",
+    "shortName": "IMNU / 内师大",
+    "pinyin": "neimenggushifandaxue imnu nsd neishida",
+    "region": "内蒙古 · 呼和浩特",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "imnu_jw",
+        "name": "内蒙古师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.imnu.edu.cn/",
+        "desc": "内蒙古师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "imnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.imnu.edu.cn/",
+        "desc": "内蒙古师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "imun",
+    "name": "内蒙古民族大学",
+    "shortName": "IMUN / 蒙民大",
+    "pinyin": "neimengguminzudaxue imun mmd mengminda",
+    "region": "内蒙古 · 通辽",
+    "badge": "综合重点",
+    "systems": [
+      {
+        "id": "imun_jw",
+        "name": "内蒙古民族大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.imun.edu.cn/",
+        "desc": "内蒙古民族大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "imun_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.imun.edu.cn/",
+        "desc": "内蒙古民族大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "imust",
+    "name": "内蒙古科技大学",
+    "shortName": "IMUST / 内科大",
+    "pinyin": "neimenggukejidaxue imust nkd neikeda",
+    "region": "内蒙古 · 包头",
+    "badge": "公办重点",
+    "systems": [
+      {
+        "id": "imust_jw",
+        "name": "内蒙古科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.imust.edu.cn/",
+        "desc": "内蒙古科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "imust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.imust.edu.cn/",
+        "desc": "内蒙古科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "dlut",
+    "name": "大连理工大学",
+    "shortName": "DUT / 大工",
+    "pinyin": "dalianligongdaxue dlut dut dg dagong",
+    "region": "辽宁 · 大连",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "dlut_jw",
+        "name": "大连理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jxgl.dlut.edu.cn/",
+        "desc": "大连理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "dlut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.dlut.edu.cn/",
+        "desc": "大连理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "neu",
+    "name": "东北大学",
+    "shortName": "NEU / 东大",
+    "pinyin": "dongbeidaxue neu dd dongda",
+    "region": "辽宁 · 沈阳",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "neu_jw",
+        "name": "东北大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://219.216.96.4/",
+        "desc": "东北大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "neu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.neu.edu.cn/",
+        "desc": "东北大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "lnu",
+    "name": "辽宁大学",
+    "shortName": "LNU / 辽大",
+    "pinyin": "liaoningdaxue lnu ld liaoda",
+    "region": "辽宁 · 沈阳",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "lnu_jw",
+        "name": "辽宁大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.lnu.edu.cn/",
+        "desc": "辽宁大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "lnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.lnu.edu.cn/",
+        "desc": "辽宁大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "dmu",
+    "name": "大连海事大学",
+    "shortName": "DMU / 海大",
+    "pinyin": "dalianhaishidaxue dmu hd haida haishi",
+    "region": "辽宁 · 大连",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "dmu_jw",
+        "name": "大连海事大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.dlmu.edu.cn/",
+        "desc": "大连海事大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "dmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.dmu.edu.cn/",
+        "desc": "大连海事大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sau",
+    "name": "沈阳航空航天大学",
+    "shortName": "SAU / 沈航",
+    "pinyin": "shenyanghangkonghangtiandaxue sau sh shenhang",
+    "region": "辽宁 · 沈阳",
+    "badge": "特色高水平",
+    "systems": [
+      {
+        "id": "sau_jw",
+        "name": "沈阳航空航天大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.sau.edu.cn/",
+        "desc": "沈阳航空航天大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sau.edu.cn/",
+        "desc": "沈阳航空航天大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sylu",
+    "name": "沈阳理工大学",
+    "shortName": "SYLU / 沈理工",
+    "pinyin": "shenyangligongdaxue sylu slg shenligong",
+    "region": "辽宁 · 沈阳",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "sylu_jw",
+        "name": "沈阳理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.sylu.edu.cn/",
+        "desc": "沈阳理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sylu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sylu.edu.cn/",
+        "desc": "沈阳理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sut",
+    "name": "沈阳工业大学",
+    "shortName": "SUT / 沈工大",
+    "pinyin": "shenyanggongyedaxue sut sgd shengongda",
+    "region": "辽宁 · 沈阳",
+    "badge": "重点工科",
+    "systems": [
+      {
+        "id": "sut_jw",
+        "name": "沈阳工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sut.edu.cn/",
+        "desc": "沈阳工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sut.edu.cn/",
+        "desc": "沈阳工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "lntu",
+    "name": "辽宁工程技术大学",
+    "shortName": "LNTU / 辽工程",
+    "pinyin": "liaoninggongchengjishudaxue lntu lgc liaogongcheng",
+    "region": "辽宁 · 阜新",
+    "badge": "重点工科",
+    "systems": [
+      {
+        "id": "lntu_jw",
+        "name": "辽宁工程技术大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.lntu.edu.cn/",
+        "desc": "辽宁工程技术大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "lntu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.lntu.edu.cn/",
+        "desc": "辽宁工程技术大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "lnpu",
+    "name": "辽宁石油化工大学",
+    "shortName": "LNPU / 辽石化",
+    "pinyin": "liaoningshiyouhuagongdaxue lnpu lsh liaoshihua",
+    "region": "辽宁 · 抚顺",
+    "badge": "石化特色",
+    "systems": [
+      {
+        "id": "lnpu_jw",
+        "name": "辽宁石油化工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.lnpu.edu.cn/",
+        "desc": "辽宁石油化工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "lnpu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.lnpu.edu.cn/",
+        "desc": "辽宁石油化工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "dlju",
+    "name": "大连交通大学",
+    "shortName": "DLJTU / 大连交大",
+    "pinyin": "dalianjiaotongdaxue dljtu dljd dalianjiaoda",
+    "region": "辽宁 · 大连",
+    "badge": "行业特色",
+    "systems": [
+      {
+        "id": "dlju_jw",
+        "name": "大连交通大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.djtu.edu.cn/",
+        "desc": "大连交通大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "dlju_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.dlju.edu.cn/",
+        "desc": "大连交通大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sjzu",
+    "name": "沈阳建筑大学",
+    "shortName": "SJZU / 沈建大",
+    "pinyin": "shenyangjianzhadaxue sjzu sjd shenjianda",
+    "region": "辽宁 · 沈阳",
+    "badge": "建筑特色",
+    "systems": [
+      {
+        "id": "sjzu_jw",
+        "name": "沈阳建筑大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sjzu.edu.cn/",
+        "desc": "沈阳建筑大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sjzu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sjzu.edu.cn/",
+        "desc": "沈阳建筑大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "dlpu",
+    "name": "大连工业大学",
+    "shortName": "DLPU / 大工大",
+    "pinyin": "daliangongyedaxue dlpu dgd daliangongda",
+    "region": "辽宁 · 大连",
+    "badge": "轻工特色",
+    "systems": [
+      {
+        "id": "dlpu_jw",
+        "name": "大连工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.dlpu.edu.cn/",
+        "desc": "大连工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "dlpu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.dlpu.edu.cn/",
+        "desc": "大连工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "syau",
+    "name": "沈阳农业大学",
+    "shortName": "SYAU / 沈农",
+    "pinyin": "shenyangnongyedaxue syau sn shennong",
+    "region": "辽宁 · 沈阳",
+    "badge": "农科重点",
+    "systems": [
+      {
+        "id": "syau_jw",
+        "name": "沈阳农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.syau.edu.cn/",
+        "desc": "沈阳农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "syau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.syau.edu.cn/",
+        "desc": "沈阳农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cmu_ln",
+    "name": "中国医科大学",
+    "shortName": "CMU / 中国医大",
+    "pinyin": "zhongguoyikedaxue cmu zgyd zhongguoyida",
+    "region": "辽宁 · 沈阳",
+    "badge": "医学重点",
+    "systems": [
+      {
+        "id": "cmu_ln_jw",
+        "name": "中国医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.cmu.edu.cn/",
+        "desc": "中国医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cmu_ln_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cmu_ln.edu.cn/",
+        "desc": "中国医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "dmu_med",
+    "name": "大连医科大学",
+    "shortName": "DLMEDU / 大医",
+    "pinyin": "dalianyikedaxue dlmedu dy dayi",
+    "region": "辽宁 · 大连",
+    "badge": "重点医科",
+    "systems": [
+      {
+        "id": "dmu_med_jw",
+        "name": "大连医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.dmu.edu.cn/",
+        "desc": "大连医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "dmu_med_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.dmu_med.edu.cn/",
+        "desc": "大连医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "lnnu",
+    "name": "辽宁师范大学",
+    "shortName": "LNNU / 辽师大",
+    "pinyin": "liaoningshifandaxue lnnu lsd liaoshida",
+    "region": "辽宁 · 大连",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "lnnu_jw",
+        "name": "辽宁师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.lnnu.edu.cn/",
+        "desc": "辽宁师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "lnnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.lnnu.edu.cn/",
+        "desc": "辽宁师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "synu",
+    "name": "沈阳师范大学",
+    "shortName": "SYNU / 沈师大",
+    "pinyin": "shenyangshifandaxue synu ssd shenshida",
+    "region": "辽宁 · 沈阳",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "synu_jw",
+        "name": "沈阳师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.synu.edu.cn/",
+        "desc": "沈阳师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "synu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.synu.edu.cn/",
+        "desc": "沈阳师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "dufe",
+    "name": "东北财经大学",
+    "shortName": "DUFE / 东财",
+    "pinyin": "dongbeicaijingdaxue dufe dc dongcai",
+    "region": "辽宁 · 大连",
+    "badge": "财经名校",
+    "systems": [
+      {
+        "id": "dufe_jw",
+        "name": "东北财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.dufe.edu.cn/",
+        "desc": "东北财经大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "dufe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.dufe.edu.cn/",
+        "desc": "东北财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "syu",
+    "name": "沈阳大学",
+    "shortName": "SYU / 沈大",
+    "pinyin": "shenyangdaxue syu sd shenda",
+    "region": "辽宁 · 沈阳",
+    "badge": "公办综合",
+    "systems": [
+      {
+        "id": "syu_jw",
+        "name": "沈阳大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.syu.edu.cn/",
+        "desc": "沈阳大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "syu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.syu.edu.cn/",
+        "desc": "沈阳大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "asnu",
+    "name": "鞍山师范学院",
+    "shortName": "ASNU / 鞍师",
+    "pinyin": "anshanshifanxueyuan asnu as anshi",
+    "region": "辽宁 · 鞍山",
+    "badge": "公办本科",
+    "systems": [
+      {
+        "id": "asnu_jw",
+        "name": "鞍山师范学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.asnc.edu.cn/",
+        "desc": "鞍山师范学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "asnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.asnu.edu.cn/",
+        "desc": "鞍山师范学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jlu",
+    "name": "吉林大学",
+    "shortName": "JLU / 吉大",
+    "pinyin": "jilindaxue jlu jd jida",
+    "region": "吉林 · 长春",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "jlu_jw",
+        "name": "吉林大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://uims.jlu.edu.cn/",
+        "desc": "吉林大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jlu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jlu.edu.cn/",
+        "desc": "吉林大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nenu",
+    "name": "东北师范大学",
+    "shortName": "NENU / 东北师大",
+    "pinyin": "dongbeishifandaxue nenu dbsd dongbeishida",
+    "region": "吉林 · 长春",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "nenu_jw",
+        "name": "东北师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.nenu.edu.cn/",
+        "desc": "东北师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nenu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nenu.edu.cn/",
+        "desc": "东北师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ybu",
+    "name": "延边大学",
+    "shortName": "YBU / 延大",
+    "pinyin": "yanbiandaxue ybu yd yanda",
+    "region": "吉林 · 延吉",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "ybu_jw",
+        "name": "延边大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ybu.edu.cn/",
+        "desc": "延边大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ybu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ybu.edu.cn/",
+        "desc": "延边大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cust",
+    "name": "长春理工大学",
+    "shortName": "CUST / 长理工",
+    "pinyin": "changchunligongdaxue cust clg changligong",
+    "region": "吉林 · 长春",
+    "badge": "省部共建重点",
+    "systems": [
+      {
+        "id": "cust_jw",
+        "name": "长春理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.cust.edu.cn/",
+        "desc": "长春理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cust.edu.cn/",
+        "desc": "长春理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jlau",
+    "name": "吉林农业大学",
+    "shortName": "JLAU / 吉农",
+    "pinyin": "jilinnongyedaxue jlau jn jinong",
+    "region": "吉林 · 长春",
+    "badge": "重点高校",
+    "systems": [
+      {
+        "id": "jlau_jw",
+        "name": "吉林农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.jlau.edu.cn/",
+        "desc": "吉林农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jlau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jlau.edu.cn/",
+        "desc": "吉林农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ccucm",
+    "name": "长春中医药大学",
+    "shortName": "CCUCM / 长中医",
+    "pinyin": "changchunzhongyiyaodaxue ccucm czy changzhongyi",
+    "region": "吉林 · 长春",
+    "badge": "特色高水平",
+    "systems": [
+      {
+        "id": "ccucm_jw",
+        "name": "长春中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ccucm.edu.cn/",
+        "desc": "长春中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ccucm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ccucm.edu.cn/",
+        "desc": "长春中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "neepu",
+    "name": "东北电力大学",
+    "shortName": "NEEPU / 东电",
+    "pinyin": "dongbeidianlidaxue neepu dd dongdian",
+    "region": "吉林 · 吉林",
+    "badge": "行业特色重点",
+    "systems": [
+      {
+        "id": "neepu_jw",
+        "name": "东北电力大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.neepu.edu.cn/",
+        "desc": "东北电力大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "neepu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.neepu.edu.cn/",
+        "desc": "东北电力大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ccit",
+    "name": "长春工业大学",
+    "shortName": "CCUT / 长工大",
+    "pinyin": "changchungongyedaxue ccut cgd changgongda",
+    "region": "吉林 · 长春",
+    "badge": "重点工科",
+    "systems": [
+      {
+        "id": "ccit_jw",
+        "name": "长春工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ccut.edu.cn/",
+        "desc": "长春工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ccit_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ccit.edu.cn/",
+        "desc": "长春工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jlufe",
+    "name": "吉林财经大学",
+    "shortName": "JUFE / 吉财",
+    "pinyin": "jilincaijingdaxue jufe jc jicai",
+    "region": "吉林 · 长春",
+    "badge": "财经重点",
+    "systems": [
+      {
+        "id": "jlufe_jw",
+        "name": "吉林财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.jlufe.edu.cn/",
+        "desc": "吉林财经大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jlufe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jlufe.edu.cn/",
+        "desc": "吉林财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "beihua",
+    "name": "北华大学",
+    "shortName": "BHU / 北华",
+    "pinyin": "beihuadaxue bhu bh beihua",
+    "region": "吉林 · 吉林",
+    "badge": "省属重点 · 青果",
+    "systems": [
+      {
+        "id": "beihua_jw",
+        "name": "北华大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.beihua.edu.cn/",
+        "desc": "北华大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "beihua_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.beihua.edu.cn/",
+        "desc": "北华大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "thnu",
+    "name": "通化师范学院",
+    "shortName": "THNU / 通师",
+    "pinyin": "tonghuashifanxueyuan thnu ts tongshi",
+    "region": "吉林 · 通化",
+    "badge": "师范本科",
+    "systems": [
+      {
+        "id": "thnu_jw",
+        "name": "通化师范学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.thnu.edu.cn/",
+        "desc": "通化师范学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "thnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.thnu.edu.cn/",
+        "desc": "通化师范学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hit",
+    "name": "哈尔滨工业大学",
+    "shortName": "HIT / 哈工大",
+    "pinyin": "haerbingongyedaxue hit hgd hagongda",
+    "region": "黑龙江 · 哈尔滨",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "hit_jw",
+        "name": "哈尔滨工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hit.edu.cn/",
+        "desc": "哈尔滨工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hit_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hit.edu.cn/",
+        "desc": "哈尔滨工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "heu",
+    "name": "哈尔滨工程大学",
+    "shortName": "HEU / 哈工程",
+    "pinyin": "haerbingongchengdaxue heu hgc hagongcheng",
+    "region": "黑龙江 · 哈尔滨",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "heu_jw",
+        "name": "哈尔滨工程大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "https://cas.hrbeu.edu.cn/",
+        "desc": "哈尔滨工程大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "heu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.heu.edu.cn/",
+        "desc": "哈尔滨工程大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hlju",
+    "name": "黑龙江大学",
+    "shortName": "HLJU / 黑大",
+    "pinyin": "heilongjiangdaxue hlju hd heida",
+    "region": "黑龙江 · 哈尔滨",
+    "badge": "省部共建重点",
+    "systems": [
+      {
+        "id": "hlju_jw",
+        "name": "黑龙江大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.hlju.edu.cn/",
+        "desc": "黑龙江大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hlju_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hlju.edu.cn/",
+        "desc": "黑龙江大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nefu",
+    "name": "东北林业大学",
+    "shortName": "NEFU / 东林",
+    "pinyin": "dongbeilinyedaxue nefu dl donglin",
+    "region": "黑龙江 · 哈尔滨",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "nefu_jw",
+        "name": "东北林业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwc.nefu.edu.cn/",
+        "desc": "东北林业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nefu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nefu.edu.cn/",
+        "desc": "东北林业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "neau",
+    "name": "东北农业大学",
+    "shortName": "NEAU / 东农",
+    "pinyin": "dongbeinongyedaxue neau dn dongnong",
+    "region": "黑龙江 · 哈尔滨",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "neau_jw",
+        "name": "东北农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.neau.edu.cn/",
+        "desc": "东北农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "neau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.neau.edu.cn/",
+        "desc": "东北农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hrbust",
+    "name": "哈尔滨理工大学",
+    "shortName": "HRBUST / 哈理工",
+    "pinyin": "haerbinligongdaxue hrbust hlg haligong",
+    "region": "黑龙江 · 哈尔滨",
+    "badge": "省属高水平",
+    "systems": [
+      {
+        "id": "hrbust_jw",
+        "name": "哈尔滨理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwzx.hrbust.edu.cn/",
+        "desc": "哈尔滨理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hrbust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hrbust.edu.cn/",
+        "desc": "哈尔滨理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hrbmu",
+    "name": "哈尔滨医科大学",
+    "shortName": "HMU / 哈医大",
+    "pinyin": "haerbinyikedaxue hmu hyd hayida",
+    "region": "黑龙江 · 哈尔滨",
+    "badge": "医学名校",
+    "systems": [
+      {
+        "id": "hrbmu_jw",
+        "name": "哈尔滨医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hrbmu.edu.cn/",
+        "desc": "哈尔滨医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hrbmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hrbmu.edu.cn/",
+        "desc": "哈尔滨医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hrbnu",
+    "name": "哈尔滨师范大学",
+    "shortName": "HNU / 哈师大",
+    "pinyin": "haerbinshifandaxue hnu hsd hashida",
+    "region": "黑龙江 · 哈尔滨",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "hrbnu_jw",
+        "name": "哈尔滨师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hrbnu.edu.cn/",
+        "desc": "哈尔滨师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hrbnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hrbnu.edu.cn/",
+        "desc": "哈尔滨师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "qqu",
+    "name": "齐齐哈尔大学",
+    "shortName": "QQU / 齐大",
+    "pinyin": "qiqihaerdaxue qqu qd qida qingguo",
+    "region": "黑龙江 · 齐齐哈尔",
+    "badge": "青果 · 综合大学",
+    "systems": [
+      {
+        "id": "qqu_jw",
+        "name": "齐齐哈尔大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.qqhru.edu.cn/",
+        "desc": "齐齐哈尔大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "qqu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.qqu.edu.cn/",
+        "desc": "齐齐哈尔大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nepu",
+    "name": "东北石油大学",
+    "shortName": "NEPU / 东油",
+    "pinyin": "dongbeishiyoudaxue nepu dy dongyou",
+    "region": "黑龙江 · 大庆",
+    "badge": "石油重点",
+    "systems": [
+      {
+        "id": "nepu_jw",
+        "name": "东北石油大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.nepu.edu.cn/",
+        "desc": "东北石油大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nepu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nepu.edu.cn/",
+        "desc": "东北石油大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "mdjnu",
+    "name": "牡丹江师范学院",
+    "shortName": "MNU / 牡师院",
+    "pinyin": "mudanjiangshifanxueyuan mnu msy mudanjiang qingguo",
+    "region": "黑龙江 · 牡丹江",
+    "badge": "师范院校 · 青果",
+    "systems": [
+      {
+        "id": "mdjnu_jw",
+        "name": "牡丹江师范学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.mdjnu.edu.cn/",
+        "desc": "牡丹江师范学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "mdjnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.mdjnu.edu.cn/",
+        "desc": "牡丹江师范学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "mdjmu",
+    "name": "牡丹江医学院",
+    "shortName": "MMU / 牡医",
+    "pinyin": "mudanjiangyixueyuan mmu my mudanjiangyi",
+    "region": "黑龙江 · 牡丹江",
+    "badge": "医学本科",
+    "systems": [
+      {
+        "id": "mdjmu_jw",
+        "name": "牡丹江医学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.mdjmu.edu.cn/",
+        "desc": "牡丹江医学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "mdjmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.mdjmu.edu.cn/",
+        "desc": "牡丹江医学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hrbcu",
+    "name": "哈尔滨商业大学",
+    "shortName": "HSD / 哈商大",
+    "pinyin": "haerbinshangyedaxue hsd hsd hashada",
+    "region": "黑龙江 · 哈尔滨",
+    "badge": "商科重点",
+    "systems": [
+      {
+        "id": "hrbcu_jw",
+        "name": "哈尔滨商业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hrbcu.edu.cn/",
+        "desc": "哈尔滨商业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hrbcu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hrbcu.edu.cn/",
+        "desc": "哈尔滨商业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hljucm",
+    "name": "黑龙江中医药大学",
+    "shortName": "HLJUCM / 龙中医",
+    "pinyin": "heilongjiangzhongyiyaodaxue hljucm lzy longzhongyi",
+    "region": "黑龙江 · 哈尔滨",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "hljucm_jw",
+        "name": "黑龙江中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hljucm.net/",
+        "desc": "黑龙江中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hljucm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hljucm.edu.cn/",
+        "desc": "黑龙江中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hljit",
+    "name": "黑龙江工程学院",
+    "shortName": "HLJIT / 黑工程",
+    "pinyin": "heilongjianggongchengxueyuan hljit hgc heigongcheng",
+    "region": "黑龙江 · 哈尔滨",
+    "badge": "公办工程",
+    "systems": [
+      {
+        "id": "hljit_jw",
+        "name": "黑龙江工程学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hljit.edu.cn/",
+        "desc": "黑龙江工程学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hljit_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hljit.edu.cn/",
+        "desc": "黑龙江工程学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "shuihua",
+    "name": "绥化学院",
+    "shortName": "SHU / 绥院",
+    "pinyin": "suihuaxueyuan shu sy suihua",
+    "region": "黑龙江 · 绥化",
+    "badge": "公办本科",
+    "systems": [
+      {
+        "id": "shuihua_jw",
+        "name": "绥化学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.shxy.edu.cn/",
+        "desc": "绥化学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "shuihua_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.shuihua.edu.cn/",
+        "desc": "绥化学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "fdu",
+    "name": "复旦大学",
+    "shortName": "FDU / 复旦",
+    "pinyin": "fudandaxue fdu fd fudan",
+    "region": "上海 · 杨浦",
+    "badge": "C9 · 985 · 双一流",
+    "systems": [
+      {
+        "id": "fdu_jw",
+        "name": "复旦大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwfw.fudan.edu.cn/eams/",
+        "desc": "复旦大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "fdu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.fdu.edu.cn/",
+        "desc": "复旦大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sjtu",
+    "name": "上海交通大学",
+    "shortName": "SJTU / 上海交大",
+    "pinyin": "shanghaijiaotongdaxue sjtu sjd shanghaijiaoda jaccount",
+    "region": "上海 · 闵行",
+    "badge": "C9 · 985 · 双一流",
+    "systems": [
+      {
+        "id": "sjtu_jw",
+        "name": "上海交通大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "https://i.sjtu.edu.cn/",
+        "desc": "上海交通大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sjtu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sjtu.edu.cn/",
+        "desc": "上海交通大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "tongji",
+    "name": "同济大学",
+    "shortName": "Tongji / 同济",
+    "pinyin": "tongjidaxue tongji tj tongji",
+    "region": "上海 · 杨浦",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "tongji_jw",
+        "name": "同济大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://1.tongji.edu.cn/",
+        "desc": "同济大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "tongji_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.tongji.edu.cn/",
+        "desc": "同济大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ecnu",
+    "name": "华东师范大学",
+    "shortName": "ECNU / 华东师大",
+    "pinyin": "huadongshifandaxue ecnu hdsd huadongshida",
+    "region": "上海 · 闵行",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "ecnu_jw",
+        "name": "华东师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxx.ecnu.edu.cn/",
+        "desc": "华东师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ecnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ecnu.edu.cn/",
+        "desc": "华东师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ecust",
+    "name": "华东理工大学",
+    "shortName": "ECUST / 华理",
+    "pinyin": "huadongligongdaxue ecust hl huali",
+    "region": "上海 · 徐汇",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "ecust_jw",
+        "name": "华东理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://eams.ecust.edu.cn/",
+        "desc": "华东理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ecust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ecust.edu.cn/",
+        "desc": "华东理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "shu",
+    "name": "上海大学",
+    "shortName": "SHU / 上大",
+    "pinyin": "shanghaidaxue shu sd shangda",
+    "region": "上海 · 宝山",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "shu_jw",
+        "name": "上海大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://cj.shu.edu.cn/",
+        "desc": "上海大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "shu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.shu.edu.cn/",
+        "desc": "上海大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sufe",
+    "name": "上海财经大学",
+    "shortName": "SUFE / 上财",
+    "pinyin": "shanghaicaijingdaxue sufe sc shangcai",
+    "region": "上海 · 杨浦",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "sufe_jw",
+        "name": "上海财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://eams.sufe.edu.cn/",
+        "desc": "上海财经大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sufe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sufe.edu.cn/",
+        "desc": "上海财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "dhu",
+    "name": "东华大学",
+    "shortName": "DHU / 东华",
+    "pinyin": "donghuadaxue dhu dh donghua",
+    "region": "上海 · 松江",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "dhu_jw",
+        "name": "东华大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.dhu.edu.cn/",
+        "desc": "东华大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "dhu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.dhu.edu.cn/",
+        "desc": "东华大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "usst",
+    "name": "上海理工大学",
+    "shortName": "USST / 上理工",
+    "pinyin": "shanghailigongdaxue usst slg shangligong",
+    "region": "上海 · 杨浦",
+    "badge": "市属重点",
+    "systems": [
+      {
+        "id": "usst_jw",
+        "name": "上海理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.usst.edu.cn/",
+        "desc": "上海理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "usst_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.usst.edu.cn/",
+        "desc": "上海理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "shnu",
+    "name": "上海师范大学",
+    "shortName": "SHNU / 上师大",
+    "pinyin": "shanghaishifandaxue shnu ssd shangshida",
+    "region": "上海 · 徐汇",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "shnu_jw",
+        "name": "上海师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.shnu.edu.cn/",
+        "desc": "上海师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "shnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.shnu.edu.cn/",
+        "desc": "上海师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sisu",
+    "name": "上海外国语大学",
+    "shortName": "SISU / 上外",
+    "pinyin": "shanghaiwaiguoyudaxue sisu sw shangwai",
+    "region": "上海 · 虹口",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "sisu_jw",
+        "name": "上海外国语大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.shisu.edu.cn/",
+        "desc": "上海外国语大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sisu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sisu.edu.cn/",
+        "desc": "上海外国语大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ecupl",
+    "name": "华东政法大学",
+    "shortName": "ECUPL / 华政",
+    "pinyin": "huadongzhengfadaxue ecupl hz huazheng",
+    "region": "上海 · 松江",
+    "badge": "政法名校",
+    "systems": [
+      {
+        "id": "ecupl_jw",
+        "name": "华东政法大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ecupl.edu.cn/",
+        "desc": "华东政法大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ecupl_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ecupl.edu.cn/",
+        "desc": "华东政法大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "smu_sh",
+    "name": "上海海事大学",
+    "shortName": "SMU / 上海海事",
+    "pinyin": "shanghaihaishidaxue smu shhs shanghaihaishi",
+    "region": "上海 · 浦东",
+    "badge": "航海特色",
+    "systems": [
+      {
+        "id": "smu_sh_jw",
+        "name": "上海海事大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.shmtu.edu.cn/",
+        "desc": "上海海事大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "smu_sh_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.smu_sh.edu.cn/",
+        "desc": "上海海事大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "shou",
+    "name": "上海海洋大学",
+    "shortName": "SHOU / 上海海洋",
+    "pinyin": "shanghaihaiyangdaxue shou shhy shanghaihaiyang",
+    "region": "上海 · 浦东",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "shou_jw",
+        "name": "上海海洋大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.shou.edu.cn/",
+        "desc": "上海海洋大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "shou_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.shou.edu.cn/",
+        "desc": "上海海洋大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "shutcm",
+    "name": "上海中医药大学",
+    "shortName": "SHUTCM / 上中医",
+    "pinyin": "shanghaizhongyiyaodaxue shutcm szy shangzhongyi",
+    "region": "上海 · 浦东",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "shutcm_jw",
+        "name": "上海中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.shutcm.edu.cn/",
+        "desc": "上海中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "shutcm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.shutcm.edu.cn/",
+        "desc": "上海中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sues",
+    "name": "上海工程技术大学",
+    "shortName": "SUES / 程大",
+    "pinyin": "shanghaigongchengjishudaxue sues cd chengda",
+    "region": "上海 · 松江",
+    "badge": "应用工科",
+    "systems": [
+      {
+        "id": "sues_jw",
+        "name": "上海工程技术大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sues.edu.cn/",
+        "desc": "上海工程技术大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sues_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sues.edu.cn/",
+        "desc": "上海工程技术大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sit",
+    "name": "上海应用技术大学",
+    "shortName": "SIT / 上应大",
+    "pinyin": "shanghaiyingyongjishudaxue sit syd shangyingda",
+    "region": "上海 · 奉贤",
+    "badge": "公办应用",
+    "systems": [
+      {
+        "id": "sit_jw",
+        "name": "上海应用技术大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sit.edu.cn/",
+        "desc": "上海应用技术大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sit_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sit.edu.cn/",
+        "desc": "上海应用技术大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "suep",
+    "name": "上海电力大学",
+    "shortName": "SUEP / 上电",
+    "pinyin": "shanghaidianlidaxue suep sd shangdian",
+    "region": "上海 · 浦东",
+    "badge": "电力特色",
+    "systems": [
+      {
+        "id": "suep_jw",
+        "name": "上海电力大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.shiep.edu.cn/",
+        "desc": "上海电力大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "suep_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.suep.edu.cn/",
+        "desc": "上海电力大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "lixin",
+    "name": "上海立信会计金融学院",
+    "shortName": "SLBF / 立信",
+    "pinyin": "shanghailixinhuijijinrongxueyuan slbf lx lixin",
+    "region": "上海 · 浦东",
+    "badge": "财经特色",
+    "systems": [
+      {
+        "id": "lixin_jw",
+        "name": "上海立信会计金融学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.lixin.edu.cn/",
+        "desc": "上海立信会计金融学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "lixin_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.lixin.edu.cn/",
+        "desc": "上海立信会计金融学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nju",
+    "name": "南京大学",
+    "shortName": "NJU / 南大",
+    "pinyin": "nanjingdaxue nju nd nanda",
+    "region": "江苏 · 鼓楼",
+    "badge": "C9 · 985 · 双一流",
+    "systems": [
+      {
+        "id": "nju_jw",
+        "name": "南京大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.nju.edu.cn/",
+        "desc": "南京大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nju_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nju.edu.cn/",
+        "desc": "南京大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "seu",
+    "name": "东南大学",
+    "shortName": "SEU / 东大",
+    "pinyin": "dongnandaxue seu dd dongnan",
+    "region": "江苏 · 玄武",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "seu_jw",
+        "name": "东南大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.seu.edu.cn/",
+        "desc": "东南大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "seu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.seu.edu.cn/",
+        "desc": "东南大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nuaa",
+    "name": "南京航空航天大学",
+    "shortName": "NUAA / 南航",
+    "pinyin": "nanjinghangkonghangtiandaxue nuaa nh nanhang",
+    "region": "江苏 · 秦淮",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "nuaa_jw",
+        "name": "南京航空航天大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.nuaa.edu.cn/",
+        "desc": "南京航空航天大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nuaa_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nuaa.edu.cn/",
+        "desc": "南京航空航天大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nust",
+    "name": "南京理工大学",
+    "shortName": "NUST / 南理工",
+    "pinyin": "nanjingligongdaxue nust nlg nanligong",
+    "region": "江苏 · 玄武",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "nust_jw",
+        "name": "南京理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.njust.edu.cn/",
+        "desc": "南京理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nust.edu.cn/",
+        "desc": "南京理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "suda",
+    "name": "苏州大学",
+    "shortName": "Soochow / 苏大",
+    "pinyin": "suzhoudaxue suda sd suda",
+    "region": "江苏 · 苏州",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "suda_jw",
+        "name": "苏州大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://xk.suda.edu.cn/",
+        "desc": "苏州大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "suda_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.suda.edu.cn/",
+        "desc": "苏州大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hhu",
+    "name": "河海大学",
+    "shortName": "HHU / 河海",
+    "pinyin": "hehaidaxue hhu hh hehai",
+    "region": "江苏 · 鼓楼",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "hhu_jw",
+        "name": "河海大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.hhu.edu.cn/",
+        "desc": "河海大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hhu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hhu.edu.cn/",
+        "desc": "河海大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jiangnan",
+    "name": "江南大学",
+    "shortName": "Jiangnan / 江大",
+    "pinyin": "jiangnandaxue jiangnan jd jiangnan",
+    "region": "江苏 · 无锡",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "jiangnan_jw",
+        "name": "江南大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.jiangnan.edu.cn/",
+        "desc": "江南大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jiangnan_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jiangnan.edu.cn/",
+        "desc": "江南大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "njnu",
+    "name": "南京师范大学",
+    "shortName": "NNU / 南师大",
+    "pinyin": "nanjingshifandaxue nnu nsd nanshida qingguo",
+    "region": "江苏 · 栖霞",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "njnu_jw",
+        "name": "南京师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.njnu.edu.cn/",
+        "desc": "南京师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "njnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.njnu.edu.cn/",
+        "desc": "南京师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ujs",
+    "name": "江苏大学",
+    "shortName": "UJS / 江大",
+    "pinyin": "jiangsudaxue ujs jd jiangda",
+    "region": "江苏 · 镇江",
+    "badge": "省部共建重点",
+    "systems": [
+      {
+        "id": "ujs_jw",
+        "name": "江苏大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ujs.edu.cn/",
+        "desc": "江苏大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ujs_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ujs.edu.cn/",
+        "desc": "江苏大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "yzu",
+    "name": "扬州大学",
+    "shortName": "YZU / 扬大",
+    "pinyin": "yangzhoudaxue yzu yd yangda",
+    "region": "江苏 · 扬州",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "yzu_jw",
+        "name": "扬州大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.yzu.edu.cn/",
+        "desc": "扬州大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "yzu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.yzu.edu.cn/",
+        "desc": "扬州大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "njupt",
+    "name": "南京邮电大学",
+    "shortName": "NJUPT / 南邮",
+    "pinyin": "nanjingyoudiandaxue njupt ny nanyou",
+    "region": "江苏 · 栖霞",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "njupt_jw",
+        "name": "南京邮电大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.njupt.edu.cn/",
+        "desc": "南京邮电大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "njupt_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.njupt.edu.cn/",
+        "desc": "南京邮电大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nuist",
+    "name": "南京信息工程大学",
+    "shortName": "NUIST / 南信大",
+    "pinyin": "nanjingxinxigongchengdaxue nuist nxd nanxinda",
+    "region": "江苏 · 浦口",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "nuist_jw",
+        "name": "南京信息工程大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.nuist.edu.cn/",
+        "desc": "南京信息工程大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nuist_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nuist.edu.cn/",
+        "desc": "南京信息工程大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "njtech",
+    "name": "南京工业大学",
+    "shortName": "NJTECH / 南工大",
+    "pinyin": "nanjinggongyedaxue njtech ngd nangongda",
+    "region": "江苏 · 江北",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "njtech_jw",
+        "name": "南京工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.njtech.edu.cn/",
+        "desc": "南京工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "njtech_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.njtech.edu.cn/",
+        "desc": "南京工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nau",
+    "name": "南京审计大学",
+    "shortName": "NAU / 南审",
+    "pinyin": "nanjingshenjidaxue nau ns nanshen",
+    "region": "江苏 · 浦口",
+    "badge": "审计特色",
+    "systems": [
+      {
+        "id": "nau_jw",
+        "name": "南京审计大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.nau.edu.cn/",
+        "desc": "南京审计大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nau.edu.cn/",
+        "desc": "南京审计大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cczu",
+    "name": "常州大学",
+    "shortName": "CZU / 常大",
+    "pinyin": "changzhoudaxue czu cd changda",
+    "region": "江苏 · 常州",
+    "badge": "省部共建",
+    "systems": [
+      {
+        "id": "cczu_jw",
+        "name": "常州大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cczu.edu.cn/",
+        "desc": "常州大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cczu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cczu.edu.cn/",
+        "desc": "常州大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nfu",
+    "name": "南京林业大学",
+    "shortName": "NFU / 南林",
+    "pinyin": "nanjinglinyedaxue nfu nl nanlin",
+    "region": "江苏 · 玄武",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "nfu_jw",
+        "name": "南京林业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.njfu.edu.cn/",
+        "desc": "南京林业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nfu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nfu.edu.cn/",
+        "desc": "南京林业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "just",
+    "name": "江苏科技大学",
+    "shortName": "JUST / 江科大",
+    "pinyin": "jiangsukejidaxue just jkd jiangkeda",
+    "region": "江苏 · 镇江",
+    "badge": "船舶特色",
+    "systems": [
+      {
+        "id": "just_jw",
+        "name": "江苏科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.just.edu.cn/",
+        "desc": "江苏科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "just_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.just.edu.cn/",
+        "desc": "江苏科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ntu",
+    "name": "南通大学",
+    "shortName": "NTU / 通大",
+    "pinyin": "nantongdaxue ntu td tongda",
+    "region": "江苏 · 南通",
+    "badge": "综合重点",
+    "systems": [
+      {
+        "id": "ntu_jw",
+        "name": "南通大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ntu.edu.cn/",
+        "desc": "南通大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ntu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ntu.edu.cn/",
+        "desc": "南通大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xzmu",
+    "name": "徐州医科大学",
+    "shortName": "XZMU / 徐医大",
+    "pinyin": "xuzhouyikedaxue xzmu xyd xuyida",
+    "region": "江苏 · 徐州",
+    "badge": "医学重点",
+    "systems": [
+      {
+        "id": "xzmu_jw",
+        "name": "徐州医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xzhmu.edu.cn/",
+        "desc": "徐州医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xzmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xzmu.edu.cn/",
+        "desc": "徐州医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "njucm",
+    "name": "南京中医药大学",
+    "shortName": "NJUCM / 南中医",
+    "pinyin": "nanjingzhongyiyaodaxue njucm nzy nanzhongyi",
+    "region": "江苏 · 栖霞",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "njucm_jw",
+        "name": "南京中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.njucm.edu.cn/",
+        "desc": "南京中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "njucm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.njucm.edu.cn/",
+        "desc": "南京中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "njmu",
+    "name": "南京医科大学",
+    "shortName": "NJMU / 南医大",
+    "pinyin": "nanjingyikedaxue njmu nyd nanyida",
+    "region": "江苏 · 江宁",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "njmu_jw",
+        "name": "南京医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.njmu.edu.cn/",
+        "desc": "南京医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "njmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.njmu.edu.cn/",
+        "desc": "南京医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nufe",
+    "name": "南京财经大学",
+    "shortName": "NUFE / 南财",
+    "pinyin": "nanjingcaijingdaxue nufe nc nancai",
+    "region": "江苏 · 栖霞",
+    "badge": "财经重点",
+    "systems": [
+      {
+        "id": "nufe_jw",
+        "name": "南京财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.nufe.edu.cn/",
+        "desc": "南京财经大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nufe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nufe.edu.cn/",
+        "desc": "南京财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "usts",
+    "name": "苏州科技大学",
+    "shortName": "USTS / 苏科大",
+    "pinyin": "suzhoukejidaxue usts skd sukeda",
+    "region": "江苏 · 苏州",
+    "badge": "公办重点",
+    "systems": [
+      {
+        "id": "usts_jw",
+        "name": "苏州科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.usts.edu.cn/",
+        "desc": "苏州科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "usts_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.usts.edu.cn/",
+        "desc": "苏州科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xjtlu",
+    "name": "西交利物浦大学",
+    "shortName": "XJTLU / 西浦",
+    "pinyin": "xijiaoliwupudaxue xjtlu xp xipu",
+    "region": "江苏 · 苏州",
+    "badge": "中外合办名校",
+    "systems": [
+      {
+        "id": "xjtlu_jw",
+        "name": "西交利物浦大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://e-bridge.xjtlu.edu.cn/",
+        "desc": "西交利物浦大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xjtlu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xjtlu.edu.cn/",
+        "desc": "西交利物浦大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "yctu",
+    "name": "盐城工学院",
+    "shortName": "YCIT / 盐工",
+    "pinyin": "yanchenggongxueyuan ycit yg yangong",
+    "region": "江苏 · 盐城",
+    "badge": "工程本科",
+    "systems": [
+      {
+        "id": "yctu_jw",
+        "name": "盐城工学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ycit.edu.cn/",
+        "desc": "盐城工学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "yctu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.yctu.edu.cn/",
+        "desc": "盐城工学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hyit",
+    "name": "淮阴工学院",
+    "shortName": "HYIT / 淮工",
+    "pinyin": "huaiyingongxueyuan hyit hg huaigong",
+    "region": "江苏 · 淮安",
+    "badge": "公办工科",
+    "systems": [
+      {
+        "id": "hyit_jw",
+        "name": "淮阴工学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hyit.edu.cn/",
+        "desc": "淮阴工学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hyit_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hyit.edu.cn/",
+        "desc": "淮阴工学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cslg",
+    "name": "常熟理工学院",
+    "shortName": "CSLG / 常熟理工",
+    "pinyin": "changshuligongxueyuan cslg cslg changshuligong",
+    "region": "江苏 · 苏州",
+    "badge": "公办应用",
+    "systems": [
+      {
+        "id": "cslg_jw",
+        "name": "常熟理工学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cslg.edu.cn/",
+        "desc": "常熟理工学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cslg_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cslg.edu.cn/",
+        "desc": "常熟理工学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "zju",
+    "name": "浙江大学",
+    "shortName": "ZJU / 浙大",
+    "pinyin": "zhejiangdaxue zju zd zheda",
+    "region": "浙江 · 杭州",
+    "badge": "C9 · 985 · 双一流",
+    "systems": [
+      {
+        "id": "zju_jw",
+        "name": "浙江大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwbinfosys.zju.edu.cn/",
+        "desc": "浙江大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "zju_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.zju.edu.cn/",
+        "desc": "浙江大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nbu",
+    "name": "宁波大学",
+    "shortName": "NBU / 宁大",
+    "pinyin": "ningbodaxue nbu nd ningda",
+    "region": "浙江 · 宁波",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "nbu_jw",
+        "name": "宁波大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.nbu.edu.cn/",
+        "desc": "宁波大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nbu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nbu.edu.cn/",
+        "desc": "宁波大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "zjut",
+    "name": "浙江工业大学",
+    "shortName": "ZJUT / 浙工大",
+    "pinyin": "zhejianggongyedaxue zjut zgd zhegongda",
+    "region": "浙江 · 杭州",
+    "badge": "省部共建重点",
+    "systems": [
+      {
+        "id": "zjut_jw",
+        "name": "浙江工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://www.gdjw.zjut.edu.cn/",
+        "desc": "浙江工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "zjut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.zjut.edu.cn/",
+        "desc": "浙江工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hdu",
+    "name": "杭州电子科技大学",
+    "shortName": "HDU / 杭电",
+    "pinyin": "hangzhoudianzikejidaxue hdu hd hangdian",
+    "region": "浙江 · 杭州",
+    "badge": "特色高水平",
+    "systems": [
+      {
+        "id": "hdu_jw",
+        "name": "杭州电子科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.hdu.edu.cn/",
+        "desc": "杭州电子科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hdu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hdu.edu.cn/",
+        "desc": "杭州电子科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "zstu",
+    "name": "浙江理工大学",
+    "shortName": "ZSTU / 浙理工",
+    "pinyin": "zhejiangligongdaxue zstu zlg zheligong",
+    "region": "浙江 · 杭州",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "zstu_jw",
+        "name": "浙江理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.zstu.edu.cn/",
+        "desc": "浙江理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "zstu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.zstu.edu.cn/",
+        "desc": "浙江理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "zafu",
+    "name": "浙江农林大学",
+    "shortName": "ZAFU / 浙农林",
+    "pinyin": "zhejiangnonglindaxue zafu znl zhenonglin",
+    "region": "浙江 · 杭州",
+    "badge": "特色重点",
+    "systems": [
+      {
+        "id": "zafu_jw",
+        "name": "浙江农林大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.zafu.edu.cn/",
+        "desc": "浙江农林大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "zafu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.zafu.edu.cn/",
+        "desc": "浙江农林大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "zcmu",
+    "name": "浙江中医药大学",
+    "shortName": "ZCMU / 浙中医",
+    "pinyin": "zhejiangzhongyiyaodaxue zcmu zzy zhezhongyi",
+    "region": "浙江 · 杭州",
+    "badge": "医学高水平",
+    "systems": [
+      {
+        "id": "zcmu_jw",
+        "name": "浙江中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.zcmu.edu.cn/",
+        "desc": "浙江中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "zcmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.zcmu.edu.cn/",
+        "desc": "浙江中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "zjnu",
+    "name": "浙江师范大学",
+    "shortName": "ZJNU / 浙师大",
+    "pinyin": "zhejiangshifandaxue zjnu zsd zheshida",
+    "region": "浙江 · 金华",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "zjnu_jw",
+        "name": "浙江师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.zjnu.edu.cn/",
+        "desc": "浙江师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "zjnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.zjnu.edu.cn/",
+        "desc": "浙江师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "wmu",
+    "name": "温州医科大学",
+    "shortName": "WMU / 温医大",
+    "pinyin": "wenzhouyikedaxue wmu wyd wenyida",
+    "region": "浙江 · 温州",
+    "badge": "医学名校",
+    "systems": [
+      {
+        "id": "wmu_jw",
+        "name": "温州医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.wmu.edu.cn/",
+        "desc": "温州医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "wmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.wmu.edu.cn/",
+        "desc": "温州医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "wzu",
+    "name": "温州大学",
+    "shortName": "WZU / 温大",
+    "pinyin": "wenzhoudaxue wzu wd wenda",
+    "region": "浙江 · 温州",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "wzu_jw",
+        "name": "温州大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.wzu.edu.cn/",
+        "desc": "温州大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "wzu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.wzu.edu.cn/",
+        "desc": "温州大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hznu",
+    "name": "杭州师范大学",
+    "shortName": "HZNU / 杭师大",
+    "pinyin": "hangzhoushifandaxue hznu hsd hangshida",
+    "region": "浙江 · 杭州",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "hznu_jw",
+        "name": "杭州师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hznu.edu.cn/",
+        "desc": "杭州师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hznu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hznu.edu.cn/",
+        "desc": "杭州师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cjlu",
+    "name": "中国计量大学",
+    "shortName": "CJLU / 计量",
+    "pinyin": "zhongguojiliangdaxue cjlu jl jiliang",
+    "region": "浙江 · 杭州",
+    "badge": "计量特色重点",
+    "systems": [
+      {
+        "id": "cjlu_jw",
+        "name": "中国计量大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cjlu.edu.cn/",
+        "desc": "中国计量大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cjlu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cjlu.edu.cn/",
+        "desc": "中国计量大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jxu",
+    "name": "嘉兴大学",
+    "shortName": "JXU / 嘉大",
+    "pinyin": "jiaxingdaxue jxu jd jiada",
+    "region": "浙江 · 嘉兴",
+    "badge": "公办综合",
+    "systems": [
+      {
+        "id": "jxu_jw",
+        "name": "嘉兴大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.zjxu.edu.cn/",
+        "desc": "嘉兴大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jxu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jxu.edu.cn/",
+        "desc": "嘉兴大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "usx",
+    "name": "绍兴文理学院",
+    "shortName": "USX / 绍文理",
+    "pinyin": "shaoxingwenlixueyuan usx swl shaowenli",
+    "region": "浙江 · 绍兴",
+    "badge": "公办本科",
+    "systems": [
+      {
+        "id": "usx_jw",
+        "name": "绍兴文理学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.usx.edu.cn/",
+        "desc": "绍兴文理学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "usx_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.usx.edu.cn/",
+        "desc": "绍兴文理学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ustc",
+    "name": "中国科学技术大学",
+    "shortName": "USTC / 中科大",
+    "pinyin": "zhongguokexuejishudaxue ustc zkd ked zhongkeda",
+    "region": "安徽 · 合肥",
+    "badge": "C9 · 985 · 双一流",
+    "systems": [
+      {
+        "id": "ustc_jw",
+        "name": "中国科学技术大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "https://jw.ustc.edu.cn/",
+        "desc": "中国科学技术大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ustc_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ustc.edu.cn/",
+        "desc": "中国科学技术大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hfut",
+    "name": "合肥工业大学",
+    "shortName": "HFUT / 合工大",
+    "pinyin": "hefeigongyedaxue hfut hgd hegongda",
+    "region": "安徽 · 合肥",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "hfut_jw",
+        "name": "合肥工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.hfut.edu.cn/",
+        "desc": "合肥工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hfut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hfut.edu.cn/",
+        "desc": "合肥工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ahu",
+    "name": "安徽大学",
+    "shortName": "AHU / 安大",
+    "pinyin": "anhuidaxue ahu ad anda",
+    "region": "安徽 · 合肥",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "ahu_jw",
+        "name": "安徽大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.ahu.edu.cn/",
+        "desc": "安徽大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ahu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ahu.edu.cn/",
+        "desc": "安徽大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ahut",
+    "name": "安徽工业大学",
+    "shortName": "AHUT / 安工大",
+    "pinyin": "anhuigongyedaxue ahut agd angongda",
+    "region": "安徽 · 马鞍山",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "ahut_jw",
+        "name": "安徽工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ahut.edu.cn/",
+        "desc": "安徽工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ahut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ahut.edu.cn/",
+        "desc": "安徽工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "aust",
+    "name": "安徽理工大学",
+    "shortName": "AUST / 安理大",
+    "pinyin": "anhuiligongdaxue aust ald anlida",
+    "region": "安徽 · 淮南",
+    "badge": "煤炭特色",
+    "systems": [
+      {
+        "id": "aust_jw",
+        "name": "安徽理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.aust.edu.cn/",
+        "desc": "安徽理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "aust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.aust.edu.cn/",
+        "desc": "安徽理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "aau",
+    "name": "安徽农业大学",
+    "shortName": "AAU / 安农大",
+    "pinyin": "anhuinongyedaxue aau and annongda",
+    "region": "安徽 · 合肥",
+    "badge": "农林重点",
+    "systems": [
+      {
+        "id": "aau_jw",
+        "name": "安徽农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ahau.edu.cn/",
+        "desc": "安徽农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "aau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.aau.edu.cn/",
+        "desc": "安徽农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ahmu",
+    "name": "安徽医科大学",
+    "shortName": "AHMU / 安医大",
+    "pinyin": "anhuiyikedaxue ahmu ayd anyida",
+    "region": "安徽 · 合肥",
+    "badge": "医学重点",
+    "systems": [
+      {
+        "id": "ahmu_jw",
+        "name": "安徽医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ahmu.edu.cn/",
+        "desc": "安徽医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ahmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ahmu.edu.cn/",
+        "desc": "安徽医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ahtcm",
+    "name": "安徽中医药大学",
+    "shortName": "AHTCM / 安中医",
+    "pinyin": "anhuizhongyiyaodaxue ahtcm azy anzhongyi",
+    "region": "安徽 · 合肥",
+    "badge": "医学名校",
+    "systems": [
+      {
+        "id": "ahtcm_jw",
+        "name": "安徽中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ahtcm.edu.cn/",
+        "desc": "安徽中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ahtcm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ahtcm.edu.cn/",
+        "desc": "安徽中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ahnu",
+    "name": "安徽师范大学",
+    "shortName": "AHNU / 安师大",
+    "pinyin": "anhuishifandaxue ahnu asd anshida",
+    "region": "安徽 · 芜湖",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "ahnu_jw",
+        "name": "安徽师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ahnu.edu.cn/",
+        "desc": "安徽师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ahnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ahnu.edu.cn/",
+        "desc": "安徽师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "fynu",
+    "name": "阜阳师范大学",
+    "shortName": "FYNU / 阜师大",
+    "pinyin": "fuyangshifandaxue fynu fsd fuyangshida",
+    "region": "安徽 · 阜阳",
+    "badge": "省属师范",
+    "systems": [
+      {
+        "id": "fynu_jw",
+        "name": "阜阳师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.fynu.edu.cn/",
+        "desc": "阜阳师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "fynu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.fynu.edu.cn/",
+        "desc": "阜阳师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "aqnu",
+    "name": "安庆师范大学",
+    "shortName": "AQNU / 安庆师大",
+    "pinyin": "anqingshifandaxue aqnu aqsd anqingshida",
+    "region": "安徽 · 安庆",
+    "badge": "省属师范",
+    "systems": [
+      {
+        "id": "aqnu_jw",
+        "name": "安庆师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.aqnu.edu.cn/",
+        "desc": "安庆师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "aqnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.aqnu.edu.cn/",
+        "desc": "安庆师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hbnu_ah",
+    "name": "淮北师范大学",
+    "shortName": "HBNU / 淮北师大",
+    "pinyin": "huaibeishifandaxue hbnu hbsd huaibeishida",
+    "region": "安徽 · 淮北",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "hbnu_ah_jw",
+        "name": "淮北师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hbnu.edu.cn/",
+        "desc": "淮北师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hbnu_ah_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hbnu_ah.edu.cn/",
+        "desc": "淮北师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ahjzu",
+    "name": "安徽建筑大学",
+    "shortName": "AHJZU / 安建大",
+    "pinyin": "anhuijianzhadaxue ahjzu ajd anjianda",
+    "region": "安徽 · 合肥",
+    "badge": "土木特色",
+    "systems": [
+      {
+        "id": "ahjzu_jw",
+        "name": "安徽建筑大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ahjzu.edu.cn/",
+        "desc": "安徽建筑大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ahjzu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ahjzu.edu.cn/",
+        "desc": "安徽建筑大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xmu",
+    "name": "厦门大学",
+    "shortName": "XMU / 厦大",
+    "pinyin": "xiamendaxue xmu xd xiada",
+    "region": "福建 · 厦门",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "xmu_jw",
+        "name": "厦门大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xmu.edu.cn/",
+        "desc": "厦门大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xmu.edu.cn/",
+        "desc": "厦门大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "fzu",
+    "name": "福州大学",
+    "shortName": "FZU / 福大",
+    "pinyin": "fuzhoudaxue fzu fd fuda",
+    "region": "福建 · 福州",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "fzu_jw",
+        "name": "福州大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwch.fzu.edu.cn/",
+        "desc": "福州大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "fzu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.fzu.edu.cn/",
+        "desc": "福州大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "fafu",
+    "name": "福建农林大学",
+    "shortName": "FAFU / 福建农林",
+    "pinyin": "fujiannonglindaxue fafu fjnl fujiannonglin",
+    "region": "福建 · 福州",
+    "badge": "省部共建重点",
+    "systems": [
+      {
+        "id": "fafu_jw",
+        "name": "福建农林大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.fafu.edu.cn/",
+        "desc": "福建农林大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "fafu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.fafu.edu.cn/",
+        "desc": "福建农林大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "fjnu",
+    "name": "福建师范大学",
+    "shortName": "FJNU / 福建师大",
+    "pinyin": "fujianshifandaxue fjnu fjsd fujianshida",
+    "region": "福建 · 福州",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "fjnu_jw",
+        "name": "福建师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.fjnu.edu.cn/",
+        "desc": "福建师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "fjnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.fjnu.edu.cn/",
+        "desc": "福建师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hqu",
+    "name": "华侨大学",
+    "shortName": "HQU / 华大",
+    "pinyin": "huaqiaodaxue hqu hd huada",
+    "region": "福建 · 泉州/厦门",
+    "badge": "中央统战部直属",
+    "systems": [
+      {
+        "id": "hqu_jw",
+        "name": "华侨大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hqu.edu.cn/",
+        "desc": "华侨大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hqu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hqu.edu.cn/",
+        "desc": "华侨大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "fjmu",
+    "name": "福建医科大学",
+    "shortName": "FJMU / 福医大",
+    "pinyin": "fujianyikedaxue fjmu fyd fuyida",
+    "region": "福建 · 福州",
+    "badge": "医学名校",
+    "systems": [
+      {
+        "id": "fjmu_jw",
+        "name": "福建医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.fjmu.edu.cn/",
+        "desc": "福建医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "fjmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.fjmu.edu.cn/",
+        "desc": "福建医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "fjutcm",
+    "name": "福建中医药大学",
+    "shortName": "FJTCM / 福中医",
+    "pinyin": "fujianzhongyiyaodaxue fjtcm fzy fuzhongyi",
+    "region": "福建 · 福州",
+    "badge": "特色高水平",
+    "systems": [
+      {
+        "id": "fjutcm_jw",
+        "name": "福建中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.fjtcm.edu.cn/",
+        "desc": "福建中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "fjutcm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.fjutcm.edu.cn/",
+        "desc": "福建中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jmu",
+    "name": "集美大学",
+    "shortName": "JMU / 集大",
+    "pinyin": "jimeidaxue jmu jd jida",
+    "region": "福建 · 厦门",
+    "badge": "省部共建重点",
+    "systems": [
+      {
+        "id": "jmu_jw",
+        "name": "集美大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.jmu.edu.cn/",
+        "desc": "集美大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jmu.edu.cn/",
+        "desc": "集美大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "mnnu",
+    "name": "闽南师范大学",
+    "shortName": "MNNU / 闽南师大",
+    "pinyin": "minnanshifandaxue mnnu mnsd minnanshida",
+    "region": "福建 · 漳州",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "mnnu_jw",
+        "name": "闽南师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.mnnu.edu.cn/",
+        "desc": "闽南师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "mnnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.mnnu.edu.cn/",
+        "desc": "闽南师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xmut",
+    "name": "厦门理工学院",
+    "shortName": "XMUT / 厦理工",
+    "pinyin": "xiamenligongxueyuan xmut xlg xialigong",
+    "region": "福建 · 厦门",
+    "badge": "应用高水平",
+    "systems": [
+      {
+        "id": "xmut_jw",
+        "name": "厦门理工学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xmut.edu.cn/",
+        "desc": "厦门理工学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xmut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xmut.edu.cn/",
+        "desc": "厦门理工学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "mju",
+    "name": "闽江学院",
+    "shortName": "MJU / 闽院",
+    "pinyin": "minjiangxueyuan mju my minyuan",
+    "region": "福建 · 福州",
+    "badge": "应用本科",
+    "systems": [
+      {
+        "id": "mju_jw",
+        "name": "闽江学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.mju.edu.cn/",
+        "desc": "闽江学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "mju_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.mju.edu.cn/",
+        "desc": "闽江学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ncu",
+    "name": "南昌大学",
+    "shortName": "NCU / 昌大",
+    "pinyin": "nanchangdaxue ncu cd changda",
+    "region": "江西 · 南昌",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "ncu_jw",
+        "name": "南昌大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwc.ncu.edu.cn/",
+        "desc": "南昌大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ncu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ncu.edu.cn/",
+        "desc": "南昌大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jxnu",
+    "name": "江西师范大学",
+    "shortName": "JXNU / 江西师大",
+    "pinyin": "jiangxishifandaxue jxnu jxsd jiangxishida",
+    "region": "江西 · 南昌",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "jxnu_jw",
+        "name": "江西师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwc.jxnu.edu.cn/",
+        "desc": "江西师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jxnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jxnu.edu.cn/",
+        "desc": "江西师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jufe",
+    "name": "江西财经大学",
+    "shortName": "JUFE / 江财",
+    "pinyin": "jiangxicaijingdaxue jufe jc jiangcai",
+    "region": "江西 · 南昌",
+    "badge": "财经名校",
+    "systems": [
+      {
+        "id": "jufe_jw",
+        "name": "江西财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.jxufe.edu.cn/",
+        "desc": "江西财经大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jufe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jufe.edu.cn/",
+        "desc": "江西财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ecjtu",
+    "name": "华东交通大学",
+    "shortName": "ECJTU / 华东交大",
+    "pinyin": "huadongjiaotongdaxue ecjtu hdjd huadongjiaoda",
+    "region": "江西 · 南昌",
+    "badge": "轨道交通重点",
+    "systems": [
+      {
+        "id": "ecjtu_jw",
+        "name": "华东交通大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ecjtu.edu.cn/",
+        "desc": "华东交通大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ecjtu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ecjtu.edu.cn/",
+        "desc": "华东交通大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nchu",
+    "name": "南昌航空大学",
+    "shortName": "NCHU / 昌航",
+    "pinyin": "nanchanghangkongdaxue nchu ch changhang",
+    "region": "江西 · 南昌",
+    "badge": "航空航天特色",
+    "systems": [
+      {
+        "id": "nchu_jw",
+        "name": "南昌航空大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.nchu.edu.cn/",
+        "desc": "南昌航空大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nchu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nchu.edu.cn/",
+        "desc": "南昌航空大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ecut",
+    "name": "东华理工大学",
+    "shortName": "ECUT / 东华理工",
+    "pinyin": "donghualigongdaxue ecut dhlg donghualigong",
+    "region": "江西 · 南昌",
+    "badge": "核工特色",
+    "systems": [
+      {
+        "id": "ecut_jw",
+        "name": "东华理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ecut.edu.cn/",
+        "desc": "东华理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ecut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ecut.edu.cn/",
+        "desc": "东华理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jxust",
+    "name": "江西理工大学",
+    "shortName": "JXUST / 江理",
+    "pinyin": "jiangxiligongdaxue jxust jl jiangli",
+    "region": "江西 · 赣州",
+    "badge": "有色金属重点",
+    "systems": [
+      {
+        "id": "jxust_jw",
+        "name": "江西理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.jxust.edu.cn/",
+        "desc": "江西理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jxust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jxust.edu.cn/",
+        "desc": "江西理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jxau",
+    "name": "江西农业大学",
+    "shortName": "JXAU / 江农",
+    "pinyin": "jiangxinongyedaxue jxau jn jiangnong",
+    "region": "江西 · 南昌",
+    "badge": "农科高水平",
+    "systems": [
+      {
+        "id": "jxau_jw",
+        "name": "江西农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.jxau.edu.cn/",
+        "desc": "江西农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jxau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jxau.edu.cn/",
+        "desc": "江西农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jxutcm",
+    "name": "江西中医药大学",
+    "shortName": "JXTCM / 江中医",
+    "pinyin": "jiangxizhongyiyaodaxue jxtcm jzy jiangzhongyi",
+    "region": "江西 · 南昌",
+    "badge": "中药名校",
+    "systems": [
+      {
+        "id": "jxutcm_jw",
+        "name": "江西中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.jxutcm.edu.cn/",
+        "desc": "江西中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jxutcm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jxutcm.edu.cn/",
+        "desc": "江西中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jci",
+    "name": "景德镇陶瓷大学",
+    "shortName": "JCI / 陶大",
+    "pinyin": "jingdezbentaocidaxue jci td taoda",
+    "region": "江西 · 景德镇",
+    "badge": "陶瓷特色重点",
+    "systems": [
+      {
+        "id": "jci_jw",
+        "name": "景德镇陶瓷大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.jci.edu.cn/",
+        "desc": "景德镇陶瓷大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jci_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jci.edu.cn/",
+        "desc": "景德镇陶瓷大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gnnu",
+    "name": "赣南师范大学",
+    "shortName": "GNNU / 赣南师大",
+    "pinyin": "gannanshifandaxue gnnu gnsd gannanshida",
+    "region": "江西 · 赣州",
+    "badge": "师范重点",
+    "systems": [
+      {
+        "id": "gnnu_jw",
+        "name": "赣南师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gnnu.edu.cn/",
+        "desc": "赣南师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gnnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gnnu.edu.cn/",
+        "desc": "赣南师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jju",
+    "name": "九江学院",
+    "shortName": "JJU / 九院",
+    "pinyin": "jiujiangxueyuan jju jy jiuyuan",
+    "region": "江西 · 九江",
+    "badge": "公办本科",
+    "systems": [
+      {
+        "id": "jju_jw",
+        "name": "九江学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.jju.edu.cn/",
+        "desc": "九江学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jju_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jju.edu.cn/",
+        "desc": "九江学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ycu",
+    "name": "宜春学院",
+    "shortName": "YCU / 宜春",
+    "pinyin": "yichunxueyuan ycu yc yichun",
+    "region": "江西 · 宜春",
+    "badge": "综合本科",
+    "systems": [
+      {
+        "id": "ycu_jw",
+        "name": "宜春学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ycu.edu.cn/",
+        "desc": "宜春学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ycu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ycu.edu.cn/",
+        "desc": "宜春学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jgsu",
+    "name": "井冈山大学",
+    "shortName": "JGSU / 井大",
+    "pinyin": "jinggangshandaxue jgsu jd jingda",
+    "region": "江西 · 吉安",
+    "badge": "省部共建",
+    "systems": [
+      {
+        "id": "jgsu_jw",
+        "name": "井冈山大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.jgsu.edu.cn/",
+        "desc": "井冈山大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jgsu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jgsu.edu.cn/",
+        "desc": "井冈山大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sdu",
+    "name": "山东大学",
+    "shortName": "SDU / 山大",
+    "pinyin": "shandongdaxue sdu sd shanda",
+    "region": "山东 · 济南",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "sdu_jw",
+        "name": "山东大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://bkjw.sdu.edu.cn/",
+        "desc": "山东大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sdu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sdu.edu.cn/",
+        "desc": "山东大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ouc",
+    "name": "中国海洋大学",
+    "shortName": "OUC / 海大",
+    "pinyin": "zhongguohaiyangdaxue ouc hd haida haiyang",
+    "region": "山东 · 青岛",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "ouc_jw",
+        "name": "中国海洋大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.ouc.edu.cn/",
+        "desc": "中国海洋大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ouc_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ouc.edu.cn/",
+        "desc": "中国海洋大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "upc",
+    "name": "中国石油大学(华东)",
+    "shortName": "UPC / 石大",
+    "pinyin": "zhongguoshiyoudaxuehuadong upc sd shida",
+    "region": "山东 · 青岛",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "upc_jw",
+        "name": "中国石油大学(华东)教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.upc.edu.cn/",
+        "desc": "中国石油大学(华东)教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "upc_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.upc.edu.cn/",
+        "desc": "中国石油大学(华东)官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sdust",
+    "name": "山东科技大学",
+    "shortName": "SDUST / 山科大",
+    "pinyin": "shandongkejidaxue sdust skd shankeda",
+    "region": "山东 · 青岛",
+    "badge": "省部共建重点",
+    "systems": [
+      {
+        "id": "sdust_jw",
+        "name": "山东科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.sdust.edu.cn/",
+        "desc": "山东科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sdust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sdust.edu.cn/",
+        "desc": "山东科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "qust",
+    "name": "青岛科技大学",
+    "shortName": "QUST / 青科大",
+    "pinyin": "qingdaokejidaxue qust qkd qingkeda",
+    "region": "山东 · 青岛",
+    "badge": "化工橡胶重点",
+    "systems": [
+      {
+        "id": "qust_jw",
+        "name": "青岛科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.qust.edu.cn/",
+        "desc": "青岛科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "qust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.qust.edu.cn/",
+        "desc": "青岛科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ujn",
+    "name": "济南大学",
+    "shortName": "UJN / 济大",
+    "pinyin": "jinandaxue ujn jd jida",
+    "region": "山东 · 济南",
+    "badge": "综合重点",
+    "systems": [
+      {
+        "id": "ujn_jw",
+        "name": "济南大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ujn.edu.cn/",
+        "desc": "济南大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ujn_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ujn.edu.cn/",
+        "desc": "济南大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "qut",
+    "name": "青岛理工大学",
+    "shortName": "QUT / 青理工",
+    "pinyin": "qingdaoligongdaxue qut qlg qingligong",
+    "region": "山东 · 青岛",
+    "badge": "土建重点",
+    "systems": [
+      {
+        "id": "qut_jw",
+        "name": "青岛理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.qut.edu.cn/",
+        "desc": "青岛理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "qut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.qut.edu.cn/",
+        "desc": "青岛理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sdjzu",
+    "name": "山东建筑大学",
+    "shortName": "SDJZU / 山建大",
+    "pinyin": "shandongjianzhadaxue sdjzu sjd shanjianda",
+    "region": "山东 · 济南",
+    "badge": "建筑特色",
+    "systems": [
+      {
+        "id": "sdjzu_jw",
+        "name": "山东建筑大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sdjzu.edu.cn/",
+        "desc": "山东建筑大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sdjzu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sdjzu.edu.cn/",
+        "desc": "山东建筑大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "qlu",
+    "name": "齐鲁工业大学",
+    "shortName": "QLU / 齐鲁工大",
+    "pinyin": "qilugongyedaxue qlu qlgd qilugongda",
+    "region": "山东 · 济南",
+    "badge": "科学院融合",
+    "systems": [
+      {
+        "id": "qlu_jw",
+        "name": "齐鲁工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.qlu.edu.cn/",
+        "desc": "齐鲁工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "qlu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.qlu.edu.cn/",
+        "desc": "齐鲁工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sdau",
+    "name": "山东农业大学",
+    "shortName": "SDAU / 山农大",
+    "pinyin": "shandongnongyedaxue sdau snd shannongda",
+    "region": "山东 · 泰安",
+    "badge": "百年农业名校",
+    "systems": [
+      {
+        "id": "sdau_jw",
+        "name": "山东农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sdau.edu.cn/",
+        "desc": "山东农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sdau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sdau.edu.cn/",
+        "desc": "山东农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "qau",
+    "name": "青岛农业大学",
+    "shortName": "QAU / 青农大",
+    "pinyin": "qingdaonongyedaxue qau qnd qingnongda",
+    "region": "山东 · 青岛",
+    "badge": "公办重点",
+    "systems": [
+      {
+        "id": "qau_jw",
+        "name": "青岛农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.qau.edu.cn/",
+        "desc": "青岛农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "qau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.qau.edu.cn/",
+        "desc": "青岛农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sdmu_first",
+    "name": "山东第一医科大学",
+    "shortName": "SDFMU / 山一大",
+    "pinyin": "shandongdiyiyikedaxue sdfmu syd shanyida",
+    "region": "山东 · 济南",
+    "badge": "医科重点",
+    "systems": [
+      {
+        "id": "sdmu_first_jw",
+        "name": "山东第一医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sdfmu.edu.cn/",
+        "desc": "山东第一医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sdmu_first_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sdmu_first.edu.cn/",
+        "desc": "山东第一医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sdutcm",
+    "name": "山东中医药大学",
+    "shortName": "SDUTCM / 山中医",
+    "pinyin": "shandongzhongyiyaodaxue sdutcm szy shanzhongyi",
+    "region": "山东 · 济南",
+    "badge": "医学名校",
+    "systems": [
+      {
+        "id": "sdutcm_jw",
+        "name": "山东中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sdutcm.edu.cn/",
+        "desc": "山东中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sdutcm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sdutcm.edu.cn/",
+        "desc": "山东中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sdnu",
+    "name": "山东师范大学",
+    "shortName": "SDNU / 山师",
+    "pinyin": "shandongshifandaxue sdnu ss shanshi",
+    "region": "山东 · 济南",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "sdnu_jw",
+        "name": "山东师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sdnu.edu.cn/",
+        "desc": "山东师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sdnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sdnu.edu.cn/",
+        "desc": "山东师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "qfnu",
+    "name": "曲阜师范大学",
+    "shortName": "QFNU / 曲师大",
+    "pinyin": "qufushifandaxue qfnu qsd qushida",
+    "region": "山东 · 日照/曲阜",
+    "badge": "孔孟圣地名校",
+    "systems": [
+      {
+        "id": "qfnu_jw",
+        "name": "曲阜师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.qfnu.edu.cn/",
+        "desc": "曲阜师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "qfnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.qfnu.edu.cn/",
+        "desc": "曲阜师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "lcu",
+    "name": "聊城大学",
+    "shortName": "LCU / 聊大",
+    "pinyin": "liaochengdaxue lcu ld liaoda",
+    "region": "山东 · 聊城",
+    "badge": "省属公办",
+    "systems": [
+      {
+        "id": "lcu_jw",
+        "name": "聊城大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.lcu.edu.cn/",
+        "desc": "聊城大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "lcu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.lcu.edu.cn/",
+        "desc": "聊城大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ldu",
+    "name": "鲁东大学",
+    "shortName": "LDU / 鲁东",
+    "pinyin": "ludongdaxue ldu ld ludong",
+    "region": "山东 · 烟台",
+    "badge": "综合大学",
+    "systems": [
+      {
+        "id": "ldu_jw",
+        "name": "鲁东大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ldu.edu.cn/",
+        "desc": "鲁东大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ldu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ldu.edu.cn/",
+        "desc": "鲁东大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "lyu",
+    "name": "临沂大学",
+    "shortName": "LYU / 临大",
+    "pinyin": "linyidaxue lyu ld linda",
+    "region": "山东 · 临沂",
+    "badge": "综合本科",
+    "systems": [
+      {
+        "id": "lyu_jw",
+        "name": "临沂大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.lyu.edu.cn/",
+        "desc": "临沂大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "lyu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.lyu.edu.cn/",
+        "desc": "临沂大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "qdu",
+    "name": "青岛大学",
+    "shortName": "QDU / 青大",
+    "pinyin": "qingdaodaxue qdu qd qingda",
+    "region": "山东 · 青岛",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "qdu_jw",
+        "name": "青岛大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.qdu.edu.cn/",
+        "desc": "青岛大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "qdu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.qdu.edu.cn/",
+        "desc": "青岛大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ytu",
+    "name": "烟台大学",
+    "shortName": "YTU / 烟大",
+    "pinyin": "yantaidaxue ytu yd yanda",
+    "region": "山东 · 烟台",
+    "badge": "北京大学清华大学共建",
+    "systems": [
+      {
+        "id": "ytu_jw",
+        "name": "烟台大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ytu.edu.cn/",
+        "desc": "烟台大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ytu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ytu.edu.cn/",
+        "desc": "烟台大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "wfu",
+    "name": "潍坊学院",
+    "shortName": "WFU / 潍院",
+    "pinyin": "weifangxueyuan wfu wy weiyuan",
+    "region": "山东 · 潍坊",
+    "badge": "公办本科",
+    "systems": [
+      {
+        "id": "wfu_jw",
+        "name": "潍坊学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.wfu.edu.cn/",
+        "desc": "潍坊学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "wfu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.wfu.edu.cn/",
+        "desc": "潍坊学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "zzu",
+    "name": "郑州大学",
+    "shortName": "ZZU / 郑大",
+    "pinyin": "zhengzhoudaxue zzu zd zhengda",
+    "region": "河南 · 郑州",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "zzu_jw",
+        "name": "郑州大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.zzu.edu.cn/",
+        "desc": "郑州大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "zzu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.zzu.edu.cn/",
+        "desc": "郑州大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "henu",
+    "name": "河南大学",
+    "shortName": "HENU / 河大",
+    "pinyin": "henandaxue henu hd heda",
+    "region": "河南 · 开封/郑州",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "henu_jw",
+        "name": "河南大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.henu.edu.cn/",
+        "desc": "河南大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "henu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.henu.edu.cn/",
+        "desc": "河南大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "henannu",
+    "name": "河南师范大学",
+    "shortName": "HTU / 河师大",
+    "pinyin": "henanshifandaxue htu hsd heshida qingguo",
+    "region": "河南 · 新乡",
+    "badge": "青果 · 重点高校",
+    "systems": [
+      {
+        "id": "henannu_jw",
+        "name": "河南师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.htu.edu.cn/",
+        "desc": "河南师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "henannu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.henannu.edu.cn/",
+        "desc": "河南师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hpu",
+    "name": "河南理工大学",
+    "shortName": "HPU / 河南理工",
+    "pinyin": "henanligongdaxue hpu hlg henanligong",
+    "region": "河南 · 焦作",
+    "badge": "煤炭历史名校",
+    "systems": [
+      {
+        "id": "hpu_jw",
+        "name": "河南理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.hpu.edu.cn/",
+        "desc": "河南理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hpu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hpu.edu.cn/",
+        "desc": "河南理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "haust",
+    "name": "河南科技大学",
+    "shortName": "HAUST / 河科大",
+    "pinyin": "henankejidaxue haust hkd hekeda",
+    "region": "河南 · 洛阳",
+    "badge": "省部共建重点",
+    "systems": [
+      {
+        "id": "haust_jw",
+        "name": "河南科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.haust.edu.cn/",
+        "desc": "河南科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "haust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.haust.edu.cn/",
+        "desc": "河南科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ncwu",
+    "name": "华北水利水电大学",
+    "shortName": "NCWU / 华水",
+    "pinyin": "huabeishuilishuidiandaxue ncwu hs huashui",
+    "region": "河南 · 郑州",
+    "badge": "水利特色名校",
+    "systems": [
+      {
+        "id": "ncwu_jw",
+        "name": "华北水利水电大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ncwu.edu.cn/",
+        "desc": "华北水利水电大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ncwu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ncwu.edu.cn/",
+        "desc": "华北水利水电大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "zzuli",
+    "name": "郑州轻工业大学",
+    "shortName": "ZZULI / 郑州轻工业",
+    "pinyin": "zhengzhouqinggongyedaxue zzuli zzqgy zhengqing",
+    "region": "河南 · 郑州",
+    "badge": "重点工科",
+    "systems": [
+      {
+        "id": "zzuli_jw",
+        "name": "郑州轻工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.zzuli.edu.cn/",
+        "desc": "郑州轻工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "zzuli_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.zzuli.edu.cn/",
+        "desc": "郑州轻工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "henau",
+    "name": "河南农业大学",
+    "shortName": "HAU / 河南农大",
+    "pinyin": "henannongyedaxue hau hnd henannongda",
+    "region": "河南 · 郑州",
+    "badge": "省部共建重点",
+    "systems": [
+      {
+        "id": "henau_jw",
+        "name": "河南农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.henau.edu.cn/",
+        "desc": "河南农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "henau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.henau.edu.cn/",
+        "desc": "河南农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hactcm",
+    "name": "河南中医药大学",
+    "shortName": "HACTCM / 河中医",
+    "pinyin": "henanzhongyiyaodaxue hactcm hzy hezhongyi",
+    "region": "河南 · 郑州",
+    "badge": "中医药特色",
+    "systems": [
+      {
+        "id": "hactcm_jw",
+        "name": "河南中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hactcm.edu.cn/",
+        "desc": "河南中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hactcm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hactcm.edu.cn/",
+        "desc": "河南中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xynu",
+    "name": "信阳师范大学",
+    "shortName": "XYNU / 信阳师大",
+    "pinyin": "xinyangshifandaxue xynu xysd xinyangshida",
+    "region": "河南 · 信阳",
+    "badge": "师范重点",
+    "systems": [
+      {
+        "id": "xynu_jw",
+        "name": "信阳师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xynu.edu.cn/",
+        "desc": "信阳师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xynu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xynu.edu.cn/",
+        "desc": "信阳师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "zut",
+    "name": "中原工学院",
+    "shortName": "ZUT / 中工",
+    "pinyin": "zhongyangongxueyuan zut zg zhonggong",
+    "region": "河南 · 郑州",
+    "badge": "纺织工程重点",
+    "systems": [
+      {
+        "id": "zut_jw",
+        "name": "中原工学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.zut.edu.cn/",
+        "desc": "中原工学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "zut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.zut.edu.cn/",
+        "desc": "中原工学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "haut",
+    "name": "河南工业大学",
+    "shortName": "HAUT / 河南工大",
+    "pinyin": "henangongyedaxue haut hgd henangongda",
+    "region": "河南 · 郑州",
+    "badge": "粮食工程重点",
+    "systems": [
+      {
+        "id": "haut_jw",
+        "name": "河南工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.haut.edu.cn/",
+        "desc": "河南工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "haut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.haut.edu.cn/",
+        "desc": "河南工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nlit",
+    "name": "南阳理工学院",
+    "shortName": "NYIST / 南阳理工",
+    "pinyin": "nanyangligongxueyuan nyist nylg nanyangligong",
+    "region": "河南 · 南阳",
+    "badge": "工程应用本科",
+    "systems": [
+      {
+        "id": "nlit_jw",
+        "name": "南阳理工学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.nyist.edu.cn/",
+        "desc": "南阳理工学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nlit_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nlit.edu.cn/",
+        "desc": "南阳理工学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xxmu",
+    "name": "新乡医学院",
+    "shortName": "XXMU / 新医",
+    "pinyin": "xinxiangyixueyuan xxmu xy xinyi",
+    "region": "河南 · 新乡",
+    "badge": "独立医学院",
+    "systems": [
+      {
+        "id": "xxmu_jw",
+        "name": "新乡医学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xxmu.edu.cn/",
+        "desc": "新乡医学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xxmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xxmu.edu.cn/",
+        "desc": "新乡医学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "pdsxy",
+    "name": "平顶山学院",
+    "shortName": "PDSU / 平院",
+    "pinyin": "pingdingshanxueyuan pdsu py pingyuan",
+    "region": "河南 · 平顶山",
+    "badge": "公办应用",
+    "systems": [
+      {
+        "id": "pdsxy_jw",
+        "name": "平顶山学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.pdsu.edu.cn/",
+        "desc": "平顶山学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "pdsxy_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.pdsxy.edu.cn/",
+        "desc": "平顶山学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "whu",
+    "name": "武汉大学",
+    "shortName": "WHU / 武大",
+    "pinyin": "wuhandaxue whu wd wuda",
+    "region": "湖北 · 武汉",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "whu_jw",
+        "name": "武汉大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "https://bkzs.whu.edu.cn/",
+        "desc": "武汉大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "whu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.whu.edu.cn/",
+        "desc": "武汉大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hust",
+    "name": "华中科技大学",
+    "shortName": "HUST / 华科",
+    "pinyin": "huazhongkejidaxue hust hk huake huakeji",
+    "region": "湖北 · 武汉",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "hust_jw",
+        "name": "华中科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://hub.m.hust.edu.cn/",
+        "desc": "华中科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hust.edu.cn/",
+        "desc": "华中科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "whut",
+    "name": "武汉理工大学",
+    "shortName": "WUT / 武理工",
+    "pinyin": "wuhanligongdaxue wut wlg wuligong",
+    "region": "湖北 · 武汉",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "whut_jw",
+        "name": "武汉理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.whut.edu.cn/",
+        "desc": "武汉理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "whut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.whut.edu.cn/",
+        "desc": "武汉理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hzau",
+    "name": "华中农业大学",
+    "shortName": "HZAU / 华农",
+    "pinyin": "huazhongnongyedaxue hzau hn huanong",
+    "region": "湖北 · 武汉",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "hzau_jw",
+        "name": "华中农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.hzau.edu.cn/",
+        "desc": "华中农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hzau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hzau.edu.cn/",
+        "desc": "华中农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ccnu",
+    "name": "华中师范大学",
+    "shortName": "CCNU / 华中师大",
+    "pinyin": "huazhongshifandaxue ccnu hzsd huazhongshida",
+    "region": "湖北 · 武汉",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "ccnu_jw",
+        "name": "华中师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://xk.ccnu.edu.cn/",
+        "desc": "华中师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ccnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ccnu.edu.cn/",
+        "desc": "华中师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "zuel",
+    "name": "中南财经政法大学",
+    "shortName": "ZUEL / 中南大",
+    "pinyin": "zhongnancaijingzhengfadaxue zuel znd zhongnandaxue",
+    "region": "湖北 · 武汉",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "zuel_jw",
+        "name": "中南财经政法大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.zuel.edu.cn/",
+        "desc": "中南财经政法大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "zuel_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.zuel.edu.cn/",
+        "desc": "中南财经政法大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cug",
+    "name": "中国地质大学(武汉)",
+    "shortName": "CUG / 地大",
+    "pinyin": "zhongguodizhidaxuewuhan cug dd dida",
+    "region": "湖北 · 武汉",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "cug_jw",
+        "name": "中国地质大学(武汉)教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.cug.edu.cn/",
+        "desc": "中国地质大学(武汉)教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cug_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cug.edu.cn/",
+        "desc": "中国地质大学(武汉)官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hubu",
+    "name": "湖北大学",
+    "shortName": "HUBU / 湖大",
+    "pinyin": "hubeidaxue hubu hd huda",
+    "region": "湖北 · 武汉",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "hubu_jw",
+        "name": "湖北大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.hubu.edu.cn/",
+        "desc": "湖北大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hubu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hubu.edu.cn/",
+        "desc": "湖北大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "wust",
+    "name": "武汉科技大学",
+    "shortName": "WUST / 武科大",
+    "pinyin": "wuhankejidaxue wust wkd wukeda",
+    "region": "湖北 · 武汉",
+    "badge": "冶金特色重点",
+    "systems": [
+      {
+        "id": "wust_jw",
+        "name": "武汉科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.wust.edu.cn/",
+        "desc": "武汉科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "wust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.wust.edu.cn/",
+        "desc": "武汉科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "yangtzeu",
+    "name": "长江大学",
+    "shortName": "YU / 长大",
+    "pinyin": "changjiangdaxue yu cd changda",
+    "region": "湖北 · 荆州/武汉",
+    "badge": "石油与农科重点",
+    "systems": [
+      {
+        "id": "yangtzeu_jw",
+        "name": "长江大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.yangtzeu.edu.cn/",
+        "desc": "长江大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "yangtzeu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.yangtzeu.edu.cn/",
+        "desc": "长江大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jhun",
+    "name": "江汉大学",
+    "shortName": "JHUN / 江大",
+    "pinyin": "jianghandaxue jhun jd jiangda",
+    "region": "湖北 · 武汉",
+    "badge": "市属高水平",
+    "systems": [
+      {
+        "id": "jhun_jw",
+        "name": "江汉大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.jhun.edu.cn/",
+        "desc": "江汉大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jhun_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jhun.edu.cn/",
+        "desc": "江汉大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ctgu",
+    "name": "三峡大学",
+    "shortName": "CTGU / 三大",
+    "pinyin": "sanxiadaxue ctgu sd sanda",
+    "region": "湖北 · 宜昌",
+    "badge": "水利电力重点",
+    "systems": [
+      {
+        "id": "ctgu_jw",
+        "name": "三峡大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ctgu.edu.cn/",
+        "desc": "三峡大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ctgu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ctgu.edu.cn/",
+        "desc": "三峡大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "wit",
+    "name": "武汉工程大学",
+    "shortName": "WIT / 武工大",
+    "pinyin": "wuhangongchengdaxue wit wgd wugongda",
+    "region": "湖北 · 武汉",
+    "badge": "化工特色",
+    "systems": [
+      {
+        "id": "wit_jw",
+        "name": "武汉工程大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.wit.edu.cn/",
+        "desc": "武汉工程大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "wit_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.wit.edu.cn/",
+        "desc": "武汉工程大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hbut",
+    "name": "湖北工业大学",
+    "shortName": "HBUT / 湖工大",
+    "pinyin": "hubeigongyedaxue hbut hgd hugongda",
+    "region": "湖北 · 武汉",
+    "badge": "工程重点",
+    "systems": [
+      {
+        "id": "hbut_jw",
+        "name": "湖北工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hbut.edu.cn/",
+        "desc": "湖北工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hbut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hbut.edu.cn/",
+        "desc": "湖北工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "wtu",
+    "name": "武汉纺织大学",
+    "shortName": "WTU / 纺大",
+    "pinyin": "wuhanfangzhidaxue wtu fd fangda",
+    "region": "湖北 · 武汉",
+    "badge": "纺织特色",
+    "systems": [
+      {
+        "id": "wtu_jw",
+        "name": "武汉纺织大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.wtu.edu.cn/",
+        "desc": "武汉纺织大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "wtu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.wtu.edu.cn/",
+        "desc": "武汉纺织大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hbtcmu",
+    "name": "湖北中医药大学",
+    "shortName": "HBTCM / 湖中医",
+    "pinyin": "hubeizhongyiyaodaxue hbtcm hzy huzhongyi",
+    "region": "湖北 · 武汉",
+    "badge": "中医药特色",
+    "systems": [
+      {
+        "id": "hbtcmu_jw",
+        "name": "湖北中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hbtcm.edu.cn/",
+        "desc": "湖北中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hbtcmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hbtcmu.edu.cn/",
+        "desc": "湖北中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hbnu",
+    "name": "湖北师范大学",
+    "shortName": "HBNU / 湖师大",
+    "pinyin": "hubeishifandaxue hbnu hsd hushida",
+    "region": "湖北 · 黄石",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "hbnu_jw",
+        "name": "湖北师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hbnu.edu.cn/",
+        "desc": "湖北师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hbnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hbnu.edu.cn/",
+        "desc": "湖北师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "csu",
+    "name": "中南大学",
+    "shortName": "CSU / 中南",
+    "pinyin": "zhongnandaxue csu zn zhongnan",
+    "region": "湖南 · 长沙",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "csu_jw",
+        "name": "中南大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://csujwc.its.csu.edu.cn/",
+        "desc": "中南大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "csu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.csu.edu.cn/",
+        "desc": "中南大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hnu",
+    "name": "湖南大学",
+    "shortName": "HNU / 湖大",
+    "pinyin": "hunandaxue hnu hd huda",
+    "region": "湖南 · 长沙",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "hnu_jw",
+        "name": "湖南大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hnu.edu.cn/",
+        "desc": "湖南大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hnu.edu.cn/",
+        "desc": "湖南大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hunnu",
+    "name": "湖南师范大学",
+    "shortName": "HUNNU / 湖师大",
+    "pinyin": "hunanshifandaxue hunnu hsd hushida qingguo",
+    "region": "湖南 · 长沙",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "hunnu_jw",
+        "name": "湖南师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "https://jw.hunnu.edu.cn/",
+        "desc": "湖南师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hunnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hunnu.edu.cn/",
+        "desc": "湖南师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "csust",
+    "name": "长沙理工大学",
+    "shortName": "CSUST / 长理",
+    "pinyin": "changshaligongdaxue csust cl changli qiangzhi",
+    "region": "湖南 · 长沙",
+    "badge": "强智系统",
+    "systems": [
+      {
+        "id": "csust_jw",
+        "name": "长沙理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://xk.csust.edu.cn/",
+        "desc": "长沙理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "csust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.csust.edu.cn/",
+        "desc": "长沙理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hunau",
+    "name": "湖南农业大学",
+    "shortName": "HUNAU / 湖南农大",
+    "pinyin": "hunannongyedaxue hunau hnd hunannongda qiangzhi",
+    "region": "湖南 · 长沙",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "hunau_jw",
+        "name": "湖南农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.hunau.edu.cn/",
+        "desc": "湖南农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hunau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hunau.edu.cn/",
+        "desc": "湖南农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "csuft",
+    "name": "中南林业科技大学",
+    "shortName": "CSUFT / 中南林",
+    "pinyin": "zhongnanlinyekejidaxue csuft znl zhongnanlin",
+    "region": "湖南 · 长沙",
+    "badge": "林业高水平",
+    "systems": [
+      {
+        "id": "csuft_jw",
+        "name": "中南林业科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.csuft.edu.cn/",
+        "desc": "中南林业科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "csuft_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.csuft.edu.cn/",
+        "desc": "中南林业科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xtu",
+    "name": "湘潭大学",
+    "shortName": "XTU / 湘大",
+    "pinyin": "xiangtandaxue xtu xd xiangda",
+    "region": "湖南 · 湘潭",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "xtu_jw",
+        "name": "湘潭大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.xtu.edu.cn/",
+        "desc": "湘潭大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xtu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xtu.edu.cn/",
+        "desc": "湘潭大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hnust",
+    "name": "湖南科技大学",
+    "shortName": "HNUST / 湖科大",
+    "pinyin": "hunankejidaxue hnust hkd hukeda qiangzhi",
+    "region": "湖南 · 湘潭",
+    "badge": "强智系统",
+    "systems": [
+      {
+        "id": "hnust_jw",
+        "name": "湖南科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://kdjw.hnust.edu.cn/",
+        "desc": "湖南科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hnust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hnust.edu.cn/",
+        "desc": "湖南科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "usc",
+    "name": "南华大学",
+    "shortName": "USC / 南华",
+    "pinyin": "nanhuadaxue usc nh nanhua qiangzhi",
+    "region": "湖南 · 衡阳",
+    "badge": "核工医学重点",
+    "systems": [
+      {
+        "id": "usc_jw",
+        "name": "南华大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.usc.edu.cn/",
+        "desc": "南华大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "usc_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.usc.edu.cn/",
+        "desc": "南华大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jsu_hn",
+    "name": "吉首大学",
+    "shortName": "JSU / 吉大",
+    "pinyin": "jishoudaxue jsu jd jishou qiangzhi",
+    "region": "湖南 · 吉首",
+    "badge": "民族重点",
+    "systems": [
+      {
+        "id": "jsu_hn_jw",
+        "name": "吉首大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.jsu.edu.cn/",
+        "desc": "吉首大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jsu_hn_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jsu_hn.edu.cn/",
+        "desc": "吉首大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hut",
+    "name": "湖南工业大学",
+    "shortName": "HUT / 湖工大",
+    "pinyin": "hunangongyedaxue hut hgd hugongda",
+    "region": "湖南 · 株洲",
+    "badge": "包装特色高水平",
+    "systems": [
+      {
+        "id": "hut_jw",
+        "name": "湖南工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.hut.edu.cn/",
+        "desc": "湖南工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hut.edu.cn/",
+        "desc": "湖南工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hnfirstnu",
+    "name": "湖南第一师范学院",
+    "shortName": "HN1NU / 一师范",
+    "pinyin": "hunandiyishifanxueyuan hnnu ysf yishifan",
+    "region": "湖南 · 长沙",
+    "badge": "师范名校",
+    "systems": [
+      {
+        "id": "hnfirstnu_jw",
+        "name": "湖南第一师范学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.hnfnu.edu.cn/",
+        "desc": "湖南第一师范学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hnfirstnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hnfirstnu.edu.cn/",
+        "desc": "湖南第一师范学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hnu_med",
+    "name": "湖南中医药大学",
+    "shortName": "HNUCMS / 湖中医",
+    "pinyin": "hunanzhongyiyaodaxue hnucms hzy huzhongyi",
+    "region": "湖南 · 长沙",
+    "badge": "医学特色",
+    "systems": [
+      {
+        "id": "hnu_med_jw",
+        "name": "湖南中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.hnucm.edu.cn/",
+        "desc": "湖南中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hnu_med_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hnu_med.edu.cn/",
+        "desc": "湖南中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "syu_hn",
+    "name": "邵阳学院",
+    "shortName": "SYU / 邵院",
+    "pinyin": "shaoyangxueyuan syu sy shaoyuan",
+    "region": "湖南 · 邵阳",
+    "badge": "公办应用",
+    "systems": [
+      {
+        "id": "syu_hn_jw",
+        "name": "邵阳学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hnsyu.edu.cn/",
+        "desc": "邵阳学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "syu_hn_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.syu_hn.edu.cn/",
+        "desc": "邵阳学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hhu_hn",
+    "name": "怀化学院",
+    "shortName": "HHU / 怀院",
+    "pinyin": "huaihuaxueyuan hhu hy huaiyuan",
+    "region": "湖南 · 怀化",
+    "badge": "公办本科",
+    "systems": [
+      {
+        "id": "hhu_hn_jw",
+        "name": "怀化学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hhtc.edu.cn/",
+        "desc": "怀化学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hhu_hn_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hhu_hn.edu.cn/",
+        "desc": "怀化学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xnu_hn",
+    "name": "湘南学院",
+    "shortName": "XNU / 湘南",
+    "pinyin": "xiangnanxueyuan xnu xn xiangnan",
+    "region": "湖南 · 郴州",
+    "badge": "公办本科",
+    "systems": [
+      {
+        "id": "xnu_hn_jw",
+        "name": "湘南学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xnu.edu.cn/",
+        "desc": "湘南学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xnu_hn_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xnu_hn.edu.cn/",
+        "desc": "湘南学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "huas",
+    "name": "湖南文理学院",
+    "shortName": "HUAS / 湖南文理",
+    "pinyin": "hunanwenlixueyuan huas hnwl hunanwenli",
+    "region": "湖南 · 常德",
+    "badge": "公办本科",
+    "systems": [
+      {
+        "id": "huas_jw",
+        "name": "湖南文理学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.huas.edu.cn/",
+        "desc": "湖南文理学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "huas_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.huas.edu.cn/",
+        "desc": "湖南文理学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "huel",
+    "name": "湖南人文科技学院",
+    "shortName": "HUEL / 人文科技",
+    "pinyin": "hunanrenwenkejixueyuan huel rwk j hunanrenwen",
+    "region": "湖南 · 娄底",
+    "badge": "公办本科",
+    "systems": [
+      {
+        "id": "huel_jw",
+        "name": "湖南人文科技学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.huhst.edu.cn/",
+        "desc": "湖南人文科技学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "huel_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.huel.edu.cn/",
+        "desc": "湖南人文科技学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hnie",
+    "name": "湖南工程学院",
+    "shortName": "HNIE / 湖工院",
+    "pinyin": "hunangongchengxueyuan hnie hgy hugongyuan",
+    "region": "湖南 · 湘潭",
+    "badge": "电气纺织特色",
+    "systems": [
+      {
+        "id": "hnie_jw",
+        "name": "湖南工程学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hnie.edu.cn/",
+        "desc": "湖南工程学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hnie_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hnie.edu.cn/",
+        "desc": "湖南工程学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hynu",
+    "name": "衡阳师范学院",
+    "shortName": "HYNU / 衡师",
+    "pinyin": "hengyangshifanxueyuan hynu hs hengshi",
+    "region": "湖南 · 衡阳",
+    "badge": "省属师范",
+    "systems": [
+      {
+        "id": "hynu_jw",
+        "name": "衡阳师范学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hynu.edu.cn/",
+        "desc": "衡阳师范学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hynu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hynu.edu.cn/",
+        "desc": "衡阳师范学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hncu",
+    "name": "湖南城市学院",
+    "shortName": "HNCU / 城院",
+    "pinyin": "hunanchengshixueyuan hncu cy chengyuan",
+    "region": "湖南 · 益阳",
+    "badge": "规划建筑特色",
+    "systems": [
+      {
+        "id": "hncu_jw",
+        "name": "湖南城市学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hncu.edu.cn/",
+        "desc": "湖南城市学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hncu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hncu.edu.cn/",
+        "desc": "湖南城市学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hnit",
+    "name": "湖南工学院",
+    "shortName": "HNIT / 湖工",
+    "pinyin": "hunangongxueyuan hnit hg hugong",
+    "region": "湖南 · 衡阳",
+    "badge": "安全工程特色",
+    "systems": [
+      {
+        "id": "hnit_jw",
+        "name": "湖南工学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hnit.edu.cn/",
+        "desc": "湖南工学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hnit_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hnit.edu.cn/",
+        "desc": "湖南工学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sysu",
+    "name": "中山大学",
+    "shortName": "SYSU / 中大",
+    "pinyin": "zhongshandaxue sysu zd zhongda",
+    "region": "广东 · 广州",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "sysu_jw",
+        "name": "中山大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "https://jwxt.sysu.edu.cn/jwxt/",
+        "desc": "中山大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sysu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sysu.edu.cn/",
+        "desc": "中山大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "scut",
+    "name": "华南理工大学",
+    "shortName": "SCUT / 华工",
+    "pinyin": "huananligongdaxue scut hg huagong",
+    "region": "广东 · 广州",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "scut_jw",
+        "name": "华南理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.scut.edu.cn/",
+        "desc": "华南理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "scut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.scut.edu.cn/",
+        "desc": "华南理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "jnu",
+    "name": "暨南大学",
+    "shortName": "JNU / 暨大",
+    "pinyin": "jinandaxue jnu jd jida",
+    "region": "广东 · 广州",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "jnu_jw",
+        "name": "暨南大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "https://jw2017.jnu.edu.cn/",
+        "desc": "暨南大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "jnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.jnu.edu.cn/",
+        "desc": "暨南大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "szu",
+    "name": "深圳大学",
+    "shortName": "SZU / 深大",
+    "pinyin": "shenzhendaxue szu sd shenda",
+    "region": "广东 · 深圳",
+    "badge": "特区旗舰高校",
+    "systems": [
+      {
+        "id": "szu_jw",
+        "name": "深圳大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://ehall.szu.edu.cn/jwapp/sys/homeapp/home/index.html",
+        "desc": "深圳大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "szu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.szu.edu.cn/",
+        "desc": "深圳大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sustech",
+    "name": "南方科技大学",
+    "shortName": "SUSTech / 南科大",
+    "pinyin": "nanfangkejidaxue sustech nkd nankeda",
+    "region": "广东 · 深圳",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "sustech_jw",
+        "name": "南方科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "https://jwxt.sustech.edu.cn/",
+        "desc": "南方科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sustech_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sustech.edu.cn/",
+        "desc": "南方科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gdut",
+    "name": "广东工业大学",
+    "shortName": "GDUT / 广工",
+    "pinyin": "guangdonggongyedaxue gdut gg guanggong qiangzhi",
+    "region": "广东 · 广州",
+    "badge": "强智系统",
+    "systems": [
+      {
+        "id": "gdut_jw",
+        "name": "广东工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jxfw.gdut.edu.cn/",
+        "desc": "广东工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gdut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gdut.edu.cn/",
+        "desc": "广东工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "scau",
+    "name": "华南农业大学",
+    "shortName": "SCAU / 华农",
+    "pinyin": "huanannongyedaxue scau hn huanong",
+    "region": "广东 · 广州",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "scau_jw",
+        "name": "华南农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.scau.edu.cn/",
+        "desc": "华南农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "scau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.scau.edu.cn/",
+        "desc": "华南农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "scnu",
+    "name": "华南师范大学",
+    "shortName": "SCNU / 华师",
+    "pinyin": "huananshifandaxue scnu hs huashi qingguo",
+    "region": "广东 · 广州",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "scnu_jw",
+        "name": "华南师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "https://jwxt.scnu.edu.cn/",
+        "desc": "华南师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "scnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.scnu.edu.cn/",
+        "desc": "华南师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gdufs",
+    "name": "广东外语外贸大学",
+    "shortName": "GDUFS / 广外",
+    "pinyin": "guangdongwaiyuwaimaodaxue gdufs gw guangwai",
+    "region": "广东 · 广州",
+    "badge": "外语外贸重点",
+    "systems": [
+      {
+        "id": "gdufs_jw",
+        "name": "广东外语外贸大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gdufs.edu.cn/",
+        "desc": "广东外语外贸大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gdufs_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gdufs.edu.cn/",
+        "desc": "广东外语外贸大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gzhu",
+    "name": "广州大学",
+    "shortName": "GZHU / 广大",
+    "pinyin": "guangzhoudaxue gzhu gd guangda",
+    "region": "广东 · 广州",
+    "badge": "高水平综合",
+    "systems": [
+      {
+        "id": "gzhu_jw",
+        "name": "广州大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.gzhu.edu.cn/",
+        "desc": "广州大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gzhu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gzhu.edu.cn/",
+        "desc": "广州大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "stu",
+    "name": "汕头大学",
+    "shortName": "STU / 汕大",
+    "pinyin": "shantoudaxue stu sd shanda",
+    "region": "广东 · 汕头",
+    "badge": "潮汕特色名校",
+    "systems": [
+      {
+        "id": "stu_jw",
+        "name": "汕头大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://credit.stu.edu.cn/",
+        "desc": "汕头大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "stu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.stu.edu.cn/",
+        "desc": "汕头大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gdmu",
+    "name": "广东医科大学",
+    "shortName": "GDMU / 广医大",
+    "pinyin": "guangdongyikedaxue gdmu gyd guangyida",
+    "region": "广东 · 湛江/东莞",
+    "badge": "医学高水平",
+    "systems": [
+      {
+        "id": "gdmu_jw",
+        "name": "广东医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gdmu.edu.cn/",
+        "desc": "广东医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gdmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gdmu.edu.cn/",
+        "desc": "广东医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gdpu",
+    "name": "广东药科大学",
+    "shortName": "GDPU / 广药大",
+    "pinyin": "guangdongyaokedaxue gdpu gyd guangyaoda",
+    "region": "广东 · 广州",
+    "badge": "医药特色",
+    "systems": [
+      {
+        "id": "gdpu_jw",
+        "name": "广东药科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gdpu.edu.cn/",
+        "desc": "广东药科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gdpu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gdpu.edu.cn/",
+        "desc": "广东药科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gzhmu",
+    "name": "广州医科大学",
+    "shortName": "GMU / 广医",
+    "pinyin": "guangzhouyikedaxue gmu gy guangyi",
+    "region": "广东 · 广州",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "gzhmu_jw",
+        "name": "广州医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gzhmu.edu.cn/",
+        "desc": "广州医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gzhmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gzhmu.edu.cn/",
+        "desc": "广州医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gzucm",
+    "name": "广州中医药大学",
+    "shortName": "GZUCM / 广中医",
+    "pinyin": "guangzhouzhongyiyaodaxue gzucm gzy guangzhongyi",
+    "region": "广东 · 广州",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "gzucm_jw",
+        "name": "广州中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gzucm.edu.cn/",
+        "desc": "广州中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gzucm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gzucm.edu.cn/",
+        "desc": "广州中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gdou",
+    "name": "广东海洋大学",
+    "shortName": "GDOU / 广海",
+    "pinyin": "guangdonghaiyangdaxue gdou gh guanghai",
+    "region": "广东 · 湛江",
+    "badge": "海洋特色重点",
+    "systems": [
+      {
+        "id": "gdou_jw",
+        "name": "广东海洋大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gdou.edu.cn/",
+        "desc": "广东海洋大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gdou_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gdou.edu.cn/",
+        "desc": "广东海洋大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "dgut",
+    "name": "东莞理工学院",
+    "shortName": "DGUT / 莞工",
+    "pinyin": "dongguanligongxueyuan dgut wg wangong",
+    "region": "广东 · 东莞",
+    "badge": "应用高水平",
+    "systems": [
+      {
+        "id": "dgut_jw",
+        "name": "东莞理工学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.dgut.edu.cn/",
+        "desc": "东莞理工学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "dgut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.dgut.edu.cn/",
+        "desc": "东莞理工学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sztu",
+    "name": "深圳技术大学",
+    "shortName": "SZTU / 深技大",
+    "pinyin": "shenzhenjishudaxue sztu sjd shenjida",
+    "region": "广东 · 深圳",
+    "badge": "应用型本科名校",
+    "systems": [
+      {
+        "id": "sztu_jw",
+        "name": "深圳技术大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sztu.edu.cn/",
+        "desc": "深圳技术大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sztu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sztu.edu.cn/",
+        "desc": "深圳技术大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gxu",
+    "name": "广西大学",
+    "shortName": "GXU / 西大",
+    "pinyin": "guangxidaxue gxu xd xida",
+    "region": "广西 · 南宁",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "gxu_jw",
+        "name": "广西大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gxu.edu.cn/",
+        "desc": "广西大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gxu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gxu.edu.cn/",
+        "desc": "广西大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "guet",
+    "name": "桂林电子科技大学",
+    "shortName": "GUET / 桂电",
+    "pinyin": "guilindianzikejidaxue guet gd guidian",
+    "region": "广西 · 桂林",
+    "badge": "电子信息名校",
+    "systems": [
+      {
+        "id": "guet_jw",
+        "name": "桂林电子科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.guet.edu.cn/",
+        "desc": "桂林电子科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "guet_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.guet.edu.cn/",
+        "desc": "桂林电子科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gut",
+    "name": "桂林理工大学",
+    "shortName": "GUT / 桂工",
+    "pinyin": "guilinligongdaxue gut gg guigong",
+    "region": "广西 · 桂林",
+    "badge": "理工特色重点",
+    "systems": [
+      {
+        "id": "gut_jw",
+        "name": "桂林理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.glut.edu.cn/",
+        "desc": "桂林理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gut.edu.cn/",
+        "desc": "桂林理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gxnu",
+    "name": "广西师范大学",
+    "shortName": "GXNU / 广西师大",
+    "pinyin": "guangxishifandaxue gxnu gxsd guangxishida",
+    "region": "广西 · 桂林",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "gxnu_jw",
+        "name": "广西师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gxnu.edu.cn/",
+        "desc": "广西师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gxnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gxnu.edu.cn/",
+        "desc": "广西师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gxmu",
+    "name": "广西医科大学",
+    "shortName": "GXMU / 广医大",
+    "pinyin": "guangxiyikedaxue gxmu gyd guangyida",
+    "region": "广西 · 南宁",
+    "badge": "医学名校",
+    "systems": [
+      {
+        "id": "gxmu_jw",
+        "name": "广西医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gxmu.edu.cn/",
+        "desc": "广西医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gxmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gxmu.edu.cn/",
+        "desc": "广西医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gxun",
+    "name": "广西民族大学",
+    "shortName": "GXUN / 广民大",
+    "pinyin": "guangximinzudaxue gxun gmd guangminda",
+    "region": "广西 · 南宁",
+    "badge": "省部共建",
+    "systems": [
+      {
+        "id": "gxun_jw",
+        "name": "广西民族大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gxun.edu.cn/",
+        "desc": "广西民族大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gxun_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gxun.edu.cn/",
+        "desc": "广西民族大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nnnu",
+    "name": "南宁师范大学",
+    "shortName": "NNNU / 南宁师大",
+    "pinyin": "nanningshifandaxue nnnu nnsd nanningshida",
+    "region": "广西 · 南宁",
+    "badge": "公办师范",
+    "systems": [
+      {
+        "id": "nnnu_jw",
+        "name": "南宁师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.nnnu.edu.cn/",
+        "desc": "南宁师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nnnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nnnu.edu.cn/",
+        "desc": "南宁师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hainanu",
+    "name": "海南大学",
+    "shortName": "HNU / 海大",
+    "pinyin": "hainandaxue hnu hd haida hainan",
+    "region": "海南 · 海口",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "hainanu_jw",
+        "name": "海南大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.hainanu.edu.cn/",
+        "desc": "海南大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hainanu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hainanu.edu.cn/",
+        "desc": "海南大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "hnnu_hain",
+    "name": "海南师范大学",
+    "shortName": "HNNU / 海师大",
+    "pinyin": "hainanshifandaxue hnnu hsd haishida",
+    "region": "海南 · 海口",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "hnnu_hain_jw",
+        "name": "海南师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hainnu.edu.cn/",
+        "desc": "海南师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "hnnu_hain_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.hnnu_hain.edu.cn/",
+        "desc": "海南师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "mu_hn",
+    "name": "海南医学院",
+    "shortName": "HNM / 海医",
+    "pinyin": "hainanyixueyuan hnm hy haiyi",
+    "region": "海南 · 海口",
+    "badge": "医药特色",
+    "systems": [
+      {
+        "id": "mu_hn_jw",
+        "name": "海南医学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.hainmc.edu.cn/",
+        "desc": "海南医学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "mu_hn_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.mu_hn.edu.cn/",
+        "desc": "海南医学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cqu",
+    "name": "重庆大学",
+    "shortName": "CQU / 重大",
+    "pinyin": "chongqingdaxue cqu cd chongda zhongda",
+    "region": "重庆 · 沙坪坝",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "cqu_jw",
+        "name": "重庆大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.cqu.edu.cn/",
+        "desc": "重庆大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cqu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cqu.edu.cn/",
+        "desc": "重庆大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "swu",
+    "name": "西南大学",
+    "shortName": "SWU / 西大",
+    "pinyin": "xinandaxue swu xd xida",
+    "region": "重庆 · 北碚",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "swu_jw",
+        "name": "西南大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.swu.edu.cn/",
+        "desc": "西南大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "swu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.swu.edu.cn/",
+        "desc": "西南大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cqupt",
+    "name": "重庆邮电大学",
+    "shortName": "CQUPT / 重邮",
+    "pinyin": "chongqingyoudiandaxue cqupt cy chongyou",
+    "region": "重庆 · 南岸",
+    "badge": "电子信息特色",
+    "systems": [
+      {
+        "id": "cqupt_jw",
+        "name": "重庆邮电大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.cqupt.edu.cn/",
+        "desc": "重庆邮电大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cqupt_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cqupt.edu.cn/",
+        "desc": "重庆邮电大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cqjtu",
+    "name": "重庆交通大学",
+    "shortName": "CQJTU / 重交",
+    "pinyin": "chongqingjiaotongdaxue cqjtu cj chongjiao",
+    "region": "重庆 · 南岸",
+    "badge": "交通重点",
+    "systems": [
+      {
+        "id": "cqjtu_jw",
+        "name": "重庆交通大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cqjtu.edu.cn/",
+        "desc": "重庆交通大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cqjtu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cqjtu.edu.cn/",
+        "desc": "重庆交通大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cqmu",
+    "name": "重庆医科大学",
+    "shortName": "CQMU / 重医",
+    "pinyin": "chongqingyikedaxue cqmu cy chongyi",
+    "region": "重庆 · 渝中",
+    "badge": "医学重点",
+    "systems": [
+      {
+        "id": "cqmu_jw",
+        "name": "重庆医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cqmu.edu.cn/",
+        "desc": "重庆医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cqmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cqmu.edu.cn/",
+        "desc": "重庆医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cqnu",
+    "name": "重庆师范大学",
+    "shortName": "CQNU / 重师大",
+    "pinyin": "chongqingshifandaxue cqnu csd chongshida",
+    "region": "重庆 · 沙坪坝",
+    "badge": "师范重点",
+    "systems": [
+      {
+        "id": "cqnu_jw",
+        "name": "重庆师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cqnu.edu.cn/",
+        "desc": "重庆师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cqnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cqnu.edu.cn/",
+        "desc": "重庆师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ctbu",
+    "name": "重庆工商大学",
+    "shortName": "CTBU / 重工商",
+    "pinyin": "chongqinggongshangdaxue ctbu cgs chonggongshang",
+    "region": "重庆 · 南岸",
+    "badge": "经管特色",
+    "systems": [
+      {
+        "id": "ctbu_jw",
+        "name": "重庆工商大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ctbu.edu.cn/",
+        "desc": "重庆工商大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ctbu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ctbu.edu.cn/",
+        "desc": "重庆工商大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cqut",
+    "name": "重庆理工大学",
+    "shortName": "CQUT / 重理工",
+    "pinyin": "chongqingligongdaxue cqut clg chongligong",
+    "region": "重庆 · 巴南",
+    "badge": "装备工科重点",
+    "systems": [
+      {
+        "id": "cqut_jw",
+        "name": "重庆理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cqut.edu.cn/",
+        "desc": "重庆理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cqut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cqut.edu.cn/",
+        "desc": "重庆理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sisu_cq",
+    "name": "四川外国语大学",
+    "shortName": "SISU / 川外",
+    "pinyin": "sichuanwaiguoyudaxue sisu cw chuanwai",
+    "region": "重庆 · 沙坪坝",
+    "badge": "外语名校",
+    "systems": [
+      {
+        "id": "sisu_cq_jw",
+        "name": "四川外国语大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sisu.edu.cn/",
+        "desc": "四川外国语大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sisu_cq_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sisu_cq.edu.cn/",
+        "desc": "四川外国语大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "scu",
+    "name": "四川大学",
+    "shortName": "SCU / 川大",
+    "pinyin": "sichuandaxue scu cd chuanda",
+    "region": "四川 · 成都",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "scu_jw",
+        "name": "四川大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://zhjw.scu.edu.cn/",
+        "desc": "四川大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "scu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.scu.edu.cn/",
+        "desc": "四川大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "uestc",
+    "name": "电子科技大学",
+    "shortName": "UESTC / 成电",
+    "pinyin": "dianzikejidaxue uestc cd chengdian",
+    "region": "四川 · 成都",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "uestc_jw",
+        "name": "电子科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://eams.uestc.edu.cn/eams/",
+        "desc": "电子科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "uestc_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.uestc.edu.cn/",
+        "desc": "电子科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "swjtu",
+    "name": "西南交通大学",
+    "shortName": "SWJTU / 西南交大",
+    "pinyin": "xinanjiaotongdaxue swjtu xnjd xinanjiaoda",
+    "region": "四川 · 成都",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "swjtu_jw",
+        "name": "西南交通大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwc.swjtu.edu.cn/",
+        "desc": "西南交通大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "swjtu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.swjtu.edu.cn/",
+        "desc": "西南交通大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "swufe",
+    "name": "西南财经大学",
+    "shortName": "SWUFE / 西财",
+    "pinyin": "xinancaijingdaxue swufe xc xicai",
+    "region": "四川 · 成都",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "swufe_jw",
+        "name": "西南财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.swufe.edu.cn/",
+        "desc": "西南财经大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "swufe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.swufe.edu.cn/",
+        "desc": "西南财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sicau",
+    "name": "四川农业大学",
+    "shortName": "SICAU / 川农",
+    "pinyin": "sichuannongyedaxue sicau cn chuannong",
+    "region": "四川 · 雅安/成都",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "sicau_jw",
+        "name": "四川农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jiaowu.sicau.edu.cn/",
+        "desc": "四川农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sicau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sicau.edu.cn/",
+        "desc": "四川农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cdut",
+    "name": "成都理工大学",
+    "shortName": "CDUT / 成理",
+    "pinyin": "chengduligongdaxue cdut cl chengli",
+    "region": "四川 · 成都",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "cdut_jw",
+        "name": "成都理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cdut.edu.cn/",
+        "desc": "成都理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cdut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cdut.edu.cn/",
+        "desc": "成都理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "swpu",
+    "name": "西南石油大学",
+    "shortName": "SWPU / 西南石大",
+    "pinyin": "xinanshiyoudaxue swpu xnsd xinanshida",
+    "region": "四川 · 成都",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "swpu_jw",
+        "name": "西南石油大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.swpu.edu.cn/",
+        "desc": "西南石油大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "swpu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.swpu.edu.cn/",
+        "desc": "西南石油大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "swust",
+    "name": "西南科技大学",
+    "shortName": "SWUST / 西科大",
+    "pinyin": "xinankejidaxue swust xkd xikeda",
+    "region": "四川 · 绵阳",
+    "badge": "国防共建重点",
+    "systems": [
+      {
+        "id": "swust_jw",
+        "name": "西南科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.swust.edu.cn/",
+        "desc": "西南科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "swust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.swust.edu.cn/",
+        "desc": "西南科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cdutcm",
+    "name": "成都中医药大学",
+    "shortName": "CDTCM / 成中医",
+    "pinyin": "chengduzhongyiyaodaxue cdtcm czy chengzhongyi",
+    "region": "四川 · 成都",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "cdutcm_jw",
+        "name": "成都中医药大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cdutcm.edu.cn/",
+        "desc": "成都中医药大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cdutcm_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cdutcm.edu.cn/",
+        "desc": "成都中医药大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sicnu",
+    "name": "四川师范大学",
+    "shortName": "SICNU / 川师大",
+    "pinyin": "sichuanshifandaxue sicnu csd chuanshida",
+    "region": "四川 · 成都",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "sicnu_jw",
+        "name": "四川师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sicnu.edu.cn/",
+        "desc": "四川师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sicnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sicnu.edu.cn/",
+        "desc": "四川师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xhu",
+    "name": "西华大学",
+    "shortName": "XHU / 西华",
+    "pinyin": "xihuadaxue xhu xh xihua",
+    "region": "四川 · 成都",
+    "badge": "综合工科",
+    "systems": [
+      {
+        "id": "xhu_jw",
+        "name": "西华大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xhu.edu.cn/",
+        "desc": "西华大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xhu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xhu.edu.cn/",
+        "desc": "西华大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cwnu",
+    "name": "西华师范大学",
+    "shortName": "CWNU / 西华师大",
+    "pinyin": "xihuashifandaxue cwnu xhsd xihuashida",
+    "region": "四川 · 南充",
+    "badge": "省属师范",
+    "systems": [
+      {
+        "id": "cwnu_jw",
+        "name": "西华师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cwnu.edu.cn/",
+        "desc": "西华师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cwnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cwnu.edu.cn/",
+        "desc": "西华师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cuit",
+    "name": "成都信息工程大学",
+    "shortName": "CUIT / 成信大",
+    "pinyin": "chengduxinxigongchengdaxue cuit cxd chengxinda",
+    "region": "四川 · 成都",
+    "badge": "气象信息特色",
+    "systems": [
+      {
+        "id": "cuit_jw",
+        "name": "成都信息工程大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cuit.edu.cn/",
+        "desc": "成都信息工程大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cuit_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cuit.edu.cn/",
+        "desc": "成都信息工程大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "cdu",
+    "name": "成都大学",
+    "shortName": "CDU / 成大",
+    "pinyin": "chengdudaxue cdu cd chengda",
+    "region": "四川 · 成都",
+    "badge": "综合高水平",
+    "systems": [
+      {
+        "id": "cdu_jw",
+        "name": "成都大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.cdu.edu.cn/",
+        "desc": "成都大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "cdu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.cdu.edu.cn/",
+        "desc": "成都大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gzu",
+    "name": "贵州大学",
+    "shortName": "GZU / 贵大",
+    "pinyin": "guizhoudaxue gzu gd guida",
+    "region": "贵州 · 贵阳",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "gzu_jw",
+        "name": "贵州大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwgl.gzu.edu.cn/",
+        "desc": "贵州大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gzu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gzu.edu.cn/",
+        "desc": "贵州大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gzmu",
+    "name": "贵州医科大学",
+    "shortName": "GZMU / 贵医大",
+    "pinyin": "guizhouyikedaxue gzmu gyd guiyida",
+    "region": "贵州 · 贵阳",
+    "badge": "医学重点",
+    "systems": [
+      {
+        "id": "gzmu_jw",
+        "name": "贵州医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gmc.edu.cn/",
+        "desc": "贵州医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gzmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gzmu.edu.cn/",
+        "desc": "贵州医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "zmu",
+    "name": "遵义医科大学",
+    "shortName": "ZMU / 遵医大",
+    "pinyin": "zunyiyikedaxue zmu zyd zunyida",
+    "region": "贵州 · 遵义",
+    "badge": "医学名校",
+    "systems": [
+      {
+        "id": "zmu_jw",
+        "name": "遵义医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.zmu.edu.cn/",
+        "desc": "遵义医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "zmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.zmu.edu.cn/",
+        "desc": "遵义医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gznu",
+    "name": "贵州师范大学",
+    "shortName": "GZNU / 贵师大",
+    "pinyin": "guizhoushifandaxue gznu gsd guishida",
+    "region": "贵州 · 贵阳",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "gznu_jw",
+        "name": "贵州师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gznu.edu.cn/",
+        "desc": "贵州师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gznu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gznu.edu.cn/",
+        "desc": "贵州师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gzfe",
+    "name": "贵州财经大学",
+    "shortName": "GZFE / 贵财",
+    "pinyin": "guizhoucaijingdaxue gzfe gc guicai",
+    "region": "贵州 · 贵阳",
+    "badge": "财经特色",
+    "systems": [
+      {
+        "id": "gzfe_jw",
+        "name": "贵州财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gufe.edu.cn/",
+        "desc": "贵州财经大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gzfe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gzfe.edu.cn/",
+        "desc": "贵州财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ynu",
+    "name": "云南大学",
+    "shortName": "YNU / 云大",
+    "pinyin": "yunnandaxue ynu yd yunda",
+    "region": "云南 · 昆明",
+    "badge": "双一流高校",
+    "systems": [
+      {
+        "id": "ynu_jw",
+        "name": "云南大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ynu.edu.cn/",
+        "desc": "云南大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ynu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ynu.edu.cn/",
+        "desc": "云南大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "kust",
+    "name": "昆明理工大学",
+    "shortName": "KUST / 昆工",
+    "pinyin": "kunmingligongdaxue kust kg kungong",
+    "region": "云南 · 昆明",
+    "badge": "省属重点高水平",
+    "systems": [
+      {
+        "id": "kust_jw",
+        "name": "昆明理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.kust.edu.cn/",
+        "desc": "昆明理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "kust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.kust.edu.cn/",
+        "desc": "昆明理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ynau",
+    "name": "云南农业大学",
+    "shortName": "YNAU / 云农",
+    "pinyin": "yunnannongyedaxue ynau yn yunnong",
+    "region": "云南 · 昆明",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "ynau_jw",
+        "name": "云南农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ynau.edu.cn/",
+        "desc": "云南农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ynau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ynau.edu.cn/",
+        "desc": "云南农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "swfu",
+    "name": "西南林业大学",
+    "shortName": "SWFU / 西南林",
+    "pinyin": "xinanlinyedaxue swfu xnl xinanlin",
+    "region": "云南 · 昆明",
+    "badge": "林业高水平",
+    "systems": [
+      {
+        "id": "swfu_jw",
+        "name": "西南林业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.swfu.edu.cn/",
+        "desc": "西南林业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "swfu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.swfu.edu.cn/",
+        "desc": "西南林业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "kmu",
+    "name": "昆明医科大学",
+    "shortName": "KMU / 昆医大",
+    "pinyin": "kunmingyikedaxue kmu kyd kunyida",
+    "region": "云南 · 昆明",
+    "badge": "医学名校",
+    "systems": [
+      {
+        "id": "kmu_jw",
+        "name": "昆明医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.kmu.edu.cn/",
+        "desc": "昆明医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "kmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.kmu.edu.cn/",
+        "desc": "昆明医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ynnu",
+    "name": "云南师范大学",
+    "shortName": "YNNU / 云师大",
+    "pinyin": "yunnanshifandaxue ynnu ysd yunshida",
+    "region": "云南 · 昆明",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "ynnu_jw",
+        "name": "云南师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ynnu.edu.cn/",
+        "desc": "云南师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ynnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ynnu.edu.cn/",
+        "desc": "云南师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ynfe",
+    "name": "云南财经大学",
+    "shortName": "YUFE / 云财",
+    "pinyin": "yunnancaijingdaxue yufe yc yuncai",
+    "region": "云南 · 昆明",
+    "badge": "财经特色",
+    "systems": [
+      {
+        "id": "ynfe_jw",
+        "name": "云南财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ynufe.edu.cn/",
+        "desc": "云南财经大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ynfe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ynfe.edu.cn/",
+        "desc": "云南财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "dali",
+    "name": "大理大学",
+    "shortName": "DLU / 理大",
+    "pinyin": "dalidaxue dlu ld lida",
+    "region": "云南 · 大理",
+    "badge": "综合本科",
+    "systems": [
+      {
+        "id": "dali_jw",
+        "name": "大理大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.dlu.edu.cn/",
+        "desc": "大理大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "dali_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.dali.edu.cn/",
+        "desc": "大理大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "utibet",
+    "name": "西藏大学",
+    "shortName": "UTIBET / 藏大",
+    "pinyin": "xicangdaxue utibet cd zangda qingguo",
+    "region": "西藏 · 拉萨",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "utibet_jw",
+        "name": "西藏大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.utibet.edu.cn/",
+        "desc": "西藏大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "utibet_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.utibet.edu.cn/",
+        "desc": "西藏大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "tibet_au",
+    "name": "西藏农牧学院",
+    "shortName": "XAU / 藏农牧",
+    "pinyin": "xicangnongmuxueyuan xau znm zangnongmu",
+    "region": "西藏 · 林芝",
+    "badge": "特色重点",
+    "systems": [
+      {
+        "id": "tibet_au_jw",
+        "name": "西藏农牧学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xza.edu.cn/",
+        "desc": "西藏农牧学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "tibet_au_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.tibet_au.edu.cn/",
+        "desc": "西藏农牧学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xjtu",
+    "name": "西安交通大学",
+    "shortName": "XJTU / 西安交大",
+    "pinyin": "xianjiaotongdaxue xjtu xajd xianjiaoda",
+    "region": "陕西 · 西安",
+    "badge": "C9 · 985 · 双一流",
+    "systems": [
+      {
+        "id": "xjtu_jw",
+        "name": "西安交通大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.xjtu.edu.cn/",
+        "desc": "西安交通大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xjtu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xjtu.edu.cn/",
+        "desc": "西安交通大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nwpu",
+    "name": "西北工业大学",
+    "shortName": "NPU / 西工大",
+    "pinyin": "xibeigongyedaxue nwpu npu xgd xigongda",
+    "region": "陕西 · 西安",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "nwpu_jw",
+        "name": "西北工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.nwpu.edu.cn/",
+        "desc": "西北工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nwpu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nwpu.edu.cn/",
+        "desc": "西北工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xidian",
+    "name": "西安电子科技大学",
+    "shortName": "Xidian / 西电",
+    "pinyin": "xiandianzikejidaxue xidian xd xidian",
+    "region": "陕西 · 西安",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "xidian_jw",
+        "name": "西安电子科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.xidian.edu.cn/",
+        "desc": "西安电子科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xidian_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xidian.edu.cn/",
+        "desc": "西安电子科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nwu",
+    "name": "西北大学",
+    "shortName": "NWU / 西大",
+    "pinyin": "xibeidaxue nwu xd xida",
+    "region": "陕西 · 西安",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "nwu_jw",
+        "name": "西北大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.nwu.edu.cn/",
+        "desc": "西北大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nwu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nwu.edu.cn/",
+        "desc": "西北大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "chd",
+    "name": "长安大学",
+    "shortName": "CHD / 长大",
+    "pinyin": "changandaxue chd cd changda",
+    "region": "陕西 · 西安",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "chd_jw",
+        "name": "长安大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.chd.edu.cn/",
+        "desc": "长安大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "chd_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.chd.edu.cn/",
+        "desc": "长安大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "snnu",
+    "name": "陕西师范大学",
+    "shortName": "SNNU / 陕师大",
+    "pinyin": "shanxishifandaxue snnu ssd shanshida",
+    "region": "陕西 · 西安",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "snnu_jw",
+        "name": "陕西师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.snnu.edu.cn/",
+        "desc": "陕西师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "snnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.snnu.edu.cn/",
+        "desc": "陕西师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xaut",
+    "name": "西安理工大学",
+    "shortName": "XAUT / 西理工",
+    "pinyin": "xianligongdaxue xaut xlg xianligong",
+    "region": "陕西 · 西安",
+    "badge": "省部共建重点",
+    "systems": [
+      {
+        "id": "xaut_jw",
+        "name": "西安理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xaut.edu.cn/",
+        "desc": "西安理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xaut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xaut.edu.cn/",
+        "desc": "西安理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xatu",
+    "name": "西安工业大学",
+    "shortName": "XATU / 西工",
+    "pinyin": "xiangongyedaxue xatu xg xiangong",
+    "region": "陕西 · 西安",
+    "badge": "兵工特色",
+    "systems": [
+      {
+        "id": "xatu_jw",
+        "name": "西安工业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xatu.edu.cn/",
+        "desc": "西安工业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xatu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xatu.edu.cn/",
+        "desc": "西安工业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xauat",
+    "name": "西安建筑科技大学",
+    "shortName": "XAUAT / 西建大",
+    "pinyin": "xianjianzhadaxue xauat xjd xianjianda",
+    "region": "陕西 · 西安",
+    "badge": "建筑老八校",
+    "systems": [
+      {
+        "id": "xauat_jw",
+        "name": "西安建筑科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xauat.edu.cn/",
+        "desc": "西安建筑科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xauat_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xauat.edu.cn/",
+        "desc": "西安建筑科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xust",
+    "name": "西安科技大学",
+    "shortName": "XUST / 西科大",
+    "pinyin": "xiankejidaxue xust xkd xiankeda",
+    "region": "陕西 · 西安",
+    "badge": "煤炭地质高水平",
+    "systems": [
+      {
+        "id": "xust_jw",
+        "name": "西安科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xust.edu.cn/",
+        "desc": "西安科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xust.edu.cn/",
+        "desc": "西安科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xupt_oil",
+    "name": "西安石油大学",
+    "shortName": "XSYU / 西石大",
+    "pinyin": "xianshiyoudaxue xsyu xsd xianshida",
+    "region": "陕西 · 西安",
+    "badge": "石油特色重点",
+    "systems": [
+      {
+        "id": "xupt_oil_jw",
+        "name": "西安石油大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xsyu.edu.cn/",
+        "desc": "西安石油大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xupt_oil_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xupt_oil.edu.cn/",
+        "desc": "西安石油大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "sust",
+    "name": "陕西科技大学",
+    "shortName": "SUST / 陕科大",
+    "pinyin": "shanxikejidaxue sust skd shankeda",
+    "region": "陕西 · 西安",
+    "badge": "轻工名校",
+    "systems": [
+      {
+        "id": "sust_jw",
+        "name": "陕西科技大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.sust.edu.cn/",
+        "desc": "陕西科技大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "sust_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.sust.edu.cn/",
+        "desc": "陕西科技大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "yau",
+    "name": "延安大学",
+    "shortName": "YAU / 延大",
+    "pinyin": "yanandaxue yau yd yanda",
+    "region": "陕西 · 延安",
+    "badge": "省部共建重点",
+    "systems": [
+      {
+        "id": "yau_jw",
+        "name": "延安大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.yau.edu.cn/",
+        "desc": "延安大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "yau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.yau.edu.cn/",
+        "desc": "延安大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xupt",
+    "name": "西安邮电大学",
+    "shortName": "XUPT / 西邮",
+    "pinyin": "xianyoudiandaxue xupt xy xianyou",
+    "region": "陕西 · 西安",
+    "badge": "信息特色重点",
+    "systems": [
+      {
+        "id": "xupt_jw",
+        "name": "西安邮电大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.xupt.edu.cn/",
+        "desc": "西安邮电大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xupt_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xupt.edu.cn/",
+        "desc": "西安邮电大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "lzu",
+    "name": "兰州大学",
+    "shortName": "LZU / 兰大",
+    "pinyin": "lanzhoudaxue lzu ld landa",
+    "region": "甘肃 · 兰州",
+    "badge": "985 · 双一流",
+    "systems": [
+      {
+        "id": "lzu_jw",
+        "name": "兰州大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.lzu.edu.cn/",
+        "desc": "兰州大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "lzu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.lzu.edu.cn/",
+        "desc": "兰州大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "lut",
+    "name": "兰州理工大学",
+    "shortName": "LUT / 兰理工",
+    "pinyin": "lanzhouligongdaxue lut llg lanligong qingguo",
+    "region": "甘肃 · 兰州",
+    "badge": "青果 · 省部共建",
+    "systems": [
+      {
+        "id": "lut_jw",
+        "name": "兰州理工大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.lut.edu.cn/",
+        "desc": "兰州理工大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "lut_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.lut.edu.cn/",
+        "desc": "兰州理工大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "lzjtu",
+    "name": "兰州交通大学",
+    "shortName": "LZJTU / 兰州交大",
+    "pinyin": "lanzhoujiaotongdaxue lzjtu lzjd lanzhoujiaoda",
+    "region": "甘肃 · 兰州",
+    "badge": "铁道交通名校",
+    "systems": [
+      {
+        "id": "lzjtu_jw",
+        "name": "兰州交通大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.lzjtu.edu.cn/",
+        "desc": "兰州交通大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "lzjtu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.lzjtu.edu.cn/",
+        "desc": "兰州交通大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "gsau",
+    "name": "甘肃农业大学",
+    "shortName": "GSAU / 甘农大",
+    "pinyin": "gansunongyedaxue gsau gnd gannongda",
+    "region": "甘肃 · 兰州",
+    "badge": "省属重点",
+    "systems": [
+      {
+        "id": "gsau_jw",
+        "name": "甘肃农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.gsau.edu.cn/",
+        "desc": "甘肃农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "gsau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.gsau.edu.cn/",
+        "desc": "甘肃农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nwnu",
+    "name": "西北师范大学",
+    "shortName": "NWNU / 西北师大",
+    "pinyin": "xibeishifandaxue nwnu xbsd xibeishida",
+    "region": "甘肃 · 兰州",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "nwnu_jw",
+        "name": "西北师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.nwnu.edu.cn/",
+        "desc": "西北师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nwnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nwnu.edu.cn/",
+        "desc": "西北师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "lzufe",
+    "name": "兰州财经大学",
+    "shortName": "LZFE / 兰财",
+    "pinyin": "lanzhoucaijingdaxue lzfe lc lancai",
+    "region": "甘肃 · 兰州",
+    "badge": "经管重点",
+    "systems": [
+      {
+        "id": "lzufe_jw",
+        "name": "兰州财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.lzufe.edu.cn/",
+        "desc": "兰州财经大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "lzufe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.lzufe.edu.cn/",
+        "desc": "兰州财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "qhu",
+    "name": "青海大学",
+    "shortName": "QHU / 青大",
+    "pinyin": "qinghaidaxue qhu qd qingda",
+    "region": "青海 · 西宁",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "qhu_jw",
+        "name": "青海大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.qhu.edu.cn/",
+        "desc": "青海大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "qhu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.qhu.edu.cn/",
+        "desc": "青海大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "qhnu",
+    "name": "青海师范大学",
+    "shortName": "QHNU / 青师大",
+    "pinyin": "qinghaishifandaxue qhnu qsd qingshida",
+    "region": "青海 · 西宁",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "qhnu_jw",
+        "name": "青海师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.qhnu.edu.cn/",
+        "desc": "青海师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "qhnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.qhnu.edu.cn/",
+        "desc": "青海师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "qhmu",
+    "name": "青海民族大学",
+    "shortName": "QHMU / 青民大",
+    "pinyin": "qinghaiminzudaxue qhmu qmd qingminda",
+    "region": "青海 · 西宁",
+    "badge": "民族重点",
+    "systems": [
+      {
+        "id": "qhmu_jw",
+        "name": "青海民族大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.qhmu.edu.cn/",
+        "desc": "青海民族大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "qhmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.qhmu.edu.cn/",
+        "desc": "青海民族大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nxu",
+    "name": "宁夏大学",
+    "shortName": "NXU / 宁大",
+    "pinyin": "ningxiadaxue nxu nd ningda",
+    "region": "宁夏 · 银川",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "nxu_jw",
+        "name": "宁夏大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.nxu.edu.cn/",
+        "desc": "宁夏大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nxu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nxu.edu.cn/",
+        "desc": "宁夏大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nxmu",
+    "name": "宁夏医科大学",
+    "shortName": "NXMU / 宁医大",
+    "pinyin": "ningxiayikedaxue nxmu nyd ningyida",
+    "region": "宁夏 · 银川",
+    "badge": "重点医科",
+    "systems": [
+      {
+        "id": "nxmu_jw",
+        "name": "宁夏医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.nxmu.edu.cn/",
+        "desc": "宁夏医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nxmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nxmu.edu.cn/",
+        "desc": "宁夏医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "nxnu",
+    "name": "宁夏师范学院",
+    "shortName": "NXNU / 宁师",
+    "pinyin": "ningxiashifanxueyuan nxnu ns ningshi",
+    "region": "宁夏 · 固原",
+    "badge": "六盘山区名校",
+    "systems": [
+      {
+        "id": "nxnu_jw",
+        "name": "宁夏师范学院教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.nxtc.edu.cn/",
+        "desc": "宁夏师范学院教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "nxnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.nxnu.edu.cn/",
+        "desc": "宁夏师范学院官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xju",
+    "name": "新疆大学",
+    "shortName": "XJU / 新大",
+    "pinyin": "xinjiangdaxue xju xd xinda",
+    "region": "新疆 · 乌鲁木齐",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "xju_jw",
+        "name": "新疆大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.xju.edu.cn/",
+        "desc": "新疆大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xju_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xju.edu.cn/",
+        "desc": "新疆大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "shzu",
+    "name": "石河子大学",
+    "shortName": "SHZU / 石大",
+    "pinyin": "shihezidaxue shzu sd shida",
+    "region": "新疆 · 石河子",
+    "badge": "211 · 双一流",
+    "systems": [
+      {
+        "id": "shzu_jw",
+        "name": "石河子大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jwxt.shzu.edu.cn/",
+        "desc": "石河子大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "shzu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.shzu.edu.cn/",
+        "desc": "石河子大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "taru",
+    "name": "塔里木大学",
+    "shortName": "TARU / 塔大",
+    "pinyin": "talimudaxue taru td tada",
+    "region": "新疆 · 阿拉尔",
+    "badge": "兵团重点",
+    "systems": [
+      {
+        "id": "taru_jw",
+        "name": "塔里木大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.taru.edu.cn/",
+        "desc": "塔里木大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "taru_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.taru.edu.cn/",
+        "desc": "塔里木大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xjau",
+    "name": "新疆农业大学",
+    "shortName": "XJAU / 新农大",
+    "pinyin": "xinjiangnongyedaxue xjau xnd xinnongda",
+    "region": "新疆 · 乌鲁木齐",
+    "badge": "农科高水平",
+    "systems": [
+      {
+        "id": "xjau_jw",
+        "name": "新疆农业大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xjau.edu.cn/",
+        "desc": "新疆农业大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xjau_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xjau.edu.cn/",
+        "desc": "新疆农业大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xjmu",
+    "name": "新疆医科大学",
+    "shortName": "XJMU / 新医大",
+    "pinyin": "xinjiangyikedaxue xjmu xyd xinyida",
+    "region": "新疆 · 乌鲁木齐",
+    "badge": "医学高水平",
+    "systems": [
+      {
+        "id": "xjmu_jw",
+        "name": "新疆医科大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xjmu.edu.cn/",
+        "desc": "新疆医科大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xjmu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xjmu.edu.cn/",
+        "desc": "新疆医科大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xjnu",
+    "name": "新疆师范大学",
+    "shortName": "XJNU / 新师大",
+    "pinyin": "xinjiangshifandaxue xjnu xsd xinshida",
+    "region": "新疆 · 乌鲁木齐",
+    "badge": "重点师范",
+    "systems": [
+      {
+        "id": "xjnu_jw",
+        "name": "新疆师范大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xjnu.edu.cn/",
+        "desc": "新疆师范大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xjnu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xjnu.edu.cn/",
+        "desc": "新疆师范大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "xjufe",
+    "name": "新疆财经大学",
+    "shortName": "XJUFE / 新财",
+    "pinyin": "xinjiangcaijingdaxue xjufe xc xincai",
+    "region": "新疆 · 乌鲁木齐",
+    "badge": "财经特色",
+    "systems": [
+      {
+        "id": "xjufe_jw",
+        "name": "新疆财经大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.xjufe.edu.cn/",
+        "desc": "新疆财经大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "xjufe_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.xjufe.edu.cn/",
+        "desc": "新疆财经大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "ksu",
+    "name": "喀什大学",
+    "shortName": "KSU / 喀大",
+    "pinyin": "kashidaxue ksu kd kada",
+    "region": "新疆 · 喀什",
+    "badge": "南疆重点",
+    "systems": [
+      {
+        "id": "ksu_jw",
+        "name": "喀什大学教务管理系统",
+        "level": "本科/研究生",
+        "url": "http://jw.ksu.edu.cn/",
+        "desc": "喀什大学教务综合服务平台，课表查询与导入"
+      },
+      {
+        "id": "ksu_portal",
+        "name": "数字校园统一身份认证 / WebVPN",
+        "level": "全校师生",
+        "url": "https://cas.ksu.edu.cn/",
+        "desc": "喀什大学官方智慧校园一网通办认证与校外直连"
+      }
+    ]
+  },
+  {
+    "id": "custom_general",
+    "name": "全国高校通用通道 (支持任何大学)",
+    "shortName": "自定义教务 / WebVPN",
+    "pinyin": "quanguogaoxiaotongyong quanguo zidingyi tongyong ranyi ranyidaxue",
+    "region": "全国 · 任意高校",
+    "badge": "万能导入",
+    "systems": [
+      {
+        "id": "generic_direct",
+        "name": "通用教务直连 / WebVPN",
+        "level": "全国师生",
+        "url": "https://",
+        "desc": "支持全国 3000+ 高校，手动输入任意高校教务登录网址或校外 WebVPN 直连"
+      }
+    ]
+  }
 ];
