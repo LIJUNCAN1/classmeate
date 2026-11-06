@@ -472,7 +472,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
             <Ionicons name="search" size={18} color="#94A3B8" style={{ marginRight: 8 }} />
             <TextInput
               style={styles.schoolSearchInput}
-              placeholder="高校搜索 (输入学校名称或拼音如 佳大 / 矿大)"
+              placeholder="高校搜索"
               placeholderTextColor="#94A3B8"
               value={schoolSearchQuery}
               onChangeText={setSchoolSearchQuery}
