@@ -101,26 +101,44 @@ export const ImportModal: React.FC<ImportModalProps> = ({
     setCurrentStep('school_select');
   };
 
-  // 选中学校后进入该学校的【认证方式选择】
+  // 选中学校后直接进入该学校官方教务系统登录
   const handlePickSchool = (school: SchoolItem) => {
     setSelectedSchool(school);
     setSelectedSystemId(school.systems[0].id);
-    if (school.id === 'custom_general') {
+    const isCustom = school.id === 'custom_general' || school.id.startsWith('custom');
+    if (isCustom) {
       setIsEditingCustomUrl(true);
-    } else {
-      setIsEditingCustomUrl(false);
+      setCurrentStep('auth_select');
+      return;
     }
-    setCurrentStep('auth_select');
+
+    setIsEditingCustomUrl(false);
+    const targetUrl = school.systems[0]?.url || 'https://www.google.com';
+
+    if (Platform.OS === 'web' || !NativeWebView) {
+      Alert.alert(
+        '环境提示',
+        '内置安全浏览器与 DOM 课表识别在 Android 原生运行。当前 Web 预览环境将为您在外部浏览器打开登录页。',
+        [
+          { text: '在浏览器打开', onPress: () => Linking.openURL(targetUrl) },
+          { text: '取消', style: 'cancel' },
+        ]
+      );
+      return;
+    }
+
+    setIsBrowserOpen(true);
   };
 
-  // 点击认证页底部的【进入】打开内置浏览器
+  // 点击认证页底部的【进入】打开内置浏览器（供自定义高校网址使用）
   const handleEnterBrowser = () => {
     const chosen =
       selectedSchool.systems.find((s) => s.id === selectedSystemId) ||
       selectedSchool.systems[0];
 
+    const isCustom = selectedSchool.id === 'custom_general' || selectedSchool.id.startsWith('custom');
     const targetUrl =
-      selectedSchool.id === 'custom_general' && customWebUrl.trim()
+      isCustom && customWebUrl.trim()
         ? customWebUrl.trim()
         : chosen.url;
 
@@ -329,8 +347,11 @@ export const ImportModal: React.FC<ImportModalProps> = ({
     selectedSchool.systems.find((s) => s.id === selectedSystemId) ||
     selectedSchool.systems[0];
 
+  const isSelectedCustom =
+    selectedSchool.id === 'custom_general' || selectedSchool.id.startsWith('custom');
+
   const browserLoadUrl =
-    selectedSchool.id === 'custom_general' && customWebUrl.trim()
+    isSelectedCustom && customWebUrl.trim()
       ? customWebUrl.trim()
       : currentChosenSystem.url;
 
@@ -442,7 +463,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
             >
               <Ionicons name="chevron-back" size={24} color="#1E293B" />
             </TouchableOpacity>
-            <Text style={styles.navTitle}>选择学校</Text>
+            <Text style={styles.navTitle}>高校搜索</Text>
             <View style={{ width: 40 }} />
           </View>
 
@@ -451,7 +472,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
             <Ionicons name="search" size={18} color="#94A3B8" style={{ marginRight: 8 }} />
             <TextInput
               style={styles.schoolSearchInput}
-              placeholder="搜索高校名称或拼音缩写 (如 长沙学院 / CCSU)"
+              placeholder="高校搜索 (输入学校名称或拼音如 佳大 / 矿大)"
               placeholderTextColor="#94A3B8"
               value={schoolSearchQuery}
               onChangeText={setSchoolSearchQuery}
@@ -466,7 +487,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
 
           {/* 常用热门高校快速标签 */}
           <View style={styles.quickTagsRow}>
-            {['中国矿大', '中南大学', '湖南大学', '清华大学', '浙江大学', '武汉大学', '四川大学', '长沙学院'].map((name) => {
+            {['佳木斯大学', '中国矿大', '长沙学院', '中南大学', '湖南大学', '清华大学', '浙江大学', '武汉大学'].map((name) => {
               const isMatch =
                 schoolSearchQuery === name ||
                 selectedSchool.name.includes(name) ||
@@ -499,8 +520,8 @@ export const ImportModal: React.FC<ImportModalProps> = ({
           <ScrollView style={styles.schoolListScroll} showsVerticalScrollIndicator={false}>
             <Text style={styles.schoolListSectionTitle}>
               {schoolSearchQuery.trim()
-                ? `搜索结果 (${filteredSchools.length})`
-                : '全国重点高校及支持教务系统列表'}
+                ? `高校搜索结果 (${filteredSchools.length})`
+                : `高校列表 (${filteredSchools.length})`}
             </Text>
 
             {filteredSchools.map((school) => {
@@ -526,7 +547,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                       )}
                     </View>
                     <Text style={styles.schoolItemDesc}>
-                      {school.region} · 教务系统登录
+                      {school.region}
                     </Text>
                   </View>
 

@@ -35,7 +35,7 @@ const list = [
     region: '江苏 · 徐州',
     badge: '211 · 双一流',
     systems: [
-      { id: 'cumt_jw', name: '教务系统登录', level: '全校师生通用', url: 'http://jwxt.cumt.edu.cn/', desc: '中国矿业大学官方教务管理系统登录' },
+      { id: 'cumt_jw', name: '教务系统登录', level: '全校师生通用', url: 'https://authserver.cumt.edu.cn/authserver/login?service=http%3A%2F%2Fjwxt.cumt.edu.cn%2F', desc: '中国矿业大学官方教务管理系统统一身份认证登录' },
     ]
   },
   {
@@ -57,7 +57,7 @@ const list = [
     region: '黑龙江 · 佳木斯',
     badge: '青果 · 喜鹊儿',
     systems: [
-      { id: 'jmsu_jw', name: '教务系统登录', level: '全校师生通用', url: 'http://jwc.jmsu.edu.cn/', desc: '佳木斯大学青果教务系统登录' },
+      { id: 'jmsu_jw', name: '教务系统登录', level: '全校师生通用', url: 'https://jwxt.jmsu.edu.cn:456/jmsujw/cas/login.action', desc: '佳木斯大学青果教务系统登录' },
     ]
   },
   {
