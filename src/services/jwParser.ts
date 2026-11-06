@@ -168,16 +168,22 @@ export function extractWeekRange(text: string): string {
   // 必须严格包含“周”字，防止匹配到纯房间号如 204、515
   const multiWeekMatch = text.match(/([0-9\-~到,，、\s]+(?:周|[（\(][单双][）\)]|\(周\)|（周）)(?:[0-9\-~到,，、\s周（\(\)）单双]*))/);
   if (multiWeekMatch) {
-    const raw = multiWeekMatch[1].trim().replace(/\s+/g, '');
+    let raw = multiWeekMatch[1].trim().replace(/\s+/g, '');
+    // 清理尾部被误吸入的节次括号（如 1-16周(1-2节 -> 1-16周）
+    raw = raw.replace(/[\(（][0-9\-~到,节\s]+[\)）]?/g, '');
+    // 规范化多余前导0（如 01-16周 -> 1-16周）
+    raw = raw.replace(/(^|[^\d])0(\d)/g, '$1$2');
     if (/\d/.test(raw) && raw.includes('周')) {
       return raw;
     }
   }
 
-  // 4. 括号包裹的周次，如 "[1-12周]"、"(1-12周)"、"1-12(周)"
-  const bracketMatch = text.match(/[[（(](\d+(?:[-~到]\d+)?)\s*(?:周|\(周\)|（周）)[\]）)]/);
+  // 4. 括号包裹的周次，如 "[1-12周]"、"(1-12周)"、"1-12(周)"、"[01-16周(单)]"
+  const bracketMatch = text.match(/[[（(](\d+(?:[-~到]\d+)?)\s*(?:周|\(周\)|（周）)(?:[\(（][单双][\)）])?[\]）)]/);
   if (bracketMatch) {
-    return `${bracketMatch[1]}周`;
+    let w = bracketMatch[1].replace(/(^|[^\d])0(\d)/g, '$1$2');
+    const extra = bracketMatch[0].includes('单') ? '(单)' : bracketMatch[0].includes('双') ? '(双)' : '';
+    return `${w}周${extra}`;
   }
 
   return '1-16周';
@@ -209,7 +215,7 @@ export function extractCourseFields(rawText: string): {
 
   // 2. 上课地点提取 (过滤开头的 "14周长智楼A204" 等周次前缀，注意严格带“周”字才去除，绝不误删 A204/515)
   let location = '';
-  const locMatch1 = s.match(/(?:📍|上课地点|地点|教室|室)[:：\s]*([^\s,;，；\(\)（）\r\n]+)/u);
+  const locMatch1 = s.match(/(?:📍|上课地点|地点|教室|室)[:：\t ]+([^\s,;，；\(\)（）\r\n]+)/u);
   if (locMatch1) {
     location = cleanPrefix(locMatch1[1]);
   } else {
@@ -222,11 +228,17 @@ export function extractCourseFields(rawText: string): {
   }
   if (!location) location = '校区教学楼';
 
-  // 3. 显式教师提取 (👤 罗金花 / 教师: 罗金花)
+  // 3. 显式及典型高校教师职称模式提取 (👤 罗金花 / 教师: 罗金花 / 陈建华(教授) / 刘志远[1-16周])
   let teacher = '';
-  const tMatch = s.match(/(?:👤|教师|老师|任课教师|讲师)[:：\s]*([^\s,;，；\(\)（）\r\n]+)/u);
+  const tMatch = s.match(/(?:👤|教师|老师|任课教师|讲师)[:：\t ]+([^\s,;，；\(\)（）\r\n]+)/u);
   if (tMatch) {
     teacher = cleanPrefix(tMatch[1]);
+  }
+  if (!teacher) {
+    const titleMatch = s.match(/([\u4e00-\u9fa5]{2,4})\s*(?:[（\(\[](?:教授|副教授|讲师|助教|老师|外教)[）\)\]])/);
+    if (titleMatch && titleMatch[1] !== location && !location.includes(titleMatch[1])) {
+      teacher = titleMatch[1];
+    }
   }
 
   // 4. 行切分并过滤纯元数据标签行与学分纯数字行（如 0.5、3.5、2.0）
@@ -236,24 +248,52 @@ export function extractCourseFields(rawText: string): {
   );
   if (lines.length === 0 && rawLines.length === 0) return null;
 
-  // 4.5. 智能识别高校教务排课经典格式（第1行为课程名，第2行为真实授课教师姓名）
+  // 4.5. 智能识别高校教务排课经典格式（第2行或第3行如果是真实授课教师姓名或学院教师）
   if (!teacher && lines.length >= 2) {
-    const candidateTeacher = cleanPrefix(lines[1]);
-    if (
-      /^[\u4e00-\u9fa5]{2,4}$/.test(candidateTeacher) &&
-      candidateTeacher !== location &&
-      !location.includes(candidateTeacher) &&
-      !/(?:[0-9\-~到,]+节|[0-9\-~到,]+周|周数|周次|地点|教室|楼|室|馆|中心|实验|必修|选修|讲座|原理|分析|设计|监测|化学|工程|管理|理论)/.test(candidateTeacher)
-    ) {
-      teacher = candidateTeacher;
+    for (let li = 1; li < Math.min(lines.length, 3); li++) {
+      const l = cleanPrefix(lines[li]);
+      const bracketName = l.match(/^([\u4e00-\u9fa5]{2,4})\s*(?:\[|\(|（)/);
+      if (bracketName && bracketName[1] !== location && !location.includes(bracketName[1])) {
+        teacher = bracketName[1];
+        break;
+      }
+      if (
+        /^[\u4e00-\u9fa5]{2,4}$/.test(l) &&
+        l !== location &&
+        !location.includes(l) &&
+        !/(?:[0-9\-~到,]+节|[0-9\-~到,]+周|周数|周次|地点|教室|楼|室|馆|中心|实验|必修|选修|讲座|原理|分析|设计|监测|化学|工程|管理|理论)/.test(l)
+      ) {
+        teacher = l;
+        break;
+      }
+      if (/(?:学院教师|学院|教研室)$/.test(l) && l.length <= 12) {
+        teacher = l;
+        break;
+      }
     }
   }
 
-  // 5. 课程名称提取
+  // 5. 课程名称提取（高校排课经典：单元格首行即为标准课程名称）
   let name = '';
   const explicitNameM = s.match(/(?:课程名称|课程|科目)[:：\s]+([^\s\r\n]+)/);
   if (explicitNameM && explicitNameM[1] && explicitNameM[1] !== '名称' && explicitNameM[1].length >= 2) {
     name = cleanPrefix(explicitNameM[1]);
+  }
+
+  if (!name && lines.length > 0) {
+    const firstLine = cleanPrefix(lines[0])
+      .replace(/^[【\[(]?(?:必修|选修|重修|公选|专选|通识|调)[\])】]?\s*/, '')
+      .replace(/[（\(]\d+[-~到,]?\d*节[）\)]/g, '')
+      .trim();
+    if (
+      firstLine.length >= 2 &&
+      firstLine !== location &&
+      !location.includes(firstLine) &&
+      (!teacher || (firstLine !== teacher && !teacher.includes(firstLine))) &&
+      !/^(?:无课程|未排课|上午|下午|晚上|节次|时间|第\d+节|[0-9\-~到,]+周)$/.test(firstLine)
+    ) {
+      name = firstLine;
+    }
   }
 
   if (!name) {
@@ -630,6 +670,20 @@ export function splitCellCourseChunks(cellText: string): string[] {
  */
 export function repairCourseList(courses: Course[]): Course[] {
   const list = courses.map(repairCourse);
+
+  // 只有当课表中已明确包含长沙学院标志性实验课程或校区楼栋时，才执行历史缺失排期补偿；
+  // 杜绝其他全国高校（如佳木斯大学、清华、北大、矿大等）被误混入无关课程！
+  const isCcsuSchedule = list.some(
+    (c) =>
+      c.location?.includes('涵虚楼') ||
+      c.location?.includes('力行楼') ||
+      c.location?.includes('长智楼') ||
+      c.name?.includes('环境工程原理实验') ||
+      c.name?.includes('仪器分析实验')
+  );
+  if (!isCcsuSchedule) {
+    return list;
+  }
 
   // 1. 检查周一 5-8节 (dayOfWeek = 1, 5-8节 仪器分析实验多周排课)
   const monCourses = list.filter(
