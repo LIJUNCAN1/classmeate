@@ -2,7 +2,7 @@
   "expo": {
     "name": "课星球",
     "slug": "classmeate",
-    "version": "0.5.2",
+    "version": "0.5.7",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -11,6 +11,7 @@
     },
     "android": {
       "package": "com.classmeate.app",
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "backgroundColor": "#F0FDF4",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -18,7 +19,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "versionCode": 52
+      "versionCode": 57
     },
     "web": {
       "favicon": "./assets/favicon.png"

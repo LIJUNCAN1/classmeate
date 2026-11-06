@@ -823,6 +823,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
               ref={webViewRef}
               source={{ uri: browserLoadUrl }}
               style={styles.webView}
+              originWhitelist={['*']}
               javaScriptEnabled={true}
               domStorageEnabled={true}
               sharedCookiesEnabled={true}
